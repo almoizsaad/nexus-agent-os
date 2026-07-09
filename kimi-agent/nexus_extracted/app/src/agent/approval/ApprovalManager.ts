@@ -19,7 +19,7 @@ export class ApprovalManager {
       // Notify UI via EventBus/Zustand
       useWorkspaceStore.getState().setLocked(true);
       
-      agent.dispatchAction({
+      agent.runtime.dispatchAction({
         type: AgentActionType.SHOW_NOTIFICATION,
         payload: {
           message: `Approval Required: ${message}`,

@@ -1,4 +1,3 @@
-import React from 'react';
 import { EmptyState } from './Shared';
 
 export function TableComponent({ data }: { id: string; data: Record<string, unknown> }) {

@@ -1,14 +1,17 @@
-import { AgentState, AgentEvent, AgentStatus, Planner, Executor, Memory, Plan, AgentEventType, AgentActionType } from '../types/agent';
-import { AgentProtocolEvent } from '../protocol/events';
-import { AgentProtocolAction } from '../protocol/actions';
+import { AgentEventType, AgentActionType } from '../types/agent';
+import type { AgentState, AgentEvent, AgentStatus, Planner, Executor, Memory, Plan } from '../types/agent';
+import type { AgentProtocolEvent } from '../protocol/events';
+import type { AgentProtocolAction } from '../protocol/actions';
 import { EventBus } from './EventBus';
 import { WorkflowEngine } from '../workflow/WorkflowEngine';
 import { MemoryManager } from '../memory/MemoryManager';
 import { SelfCorrection } from './SelfCorrection';
+import { AgentStream } from '../events/AgentStream';
 
 export class AgentRuntime {
   private state: AgentState;
   private eventBus: EventBus;
+  private stream: AgentStream;
   
   private planner: Planner | null = null;
   private executor: Executor | null = null;
@@ -18,6 +21,7 @@ export class AgentRuntime {
 
   constructor(eventBus: EventBus, planner?: Planner, executor?: Executor) {
     this.eventBus = eventBus;
+    this.stream = new AgentStream(eventBus);
     this.planner = planner || null;
     this.executor = executor || null;
     this.memory = new MemoryManager();
@@ -74,30 +78,19 @@ export class AgentRuntime {
 
   public async processGoal(goal: string): Promise<void> {
     if (!this.planner || !this.workflowEngine) {
-      this.dispatchAction({
-        type: AgentActionType.AGENT_UPDATE,
-        payload: {
-          status: 'error',
-          message: 'Planner or WorkflowEngine not initialized.',
-        },
-      });
+      this.stream.error('Planner or WorkflowEngine not initialized.');
       return;
     }
 
     this.state.status = 'thinking';
-    this.dispatchAction({
-      type: AgentActionType.AGENT_UPDATE,
-      payload: {
-        status: 'thinking',
-        message: 'Analyzing goal and generating autonomous plan...',
-      },
-    });
+    this.stream.thinking('Analyzing goal and generating autonomous plan...');
 
     try {
       // Recall relevant context from memory
       const context = await this.memory.recall(goal);
       const enhancedGoal = context ? `${goal} (Context: ${JSON.stringify(context)})` : goal;
 
+      this.stream.planning(enhancedGoal);
       const plan = await this.planner.generatePlan(enhancedGoal, this.state);
       this.state.currentPlan = JSON.parse(JSON.stringify(plan));
       
@@ -114,6 +107,11 @@ export class AgentRuntime {
       this.state.status = 'executing';
       
       const success = await this.workflowEngine.executePlan(this.state.currentPlan, (taskId, status, result) => {
+        if (status === 'in-progress') {
+          const task = this.state.currentPlan!.tasks.find(t => t.id === taskId);
+          this.stream.executingTool(task?.description || taskId);
+        }
+
         // Sync plan state
         const taskIndex = this.state.currentPlan!.tasks.findIndex(t => t.id === taskId);
         if (taskIndex !== -1) {
@@ -136,25 +134,12 @@ export class AgentRuntime {
       if (success) {
         this.state.status = 'idle';
         await this.memory.remember(goal, { completed: true, planId: plan.id });
-        
-        this.dispatchAction({
-          type: AgentActionType.AGENT_UPDATE,
-          payload: {
-            status: 'idle',
-            message: 'Goal accomplished successfully.',
-          },
-        });
+        this.stream.completing('Goal accomplished successfully.');
       }
 
     } catch (error) {
       this.state.status = 'error';
-      this.dispatchAction({
-        type: AgentActionType.AGENT_UPDATE,
-        payload: {
-          status: 'error',
-          message: `Critical error: ${error}`,
-        },
-      });
+      this.stream.error(`Critical error: ${error}`, true);
     }
   }
 
@@ -178,7 +163,7 @@ export class AgentRuntime {
     await this.processGoal(text);
   }
 
-  private async onToolResult(toolName: string, result: unknown): Promise<void> {
+  private async onToolResult(_toolName: string, _result: unknown): Promise<void> {
     // Handled by WorkflowEngine callbacks
   }
 
@@ -191,7 +176,7 @@ export class AgentRuntime {
     this.workflowEngine = new WorkflowEngine(executor);
   }
 
-  public registerMemory(memory: Memory): void {
+  public registerMemory(_memory: Memory): void {
     // MemoryManager is internal but this allows future external registration
   }
 }

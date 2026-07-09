@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { TaskExecutor } from '../executor/TaskExecutor';
 import { ToolRegistry } from '../tools/ToolRegistry';
-import { Tool } from '../tools/Tool';
+import type { Tool } from '../tools/Tool';
 
 class MockTool implements Tool {
   name = 'test_tool';

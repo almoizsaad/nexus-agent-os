@@ -1,6 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { EditableCard, springTransition } from './Shared';
+import { EditableCard } from './Shared';
 import { componentEvents } from '../../../workspace/events/componentEvents';
 
 export function BudgetChart({ id, data }: { id: string; data: Record<string, unknown> }) {

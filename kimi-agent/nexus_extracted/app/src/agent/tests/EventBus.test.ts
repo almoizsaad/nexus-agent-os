@@ -9,7 +9,7 @@ describe('EventBus', () => {
     
     bus.subscribe('test:topic', listener);
     
-    const message = { type: AgentEventType.USER_MESSAGE, payload: { text: 'hi' }, timestamp: Date.now() };
+    const message = { type: AgentEventType.USER_MESSAGE, payload: { text: 'hi', sender: 'user' as const }, timestamp: Date.now() };
     bus.publish('test:topic', message);
     
     expect(listener).toHaveBeenCalledWith(message);
@@ -22,7 +22,7 @@ describe('EventBus', () => {
     const unsubscribe = bus.subscribe('test:topic', listener);
     unsubscribe();
     
-    bus.publish('test:topic', { type: AgentEventType.USER_MESSAGE, payload: { text: 'hi' }, timestamp: Date.now() });
+    bus.publish('test:topic', { type: AgentEventType.USER_MESSAGE, payload: { text: 'hi', sender: 'user' }, timestamp: Date.now() });
     
     expect(listener).not.toHaveBeenCalled();
   });

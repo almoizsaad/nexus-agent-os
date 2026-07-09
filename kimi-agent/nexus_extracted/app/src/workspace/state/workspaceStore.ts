@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { WorkspaceComponent, WorkspaceState } from './workspaceTypes';
+import type { WorkspaceComponent, WorkspaceState } from './workspaceTypes';
 
 interface WorkspaceActions {
   addComponent: (component: WorkspaceComponent) => void;

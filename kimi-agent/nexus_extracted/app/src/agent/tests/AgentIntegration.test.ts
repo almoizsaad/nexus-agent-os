@@ -17,7 +17,7 @@ describe('Agent OS Integration', () => {
     // 1. Simulate User Message
     eventBus.publish('agent:events', {
       type: AgentEventType.USER_MESSAGE,
-      payload: { text: 'Plan a trip' },
+      payload: { text: 'Plan a trip', sender: 'user' },
       timestamp: Date.now(),
     });
 

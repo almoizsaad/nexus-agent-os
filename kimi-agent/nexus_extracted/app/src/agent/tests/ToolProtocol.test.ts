@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { ToolRegistry } from '../tools/ToolRegistry';
-import { AdvancedTool } from '../tools/protocols/ToolSchema';
+import type { AdvancedTool } from '../tools/protocols/ToolSchema';
 
 class AdvancedMockTool implements AdvancedTool {
   name = 'adv_tool';
   description = 'desc';
   inputSchema = { type: 'object', required: ['id'] };
   outputSchema = {};
-  async execute(input: any) { return { ok: true }; }
+  async execute(_input: any) { return { ok: true }; }
 }
 
 describe('ToolProtocol', () => {

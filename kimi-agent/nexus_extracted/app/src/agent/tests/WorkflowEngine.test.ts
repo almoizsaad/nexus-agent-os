@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { WorkflowEngine } from '../workflow/WorkflowEngine';
 import { TaskExecutor } from '../executor/TaskExecutor';
 import { ToolRegistry } from '../tools/ToolRegistry';
-import { StructuredPlan } from '../planner/schemas';
+import type { StructuredPlan } from '../planner/schemas';
 
 describe('WorkflowEngine', () => {
   it('should execute tasks in parallel based on dependencies', async () => {

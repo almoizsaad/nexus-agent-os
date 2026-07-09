@@ -1,6 +1,6 @@
 import { SessionMemory } from './SessionMemory';
 import { PersistentMemory } from './PersistentMemory';
-import { Memory } from '../types/agent';
+import type { Memory } from '../types/agent';
 
 /**
  * MemoryManager coordinates both session and persistent memory layers.
@@ -42,6 +42,22 @@ export class MemoryManager implements Memory {
   public async clear(): Promise<void> {
     this.session.clear();
     this.persistent.clear();
+  }
+
+  public setGoal(goal: string): void {
+    this.session.setGoal(goal);
+  }
+
+  public getGoal(): string | null {
+    return this.session.getGoal();
+  }
+
+  public setPlan(plan: any): void {
+    this.session.setPlan(plan);
+  }
+
+  public getPlan(): any | null {
+    return this.session.getPlan();
   }
 
   public addSessionEvent(event: any): void {

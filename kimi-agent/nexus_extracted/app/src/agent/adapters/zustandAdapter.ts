@@ -1,7 +1,9 @@
 import { agent } from '../bootstrap/createAgent';
-import { AgentActionType, AgentProtocolAction } from '../types/agent';
+import { AgentActionType } from '../types/agent';
+import type { AgentProtocolAction } from '../types/agent';
 import { useIntentStore } from '../../stores/intentStore';
-import { useLogStore, LogLevel } from '../../stores/logStore';
+import { useLogStore } from '../../stores/logStore';
+import type { LogLevel } from '../../stores/logStore';
 
 /**
  * The ZustandAdapter synchronizes Agent OS actions with the application's

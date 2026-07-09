@@ -1,4 +1,3 @@
-import React from 'react';
 import { Sun, Cloud, CloudRain, Wind } from 'lucide-react';
 
 export function WeatherWidget({ data }: { id: string; data: Record<string, unknown> }) {

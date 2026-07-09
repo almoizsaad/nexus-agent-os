@@ -1,6 +1,7 @@
-import { Planner, AgentState, Plan } from '../types/agent';
-import { LLMProvider } from '../providers/LLMProvider';
-import { PlanSchema, StructuredPlan } from './schemas';
+import type { Planner, AgentState, Plan } from '../types/agent';
+import type { LLMProvider } from '../providers/LLMProvider';
+import { PlanSchema } from './schemas';
+import type { StructuredPlan } from './schemas';
 import { ToolRegistry } from '../tools/ToolRegistry';
 import { StructuredPlanner } from './StructuredPlanner';
 

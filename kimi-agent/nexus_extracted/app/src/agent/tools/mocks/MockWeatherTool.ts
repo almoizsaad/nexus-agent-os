@@ -1,4 +1,4 @@
-import { Tool } from '../Tool';
+import type { Tool } from '../Tool';
 
 /**
  * MockWeatherTool provides predictable weather data for testing purposes.

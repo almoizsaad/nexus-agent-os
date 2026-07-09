@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Plane, Clock, ArrowRight } from 'lucide-react';
 import { EditableCard, EmptyState, springTransition } from './Shared';

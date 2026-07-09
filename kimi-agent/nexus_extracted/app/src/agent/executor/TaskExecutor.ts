@@ -1,4 +1,4 @@
-import { Executor, Task } from '../types/agent';
+import type { Executor, Task } from '../types/agent';
 import { ToolRegistry } from '../tools/ToolRegistry';
 
 /**

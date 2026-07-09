@@ -1,17 +1,24 @@
-export enum AgentEventType {
-  USER_MESSAGE = 'USER_MESSAGE',
-  WORKSPACE_ACTION = 'WORKSPACE_ACTION',
-  TOOL_RESULT = 'TOOL_RESULT',
-  AGENT_UPDATE = 'AGENT_UPDATE',
-}
+export const AgentEventType = {
+  USER_MESSAGE: 'USER_MESSAGE',
+  WORKSPACE_ACTION: 'WORKSPACE_ACTION',
+  TOOL_RESULT: 'TOOL_RESULT',
+  AGENT_UPDATE: 'AGENT_UPDATE',
+  ERROR: 'ERROR',
+} as const;
 
-export enum AgentActionType {
-  UPDATE_WORKSPACE = 'UPDATE_WORKSPACE',
-  REQUEST_TOOL = 'REQUEST_TOOL',
-  SHOW_NOTIFICATION = 'SHOW_NOTIFICATION',
-  UPDATE_PLAN = 'UPDATE_PLAN',
-  AGENT_UPDATE = 'AGENT_UPDATE',
-}
+export type AgentEventType = typeof AgentEventType[keyof typeof AgentEventType];
+
+export const AgentActionType = {
+  UPDATE_WORKSPACE: 'UPDATE_WORKSPACE',
+  REQUEST_TOOL: 'REQUEST_TOOL',
+  SHOW_NOTIFICATION: 'SHOW_NOTIFICATION',
+  UPDATE_PLAN: 'UPDATE_PLAN',
+  AGENT_UPDATE: 'AGENT_UPDATE',
+  RENDER_COMPONENT: 'RENDER_COMPONENT',
+  REQUIRE_APPROVAL: 'REQUIRE_APPROVAL',
+} as const;
+
+export type AgentActionType = typeof AgentActionType[keyof typeof AgentActionType];
 
 export type AgentStatus = 'idle' | 'thinking' | 'executing' | 'error';
 
@@ -32,6 +39,7 @@ export interface Plan {
   id: string;
   tasks: Task[];
   goal: string;
+  reasoning?: string;
   createdAt: number;
 }
 
@@ -60,3 +68,6 @@ export interface Memory {
   retrieve(key: string): Promise<unknown>;
   search(query: string): Promise<unknown[]>;
 }
+
+export type { AgentProtocolAction } from '../protocol/actions';
+export type { AgentProtocolEvent } from '../protocol/events';

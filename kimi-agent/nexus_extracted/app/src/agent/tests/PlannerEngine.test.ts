@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { PlannerEngine } from '../planner/PlannerEngine';
 import { MockLLMProvider } from '../providers/MockLLMProvider';
 import { ToolRegistry } from '../tools/ToolRegistry';

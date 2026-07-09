@@ -1,4 +1,3 @@
-import React from 'react';
 import { Star, DollarSign } from 'lucide-react';
 
 export function AnalysisCard({ data }: { id: string; data: Record<string, unknown> }) {

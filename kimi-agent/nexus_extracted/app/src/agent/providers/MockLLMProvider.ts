@@ -1,4 +1,4 @@
-import { LLMProvider } from './LLMProvider';
+import type { LLMProvider } from './LLMProvider';
 
 /**
  * A mock LLM provider for testing and development.
@@ -10,7 +10,7 @@ export class MockLLMProvider implements LLMProvider {
     this.mockResponse = response;
   }
 
-  public async generateStructuredOutput<T>(prompt: string, schema: any): Promise<T> {
+  public async generateStructuredOutput<T>(prompt: string, _schema: any): Promise<T> {
     console.log(`[MockLLMProvider] Received prompt: ${prompt.substring(0, 100)}...`);
     
     if (this.mockResponse) {

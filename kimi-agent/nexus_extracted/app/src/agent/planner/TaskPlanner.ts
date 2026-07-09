@@ -1,5 +1,5 @@
-import { Planner, AgentState, Plan, Task } from '../types/agent';
-import { StructuredTask } from './schemas';
+import type { Planner, AgentState, Plan } from '../types/agent';
+import type { StructuredTask } from './schemas';
 
 /**
  * TaskPlanner provides a basic, deterministic implementation of the Planner interface.

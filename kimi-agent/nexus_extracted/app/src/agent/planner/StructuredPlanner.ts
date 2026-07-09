@@ -1,4 +1,4 @@
-import { AgentState } from '../types/agent';
+import type { AgentState } from '../types/agent';
 
 /**
  * StructuredPlanner handles the logic of constructing prompts and parsing 

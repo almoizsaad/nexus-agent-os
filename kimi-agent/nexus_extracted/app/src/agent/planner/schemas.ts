@@ -1,4 +1,4 @@
-import { Task } from '../types/agent';
+import type { Task } from '../types/agent';
 
 /**
  * Extended task interface for structured planning.

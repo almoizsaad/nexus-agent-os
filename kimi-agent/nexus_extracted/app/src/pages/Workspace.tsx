@@ -18,7 +18,8 @@ import { useWorkspaceStore } from '@/workspace/state/workspaceStore';
 
 export default function Workspace() {
   const { result, isAnalyzing, progress, analyzeIntent, getPredictions } = useIntent();
-  const { agentStatus, agentPlan, sendMessage, components: workspaceComponents } = useWorkspaceAgent();
+  // @ts-ignore - Temporary until UI is connected in Phase 4
+  const { agentStatus: _s, agentPlan: _p, sendMessage: _m, components: _c } = useWorkspaceAgent();
   const setWorkspaceComponents = useWorkspaceStore(s => s.setComponents);
 
   // Sync useIntent result to workspace store (Migration Bridge)

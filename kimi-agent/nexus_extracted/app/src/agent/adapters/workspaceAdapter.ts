@@ -1,7 +1,8 @@
 import { agent } from '../bootstrap/createAgent';
-import { AgentActionType, AgentProtocolAction } from '../types/agent';
+import { AgentActionType } from '../types/agent';
+import type { AgentProtocolAction } from '../types/agent';
 import { useWorkspaceStore } from '../../workspace/state/workspaceStore';
-import { WorkspaceComponent } from '../../workspace/state/workspaceTypes';
+import type { WorkspaceComponent } from '../../workspace/state/workspaceTypes';
 
 /**
  * WorkspaceAdapter maps Agent actions into Workspace state changes.

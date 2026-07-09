@@ -1,15 +1,16 @@
-import { AgentActionType } from '../types/agent';
+
 
 export interface UpdateWorkspaceAction {
-  type: AgentActionType.UPDATE_WORKSPACE;
+  type: 'UPDATE_WORKSPACE';
   payload: {
     files?: Array<{ path: string; content: string }>;
     deleteFiles?: string[];
+    metadata?: Record<string, any>;
   };
 }
 
 export interface RequestToolAction {
-  type: AgentActionType.REQUEST_TOOL;
+  type: 'REQUEST_TOOL';
   payload: {
     toolName: string;
     args: Record<string, unknown>;
@@ -17,7 +18,7 @@ export interface RequestToolAction {
 }
 
 export interface ShowNotificationAction {
-  type: AgentActionType.SHOW_NOTIFICATION;
+  type: 'SHOW_NOTIFICATION';
   payload: {
     message: string;
     level: 'info' | 'warning' | 'error' | 'success';
@@ -25,7 +26,7 @@ export interface ShowNotificationAction {
 }
 
 export interface UpdatePlanAction {
-  type: AgentActionType.UPDATE_PLAN;
+  type: 'UPDATE_PLAN';
   payload: {
     planId: string;
     tasks: Array<{
@@ -36,7 +37,7 @@ export interface UpdatePlanAction {
 }
 
 export interface AgentUpdateAction {
-  type: AgentActionType.AGENT_UPDATE;
+  type: 'AGENT_UPDATE';
   payload: {
     status: string;
     message?: string;
@@ -45,9 +46,29 @@ export interface AgentUpdateAction {
   };
 }
 
+export interface RenderComponentAction {
+  type: 'RENDER_COMPONENT';
+  payload: {
+    componentId: string;
+    props: Record<string, any>;
+    position?: 'sidebar' | 'main' | 'modal';
+  };
+}
+
+export interface RequireApprovalAction {
+  type: 'REQUIRE_APPROVAL';
+  payload: {
+    requestId: string;
+    message: string;
+    action: AgentProtocolAction;
+  };
+}
+
 export type AgentProtocolAction =
   | UpdateWorkspaceAction
   | RequestToolAction
   | ShowNotificationAction
   | UpdatePlanAction
-  | AgentUpdateAction;
+  | AgentUpdateAction
+  | RenderComponentAction
+  | RequireApprovalAction;

@@ -1,4 +1,4 @@
-import { StructuredTask } from '../planner/schemas';
+import type { StructuredTask } from '../planner/schemas';
 
 /**
  * TaskGraph manages the dependency graph for a plan.

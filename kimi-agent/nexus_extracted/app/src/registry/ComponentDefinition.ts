@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+
 
 /**
  * Definition for a UI component that can be rendered in the dynamic workspace.

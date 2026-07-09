@@ -1,5 +1,6 @@
-import { Tool } from './Tool';
-import { AdvancedTool, isAdvancedTool } from './protocols/ToolSchema';
+import type { Tool } from './Tool';
+import { isAdvancedTool } from './protocols/ToolSchema';
+import type { AdvancedTool } from './protocols/ToolSchema';
 
 /**
  * ToolRegistry manages a collection of tools, providing methods for
@@ -16,6 +17,13 @@ export class ToolRegistry {
       throw new Error(`[ToolRegistry] Tool with name "${tool.name}" is already registered.`);
     }
     this.tools.set(tool.name, tool);
+  }
+
+  /**
+   * Checks if a tool with the given name is registered.
+   */
+  public hasTool(name: string): boolean {
+    return this.tools.has(name);
   }
 
   /**

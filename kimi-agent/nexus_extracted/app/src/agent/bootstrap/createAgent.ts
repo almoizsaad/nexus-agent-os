@@ -4,6 +4,8 @@ import { TaskPlanner } from '../planner/TaskPlanner';
 import { TaskExecutor } from '../executor/TaskExecutor';
 import { AgentRuntime } from '../core/AgentRuntime';
 import { MockWeatherTool } from '../tools/mocks/MockWeatherTool';
+import { LLMPlanner } from '../planner/LLMPlanner';
+import { MockLLMProvider } from '../providers/MockLLMProvider';
 
 /**
  * Bootstraps and returns a fully configured Agent OS instance.
@@ -15,7 +17,10 @@ export function createAgent() {
   // Register default tools
   toolRegistry.register(new MockWeatherTool());
   
-  const planner = new TaskPlanner();
+  const provider = new MockLLMProvider();
+  const fallbackPlanner = new TaskPlanner();
+  const planner = new LLMPlanner(provider, toolRegistry, fallbackPlanner);
+  
   const executor = new TaskExecutor(toolRegistry);
   
   const runtime = new AgentRuntime(eventBus, planner, executor);
@@ -26,6 +31,7 @@ export function createAgent() {
     toolRegistry,
     planner,
     executor,
+    provider
   };
 }
 

@@ -27,7 +27,7 @@ describe('Agent OS E2E v2', () => {
     // Send goal
     eventBus.publish('agent:events', {
       type: AgentEventType.USER_MESSAGE,
-      payload: { text: 'Plan a trip to Tokyo' },
+      payload: { text: 'Plan a trip to Tokyo', sender: 'user' },
       timestamp: Date.now()
     });
 

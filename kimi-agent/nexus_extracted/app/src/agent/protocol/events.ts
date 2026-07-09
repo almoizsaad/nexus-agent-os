@@ -1,7 +1,7 @@
-import { AgentEvent, AgentEventType } from '../types/agent';
+import type { AgentEvent } from '../types/agent';
 
 export interface UserMessageEvent extends AgentEvent {
-  type: AgentEventType.USER_MESSAGE;
+  type: 'USER_MESSAGE';
   payload: {
     text: string;
     sender: 'user';
@@ -9,7 +9,7 @@ export interface UserMessageEvent extends AgentEvent {
 }
 
 export interface WorkspaceActionEvent extends AgentEvent {
-  type: AgentEventType.WORKSPACE_ACTION;
+  type: 'WORKSPACE_ACTION';
   payload: {
     action: string;
     path?: string;
@@ -18,7 +18,7 @@ export interface WorkspaceActionEvent extends AgentEvent {
 }
 
 export interface ToolResultEvent extends AgentEvent {
-  type: AgentEventType.TOOL_RESULT;
+  type: 'TOOL_RESULT';
   payload: {
     toolName: string;
     result: any;
@@ -27,7 +27,7 @@ export interface ToolResultEvent extends AgentEvent {
 }
 
 export interface AgentUpdateEvent extends AgentEvent {
-  type: AgentEventType.AGENT_UPDATE;
+  type: 'AGENT_UPDATE';
   payload: {
     status: string;
     message?: string;
@@ -35,8 +35,20 @@ export interface AgentUpdateEvent extends AgentEvent {
   };
 }
 
+export interface ErrorEvent extends AgentEvent {
+  type: 'ERROR';
+  payload: {
+    code: string;
+    message: string;
+    details?: any;
+    fatal: boolean;
+  };
+}
+
 export type AgentProtocolEvent = 
   | UserMessageEvent 
   | WorkspaceActionEvent 
   | ToolResultEvent 
-  | AgentUpdateEvent;
+  | AgentUpdateEvent
+  | ErrorEvent;
+

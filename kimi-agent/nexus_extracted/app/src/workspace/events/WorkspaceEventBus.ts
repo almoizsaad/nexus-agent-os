@@ -1,10 +1,10 @@
 import { EventBus } from '../../agent/core/EventBus';
-import { WorkspaceEvent } from './types';
+import type { WorkspaceEvent } from './types';
 
 /**
  * WorkspaceEventBus specializes the generic EventBus for UI-Agent interactions.
  */
-export class WorkspaceEventBus extends EventBus {
+export class WorkspaceEventBus extends EventBus<WorkspaceEvent> {
   public static TOPIC = 'workspace:events';
 
   public emit(event: WorkspaceEvent): void {

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Info, AlertCircle, Pencil } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 export const springTransition = {
   type: 'spring' as const,

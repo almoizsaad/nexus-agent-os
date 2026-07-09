@@ -1,4 +1,4 @@
-import { ComponentDefinition } from './ComponentDefinition';
+import type { ComponentDefinition } from './ComponentDefinition';
 
 /**
  * ComponentRegistry manages the mapping between component types (strings) 

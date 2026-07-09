@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { agent } from '../agent/bootstrap/createAgent';
-import { AgentStatus, Plan, AgentActionType, AgentProtocolAction, AgentProtocolEvent, AgentEventType } from '../agent/types/agent';
+import { AgentActionType, AgentEventType } from '../agent/types/agent';
+import type { AgentStatus, Plan, AgentProtocolAction, AgentProtocolEvent } from '../agent/types/agent';
 
 export function useAgent() {
   const [status, setStatus] = useState<AgentStatus>(agent.runtime.getStatus());
