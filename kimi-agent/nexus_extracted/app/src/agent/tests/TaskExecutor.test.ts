@@ -1,0 +1,37 @@
+import { describe, it, expect } from 'vitest';
+import { TaskExecutor } from '../executor/TaskExecutor';
+import { ToolRegistry } from '../tools/ToolRegistry';
+import { Tool } from '../tools/Tool';
+
+class MockTool implements Tool {
+  name = 'test_tool';
+  description = 'A test tool';
+  async execute(input: any) {
+    return { result: 'success', input };
+  }
+}
+
+describe('TaskExecutor', () => {
+  it('should execute a successful tool', async () => {
+    const registry = new ToolRegistry();
+    registry.register(new MockTool());
+    const executor = new TaskExecutor(registry);
+    
+    const task = { id: '1', description: 'test_tool', status: 'pending' as const };
+    const result = await executor.executeTask(task, { data: 'test' });
+    
+    expect(result.success).toBe(true);
+    expect((result.data as any).result).toBe('success');
+  });
+
+  it('should handle missing tools', async () => {
+    const registry = new ToolRegistry();
+    const executor = new TaskExecutor(registry);
+    
+    const task = { id: '1', description: 'missing_tool', status: 'pending' as const };
+    const result = await executor.executeTask(task);
+    
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('not found');
+  });
+});
