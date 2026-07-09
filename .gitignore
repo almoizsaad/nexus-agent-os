@@ -1,0 +1,7 @@
+
+# Nexus archives
+*.zip
+
+# Local builds
+node_modules/
+dist/
