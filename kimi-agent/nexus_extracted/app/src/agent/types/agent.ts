@@ -28,7 +28,7 @@ export type AgentStatus = 'idle' | 'thinking' | 'executing' | 'error' | 'paused'
 export interface Task {
   id: string;
   description: string;
-  status: 'pending' | 'in-progress' | 'completed' | 'failed';
+  status: 'pending' | 'in-progress' | 'running' | 'completed' | 'failed';
   metadata?: Record<string, unknown>;
 }
 
@@ -40,7 +40,7 @@ export interface Plan {
   createdAt: number;
 }
 
-export type AgentRole = 'orchestrator' | 'worker' | 'specialist' | 'critic';
+export type AgentRole = 'orchestrator' | 'worker' | 'specialist' | 'critic' | 'coordinator';
 
 export interface AgentIdentity {
   id: string;

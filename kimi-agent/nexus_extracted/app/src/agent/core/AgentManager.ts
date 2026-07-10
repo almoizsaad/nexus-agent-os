@@ -4,6 +4,7 @@ import { AgentRegistry } from './AgentRegistry';
 import { AgentLifecycleManager } from './AgentLifecycleManager';
 import { AgentStateManager } from './AgentStateManager';
 import { AgentRuntime } from './AgentRuntime';
+import { CoordinatorAgent } from './CoordinatorAgent';
 import { EventBus } from './EventBus';
 import { AgentMessageBus } from './AgentMessageBus';
 import { MessageRouter } from './MessageRouter';
@@ -35,6 +36,22 @@ export class AgentManager {
       this.messageBus.subscribe(identity.id, (message) => {
         inbox.push(message);
       });
+      
+      if (identity.role === 'coordinator') {
+        // Create a CoordinatorAgent with the registry
+        const baseRuntime = runtimeFactory(identity, channel);
+        return new CoordinatorAgent(
+          eventBus,
+          this.registry,
+          baseRuntime.planner,
+          baseRuntime.executor,
+          (baseRuntime as any).monitor,
+          (baseRuntime as any).improvementEngine,
+          (baseRuntime as any).suggestions,
+          identity,
+          channel
+        );
+      }
       
       return runtimeFactory(identity, channel);
     };
