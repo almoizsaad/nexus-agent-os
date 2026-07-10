@@ -5,18 +5,41 @@ import { AgentLifecycleManager } from './AgentLifecycleManager';
 import { AgentStateManager } from './AgentStateManager';
 import { AgentRuntime } from './AgentRuntime';
 import { EventBus } from './EventBus';
+import { AgentMessageBus } from './AgentMessageBus';
+import { MessageRouter } from './MessageRouter';
+import { AgentInbox } from './AgentInbox';
+import { AgentOutbox } from './AgentOutbox';
+import { AgentChannel } from './AgentChannel';
 
 export class AgentManager {
   private registry: AgentRegistry;
   private lifecycleManager: AgentLifecycleManager;
   private stateManager: AgentStateManager;
+  private messageBus: AgentMessageBus;
+  private messageRouter: MessageRouter;
 
   constructor(
     eventBus: EventBus,
-    runtimeFactory: (identity: AgentIdentity) => AgentRuntime
+    runtimeFactory: (identity: AgentIdentity, channel: AgentChannel) => AgentRuntime
   ) {
     this.registry = new AgentRegistry();
-    this.lifecycleManager = new AgentLifecycleManager(this.registry, eventBus, runtimeFactory);
+    this.messageBus = new AgentMessageBus(eventBus);
+    this.messageRouter = new MessageRouter(this.registry, this.messageBus);
+    
+    const communicationRuntimeFactory = (identity: AgentIdentity) => {
+      const inbox = new AgentInbox();
+      const outbox = new AgentOutbox(this.messageRouter);
+      const channel = new AgentChannel(identity.id, inbox, outbox);
+      
+      // Wire up the inbox to the message bus
+      this.messageBus.subscribe(identity.id, (message) => {
+        inbox.push(message);
+      });
+      
+      return runtimeFactory(identity, channel);
+    };
+
+    this.lifecycleManager = new AgentLifecycleManager(this.registry, eventBus, communicationRuntimeFactory);
     this.stateManager = new AgentStateManager(this.registry);
   }
 

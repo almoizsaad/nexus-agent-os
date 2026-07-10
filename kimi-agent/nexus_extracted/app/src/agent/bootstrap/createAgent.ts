@@ -10,6 +10,7 @@ import { PerformanceMonitor } from '../improvement/PerformanceMonitor';
 import { ImprovementEngine } from '../improvement/ImprovementEngine';
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
 import { AgentManager } from '../core/AgentManager';
+import { AgentChannel } from '../core/AgentChannel';
 import type { AgentIdentity } from '../types/agent';
 
 /**
@@ -33,8 +34,8 @@ export function createAgent() {
   
   const runtime = new AgentRuntime(eventBus, planner, executor, monitor, improvementEngine, suggestions);
 
-  const manager = new AgentManager(eventBus, (identity: AgentIdentity) => {
-    return new AgentRuntime(eventBus, planner, executor, monitor, improvementEngine, suggestions, identity);
+  const manager = new AgentManager(eventBus, (identity: AgentIdentity, channel: AgentChannel) => {
+    return new AgentRuntime(eventBus, planner, executor, monitor, improvementEngine, suggestions, identity, channel);
   });
 
   return {

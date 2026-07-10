@@ -1,7 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
 import { createAgent } from '../bootstrap/createAgent';
-import { AgentManager } from '../core/AgentManager';
-import { AgentEventType } from '../types/agent';
 
 describe('Multi-Agent Core', () => {
   it('should spawn multiple agents with different identities', () => {

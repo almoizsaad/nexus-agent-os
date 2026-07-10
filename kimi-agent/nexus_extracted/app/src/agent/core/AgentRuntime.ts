@@ -8,6 +8,7 @@ import { MemoryManager } from '../memory/MemoryManager';
 import { SelfCorrection } from './SelfCorrection';
 import { AgentStream } from '../events/AgentStream';
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
+import { AgentChannel } from './AgentChannel';
 import type { 
   IPerformanceMonitor, 
   IImprovementEngine, 
@@ -30,6 +31,7 @@ export class AgentRuntime {
   private improvementEngine?: IImprovementEngine;
   private suggestions?: OptimizationSuggestions;
   private identity?: AgentIdentity;
+  private channel?: AgentChannel;
 
   constructor(
     eventBus: EventBus, 
@@ -38,7 +40,8 @@ export class AgentRuntime {
     monitor?: IPerformanceMonitor,
     improvementEngine?: IImprovementEngine,
     suggestions?: OptimizationSuggestions,
-    identity?: AgentIdentity
+    identity?: AgentIdentity,
+    channel?: AgentChannel
   ) {
     this.eventBus = eventBus;
     this.stream = new AgentStream(eventBus);
@@ -48,6 +51,7 @@ export class AgentRuntime {
     this.improvementEngine = improvementEngine;
     this.suggestions = suggestions;
     this.identity = identity;
+    this.channel = channel;
 
     this.memory = new MemoryManager(monitor);
     this.selfCorrection = new SelfCorrection(this);
@@ -103,6 +107,10 @@ export class AgentRuntime {
 
   public getCurrentPlan(): Plan | undefined {
     return this.state.currentPlan;
+  }
+
+  public getChannel(): AgentChannel | undefined {
+    return this.channel;
   }
 
   public async handleEvent(event: AgentProtocolEvent): Promise<void> {
