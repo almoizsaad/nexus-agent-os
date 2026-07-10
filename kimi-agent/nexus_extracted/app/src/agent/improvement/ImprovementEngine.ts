@@ -3,46 +3,18 @@ import type {
   SystemMetrics, 
   OptimizationRecommendation 
 } from '../types/improvement';
+import { ToolEvaluator } from './ToolEvaluator';
+import { PlannerEvaluator } from './PlannerEvaluator';
 
 export class ImprovementEngine implements IImprovementEngine {
+  private toolEvaluator = new ToolEvaluator();
+  private plannerEvaluator = new PlannerEvaluator();
+
   public generateRecommendations(metrics: SystemMetrics): OptimizationRecommendation[] {
-    const recommendations: OptimizationRecommendation[] = [];
-
-    // Tool optimizations
-    Object.values(metrics.toolPerformance).forEach(tool => {
-      if (tool.successRate < 0.8) {
-        recommendations.push({
-          component: 'tool',
-          id: tool.toolName,
-          type: 'reliability',
-          description: `Tool ${tool.toolName} has a low success rate (${(tool.successRate * 100).toFixed(1)}%).`,
-          suggestion: 'Review tool parameters and consider adding more robust error handling or retries.',
-          priority: 'high'
-        });
-      }
-      if (tool.avgLatency > 5000) {
-        recommendations.push({
-          component: 'tool',
-          id: tool.toolName,
-          type: 'latency',
-          description: `Tool ${tool.toolName} is slow (avg ${(tool.avgLatency / 1000).toFixed(1)}s).`,
-          suggestion: 'Optimize tool execution or consider caching results for frequent queries.',
-          priority: 'medium'
-        });
-      }
-    });
-
-    // Planner optimizations
-    if (metrics.plannerQuality.avgConfidence < 70) {
-      recommendations.push({
-        component: 'planner',
-        id: 'llm-planner',
-        type: 'quality',
-        description: `Planner confidence is low (avg ${metrics.plannerQuality.avgConfidence.toFixed(1)}%).`,
-        suggestion: 'Refine system prompts for the planner and provide more explicit tool definitions.',
-        priority: 'high'
-      });
-    }
+    const recommendations: OptimizationRecommendation[] = [
+      ...this.toolEvaluator.evaluate(metrics.toolPerformance),
+      ...this.plannerEvaluator.evaluate(metrics.plannerQuality)
+    ];
 
     // Memory optimizations
     if (metrics.memoryQuality.missRate > 0.3) {

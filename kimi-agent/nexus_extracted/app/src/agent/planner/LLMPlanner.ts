@@ -5,6 +5,7 @@ import { PlanSchema } from './schemas';
 import type { StructuredPlan } from './schemas';
 import { PlannerParser } from './PlannerParser';
 import { PlanValidator } from './PlanValidator';
+import type { IPerformanceMonitor } from '../types/improvement';
 
 /**
  * LLMPlanner uses a Large Language Model to generate autonomous plans.
@@ -16,17 +17,20 @@ export class LLMPlanner implements Planner {
   private parser: PlannerParser;
   private validator: PlanValidator;
   private fallbackPlanner?: Planner;
+  private monitor?: IPerformanceMonitor;
 
   constructor(
     provider: LLMProvider, 
     toolRegistry: ToolRegistry,
-    fallbackPlanner?: Planner
+    fallbackPlanner?: Planner,
+    monitor?: IPerformanceMonitor
   ) {
     this.provider = provider;
     this.toolRegistry = toolRegistry;
     this.parser = new PlannerParser();
     this.validator = new PlanValidator(toolRegistry);
     this.fallbackPlanner = fallbackPlanner;
+    this.monitor = monitor;
   }
 
   /**
@@ -53,8 +57,12 @@ export class LLMPlanner implements Planner {
       const validation = this.validator.validate(structuredPlan);
       if (!validation.valid) {
         console.warn('[LLMPlanner] Plan validation failed:', validation.errors);
+        this.monitor?.trackPlanner(0, structuredPlan.tasks?.length || 0);
         throw new Error(`Invalid plan generated: ${validation.errors.join(', ')}`);
       }
+
+      const confidence = structuredPlan.confidence || 85;
+      this.monitor?.trackPlanner(confidence, structuredPlan.tasks.length);
 
       // 4. Return as standard Plan
       return {
@@ -98,7 +106,8 @@ export class LLMPlanner implements Planner {
       1. Every task MUST use one of the available tools.
       2. Define clear dependencies (e.g., task B depends on task A).
       3. Provide a brief reasoning for your plan.
-      4. Return ONLY a valid JSON object matching the schema.
+      4. Estimate your confidence in this plan (0-100).
+      5. Return ONLY a valid JSON object matching the schema.
     `;
   }
 }

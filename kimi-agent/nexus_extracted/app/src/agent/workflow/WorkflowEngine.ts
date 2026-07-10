@@ -1,20 +1,24 @@
 import type { Executor, Plan } from '../types/agent';
 import { TaskGraph } from './TaskGraph';
 import type { StructuredTask } from '../planner/schemas';
+import type { IPerformanceMonitor } from '../types/improvement';
 
 /**
  * WorkflowEngine orchestrates the execution of a Plan using a TaskGraph.
  */
 export class WorkflowEngine {
   private executor: Executor;
+  private monitor?: IPerformanceMonitor;
   private maxRetries = 1;
   private events: any[] = [];
 
-  constructor(executor: Executor) {
+  constructor(executor: Executor, monitor?: IPerformanceMonitor) {
     this.executor = executor;
+    this.monitor = monitor;
   }
 
   public async executePlan(plan: Plan, onUpdate?: (taskId: string, status: string, result?: any) => void): Promise<boolean> {
+    const startTime = Date.now();
     console.log(`[WorkflowEngine] Starting execution for plan: ${plan.id}`);
     this.events = [{ type: 'workflow_start', workflowId: plan.id, timestamp: Date.now() }];
     const graph = new TaskGraph(plan.tasks as StructuredTask[]);
@@ -70,6 +74,9 @@ export class WorkflowEngine {
 
     this.events.push({ type: 'workflow_end', workflowId: plan.id, timestamp: Date.now() });
     const finalSuccess = !graph.hasFailed();
+    const latency = Date.now() - startTime;
+    this.monitor?.trackWorkflow(latency, finalSuccess);
+    
     console.log(`[WorkflowEngine] Execution finished. Success: ${finalSuccess}`);
     return finalSuccess;
   }

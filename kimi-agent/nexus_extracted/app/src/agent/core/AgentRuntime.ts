@@ -7,6 +7,13 @@ import { WorkflowEngine } from '../workflow/WorkflowEngine';
 import { MemoryManager } from '../memory/MemoryManager';
 import { SelfCorrection } from './SelfCorrection';
 import { AgentStream } from '../events/AgentStream';
+import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
+import type { 
+  IPerformanceMonitor, 
+  IImprovementEngine, 
+  SystemMetrics,
+  OptimizationRecommendation
+} from '../types/improvement';
 
 export class AgentRuntime {
   private state: AgentState;
@@ -18,17 +25,32 @@ export class AgentRuntime {
   private memory: MemoryManager;
   private workflowEngine: WorkflowEngine | null = null;
   private selfCorrection: SelfCorrection;
+  
+  private monitor?: IPerformanceMonitor;
+  private improvementEngine?: IImprovementEngine;
+  private suggestions?: OptimizationSuggestions;
 
-  constructor(eventBus: EventBus, planner?: Planner, executor?: Executor) {
+  constructor(
+    eventBus: EventBus, 
+    planner?: Planner, 
+    executor?: Executor,
+    monitor?: IPerformanceMonitor,
+    improvementEngine?: IImprovementEngine,
+    suggestions?: OptimizationSuggestions
+  ) {
     this.eventBus = eventBus;
     this.stream = new AgentStream(eventBus);
     this.planner = planner || null;
     this.executor = executor || null;
-    this.memory = new MemoryManager();
+    this.monitor = monitor;
+    this.improvementEngine = improvementEngine;
+    this.suggestions = suggestions;
+
+    this.memory = new MemoryManager(monitor);
     this.selfCorrection = new SelfCorrection(this);
     
     if (this.executor) {
-      this.workflowEngine = new WorkflowEngine(this.executor);
+      this.workflowEngine = new WorkflowEngine(this.executor, monitor);
     }
 
     this.state = this.getInitialState();
@@ -145,6 +167,9 @@ export class AgentRuntime {
         }
       });
 
+      // Self-Improvement: Generate recommendations after each workflow attempt
+      this.runSelfImprovement();
+
       if (success) {
         this.state.status = 'idle';
         await this.memory.remember(goal, { completed: true, planId: plan.id });
@@ -167,6 +192,26 @@ export class AgentRuntime {
 
   public getStatus(): AgentStatus {
     return this.state.status;
+  }
+
+  public getMetrics(): SystemMetrics | null {
+    return this.monitor?.getMetrics() || null;
+  }
+
+  public getRecommendations(): OptimizationRecommendation[] {
+    return this.suggestions?.getSuggestions() || [];
+  }
+
+  private runSelfImprovement(): void {
+    if (this.monitor && this.improvementEngine && this.suggestions) {
+      const metrics = this.monitor.getMetrics();
+      const recommendations = this.improvementEngine.generateRecommendations(metrics);
+      this.suggestions.updateSuggestions(recommendations);
+      
+      if (recommendations.length > 0) {
+        console.log(`[AgentRuntime] Generated ${recommendations.length} optimization suggestions.`);
+      }
+    }
   }
 
   public getState(): AgentState {

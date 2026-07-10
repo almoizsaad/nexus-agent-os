@@ -34,6 +34,8 @@ export function useWorkspaceAgent() {
     // Agent state
     agentStatus: agent.status,
     agentPlan: agent.currentPlan,
+    metrics: agent.metrics,
+    recommendations: agent.recommendations,
     sendMessage: agent.sendMessage,
 
     // Workspace state

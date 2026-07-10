@@ -9,6 +9,7 @@ import Sidebar from '@/components/layout/Sidebar';
 import DynamicLayout from '@/components/generative-ui/DynamicLayout';
 import PredictiveChips from '@/components/generative-ui/PredictiveChips';
 import ConfidenceBadge from '@/components/generative-ui/ConfidenceBadge';
+import MetricsDashboard from '@/components/generative-ui/MetricsDashboard';
 import { useIntent } from '@/hooks/useIntent';
 import { useLogStore, addLog } from '@/stores/logStore';
 import { streamChatCompletion } from '@/lib/agents/intentAnalyzer';
@@ -18,8 +19,7 @@ import { useWorkspaceStore } from '@/workspace/state/workspaceStore';
 
 export default function Workspace() {
   const { result, isAnalyzing, progress, analyzeIntent, getPredictions } = useIntent();
-  // @ts-ignore - Temporary until UI is connected in Phase 4
-  const { agentStatus: _s, agentPlan: _p, sendMessage: _m, components: _c } = useWorkspaceAgent();
+  const { agentStatus: _s, agentPlan: _p, sendMessage: _m, components: _c, metrics, recommendations } = useWorkspaceAgent();
   const setWorkspaceComponents = useWorkspaceStore(s => s.setComponents);
 
   // Sync useIntent result to workspace store (Migration Bridge)
@@ -310,6 +310,11 @@ export default function Workspace() {
 
         {/* Canvas */}
         <main className="flex-1 overflow-y-auto relative" role="main">
+          {/* Performance Dashboard */}
+          <div className="px-6 pt-6 mb-2">
+            <MetricsDashboard metrics={metrics} recommendations={recommendations} />
+          </div>
+
           {/* Intent Result Display */}
           <AnimatePresence mode="wait">
             {result ? (

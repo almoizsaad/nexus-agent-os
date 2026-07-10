@@ -1,6 +1,7 @@
 import type { Executor, Task } from '../types/agent';
 import { ToolRegistry } from '../tools/ToolRegistry';
 import type { StructuredTask } from '../planner/schemas';
+import type { IPerformanceMonitor } from '../types/improvement';
 
 /**
  * TaskExecutor is responsible for executing individual tasks by mapping them
@@ -8,13 +9,16 @@ import type { StructuredTask } from '../planner/schemas';
  */
 export class TaskExecutor implements Executor {
   private toolRegistry: ToolRegistry;
+  private monitor?: IPerformanceMonitor;
 
   /**
    * Initializes the TaskExecutor with a tool registry.
    * @param toolRegistry The registry to use for resolving tools.
+   * @param monitor Optional performance monitor.
    */
-  constructor(toolRegistry: ToolRegistry) {
+  constructor(toolRegistry: ToolRegistry, monitor?: IPerformanceMonitor) {
     this.toolRegistry = toolRegistry;
+    this.monitor = monitor;
   }
 
   /**
@@ -28,6 +32,7 @@ export class TaskExecutor implements Executor {
     context: Record<string, unknown> = {}
   ): Promise<Record<string, unknown>> {
     const toolName = this.resolveToolName(task);
+    const startTime = Date.now();
     
     console.log(`[TaskExecutor] Executing task "${task.id}" using tool "${toolName}"`);
 
@@ -39,6 +44,9 @@ export class TaskExecutor implements Executor {
       };
 
       const result = await this.toolRegistry.executeTool(toolName, toolInput);
+      const latency = Date.now() - startTime;
+      
+      this.monitor?.trackToolUse(toolName, latency, true);
 
       return {
         success: true,
@@ -47,6 +55,9 @@ export class TaskExecutor implements Executor {
       };
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
+      const latency = Date.now() - startTime;
+      
+      this.monitor?.trackToolUse(toolName, latency, false);
       console.error(`[TaskExecutor] Failed to execute task "${task.id}": ${message}`);
       
       return {

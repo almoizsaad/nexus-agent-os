@@ -13,6 +13,7 @@ export interface MemoryEntry<T = any> {
     source?: string;
     goalId?: string;
     taskId?: string;
+    score?: number; // Retrieval score
   };
   embedding?: number[]; // For future vector search
 }

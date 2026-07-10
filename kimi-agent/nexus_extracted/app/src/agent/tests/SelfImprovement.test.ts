@@ -1,14 +1,17 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { PerformanceMonitor } from '../improvement/PerformanceMonitor';
 import { ImprovementEngine } from '../improvement/ImprovementEngine';
+import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
 
 describe('Self Improvement Layer', () => {
   let monitor: PerformanceMonitor;
   let engine: ImprovementEngine;
+  let suggestions: OptimizationSuggestions;
 
   beforeEach(() => {
     monitor = new PerformanceMonitor();
     engine = new ImprovementEngine();
+    suggestions = new OptimizationSuggestions();
   });
 
   it('should track tool performance accurately', () => {
@@ -37,7 +40,8 @@ describe('Self Improvement Layer', () => {
   });
 
   it('should generate high priority recommendations for failing tools', () => {
-    monitor.trackToolUse('search', 100, false); // 0% success
+    // Need 5 calls for ToolEvaluator to trigger
+    for(let i=0; i<5; i++) monitor.trackToolUse('search', 100, false); 
     
     const metrics = monitor.getMetrics();
     const recommendations = engine.generateRecommendations(metrics);
@@ -48,13 +52,38 @@ describe('Self Improvement Layer', () => {
     expect(searchRec?.type).toBe('reliability');
   });
 
-  it('should suggest improvements for slow workflows', () => {
-    monitor.trackWorkflow(20000, true);
-    monitor.trackToolUse('heavy_task', 10000, true);
+  it('should suggest improvements for slow tools', () => {
+    for(let i=0; i<5; i++) monitor.trackToolUse('heavy_task', 11000, true);
     
     const metrics = monitor.getMetrics();
     const recommendations = engine.generateRecommendations(metrics);
     
-    expect(recommendations.some(r => r.type === 'latency')).toBe(true);
+    const latencyRec = recommendations.find(r => r.id === 'heavy_task' && r.type === 'latency');
+    expect(latencyRec).toBeDefined();
+    expect(latencyRec?.priority).toBe('high');
+  });
+
+  it('should suggest improvements for low planner confidence', () => {
+    monitor.trackPlanner(40, 5);
+    
+    const metrics = monitor.getMetrics();
+    const recommendations = engine.generateRecommendations(metrics);
+    
+    const plannerRec = recommendations.find(r => r.component === 'planner');
+    expect(plannerRec).toBeDefined();
+    expect(plannerRec?.priority).toBe('high');
+  });
+
+  it('should manage suggestions through OptimizationSuggestions class', () => {
+    const mockRecs = [
+      { component: 'tool', id: 't1', type: 'latency', description: 'desc', suggestion: 'sug', priority: 'high' } as any
+    ];
+    
+    suggestions.updateSuggestions(mockRecs);
+    expect(suggestions.getSuggestions().length).toBe(1);
+    expect(suggestions.getHighPrioritySuggestions().length).toBe(1);
+    
+    suggestions.dismissSuggestion('t1');
+    expect(suggestions.getSuggestions().length).toBe(0);
   });
 });

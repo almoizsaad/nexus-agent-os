@@ -13,6 +13,7 @@ import { MemoryScorer } from './MemoryScorer';
 import { MemoryRetriever } from './MemoryRetriever';
 import { MemoryCompressor } from './MemoryCompressor';
 import { MemorySummarizer } from './MemorySummarizer';
+import type { IPerformanceMonitor } from '../types/improvement';
 
 /**
  * MemoryManager is the central orchestrator for the Autonomous Memory Layer.
@@ -24,6 +25,7 @@ export class MemoryManager {
   private retriever: MemoryRetrievalPipeline;
   private compressor: MemoryCompressor;
   private summarizer: MemorySummarizer;
+  private monitor?: IPerformanceMonitor;
 
   private config: MemoryConfig = {
     limits: {
@@ -37,13 +39,14 @@ export class MemoryManager {
     }
   };
 
-  constructor() {
+  constructor(monitor?: IPerformanceMonitor) {
     this.storage = new MemoryStorage();
     this.index = new MemoryIndex();
     const scorer = new MemoryScorer();
     this.retriever = new MemoryRetriever(this.index, this.storage, scorer);
     this.compressor = new MemoryCompressor();
     this.summarizer = new MemorySummarizer();
+    this.monitor = monitor;
   }
 
   /**
@@ -96,7 +99,17 @@ export class MemoryManager {
       limit
     };
 
-    return this.retriever.retrieve(query);
+    const results = await this.retriever.retrieve(query);
+    
+    // Track retrieval quality
+    if (results.length > 0) {
+      const avgScore = results.reduce((sum, r) => sum + (r.metadata?.score || 0), 0) / results.length;
+      this.monitor?.trackMemory(avgScore, results.length);
+    } else {
+      this.monitor?.trackMemory(0, 0);
+    }
+
+    return results;
   }
 
   /**
