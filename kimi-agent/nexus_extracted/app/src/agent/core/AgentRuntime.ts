@@ -1,5 +1,5 @@
 import { AgentEventType, AgentActionType } from '../types/agent';
-import type { AgentState, AgentEvent, AgentStatus, Planner, Executor, Plan, Task } from '../types/agent';
+import type { AgentState, AgentEvent, AgentStatus, Planner, Executor, Plan, Task, AgentIdentity } from '../types/agent';
 import type { AgentProtocolEvent } from '../protocol/events';
 import type { AgentProtocolAction } from '../protocol/actions';
 import { EventBus } from './EventBus';
@@ -29,6 +29,7 @@ export class AgentRuntime {
   private monitor?: IPerformanceMonitor;
   private improvementEngine?: IImprovementEngine;
   private suggestions?: OptimizationSuggestions;
+  private identity?: AgentIdentity;
 
   constructor(
     eventBus: EventBus, 
@@ -36,7 +37,8 @@ export class AgentRuntime {
     executor?: Executor,
     monitor?: IPerformanceMonitor,
     improvementEngine?: IImprovementEngine,
-    suggestions?: OptimizationSuggestions
+    suggestions?: OptimizationSuggestions,
+    identity?: AgentIdentity
   ) {
     this.eventBus = eventBus;
     this.stream = new AgentStream(eventBus);
@@ -45,6 +47,7 @@ export class AgentRuntime {
     this.monitor = monitor;
     this.improvementEngine = improvementEngine;
     this.suggestions = suggestions;
+    this.identity = identity;
 
     this.memory = new MemoryManager(monitor);
     this.selfCorrection = new SelfCorrection(this);
@@ -86,11 +89,27 @@ export class AgentRuntime {
     });
   }
 
+  public pause(): void {
+    this.state.status = 'paused';
+    this.stream.thinking('Agent has been paused.');
+  }
+
+  public resume(): void {
+    if (this.state.status === 'paused') {
+      this.state.status = 'idle'; // Or return to previous state if tracked
+      this.stream.thinking('Agent has been resumed.');
+    }
+  }
+
   public getCurrentPlan(): Plan | undefined {
     return this.state.currentPlan;
   }
 
   public async handleEvent(event: AgentProtocolEvent): Promise<void> {
+    if (this.state.status === 'paused' && event.type !== AgentEventType.AGENT_UPDATE) {
+      return;
+    }
+    
     this.recordEvent(event);
     
     switch (event.type) {
@@ -112,6 +131,11 @@ export class AgentRuntime {
   }
 
   public async processGoal(goal: string): Promise<void> {
+    if (this.state.status === 'paused') {
+      this.stream.error('Agent is paused. Resume to process new goals.');
+      return;
+    }
+
     if (!this.planner || !this.workflowEngine) {
       this.stream.error('Planner or WorkflowEngine not initialized.');
       return;
@@ -215,7 +239,11 @@ export class AgentRuntime {
   }
 
   public getState(): AgentState {
-    return { ...this.state };
+    return { 
+      ...this.state,
+      identity: this.identity,
+      metrics: (this.monitor?.getMetrics() as unknown as Record<string, unknown>) || undefined
+    };
   }
 
   private recordEvent(event: AgentEvent): void {

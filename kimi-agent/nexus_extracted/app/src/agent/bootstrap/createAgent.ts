@@ -9,6 +9,8 @@ import { MockLLMProvider } from '../providers/MockLLMProvider';
 import { PerformanceMonitor } from '../improvement/PerformanceMonitor';
 import { ImprovementEngine } from '../improvement/ImprovementEngine';
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
+import { AgentManager } from '../core/AgentManager';
+import type { AgentIdentity } from '../types/agent';
 
 /**
  * Bootstraps and returns a fully configured Agent OS instance.
@@ -31,8 +33,13 @@ export function createAgent() {
   
   const runtime = new AgentRuntime(eventBus, planner, executor, monitor, improvementEngine, suggestions);
 
+  const manager = new AgentManager(eventBus, (identity: AgentIdentity) => {
+    return new AgentRuntime(eventBus, planner, executor, monitor, improvementEngine, suggestions, identity);
+  });
+
   return {
     runtime,
+    manager,
     eventBus,
     toolRegistry,
     planner,
