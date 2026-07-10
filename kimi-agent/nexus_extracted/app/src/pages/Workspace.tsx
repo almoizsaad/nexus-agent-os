@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Hexagon, Send, Mic, Paperclip, Sparkles, User, Bot,
@@ -19,8 +19,30 @@ import { useWorkspaceStore } from '@/workspace/state/workspaceStore';
 
 export default function Workspace() {
   const { result, isAnalyzing, progress, analyzeIntent, getPredictions } = useIntent();
-  const { agentStatus: _s, agentPlan: _p, sendMessage: _m, components: _c, metrics, recommendations } = useWorkspaceAgent();
+  const { metrics, recommendations } = useWorkspaceAgent();
   const setWorkspaceComponents = useWorkspaceStore(s => s.setComponents);
+
+  const [confettiParticles, setConfettiParticles] = useState<{
+    x: number;
+    y: number;
+    scale: number[];
+    rotate: number;
+    duration: number;
+    colorIndex: number;
+  }[]>([]);
+
+  useEffect(() => {
+    if (showConfetti) {
+      setConfettiParticles(Array.from({ length: 30 }).map(() => ({
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        scale: [0, 1, 0.5],
+        rotate: Math.random() * 720,
+        duration: 2 + Math.random() * 2,
+        colorIndex: Math.floor(Math.random() * 5)
+      })));
+    }
+  }, [showConfetti]);
 
   // Sync useIntent result to workspace store (Migration Bridge)
   useEffect(() => {
@@ -235,20 +257,20 @@ export default function Workspace() {
             transition={{ duration: 2 }}
             className="fixed inset-0 z-[100] pointer-events-none"
           >
-            {Array.from({ length: 30 }).map((_, i) => (
+            {confettiParticles.map((p, i) => (
               <motion.div
                 key={i}
                 initial={{ x: '50vw', y: '50vh', scale: 0, rotate: 0 }}
                 animate={{
-                  x: `${Math.random() * 100}vw`,
-                  y: `${Math.random() * 100}vh`,
-                  scale: [0, 1, 0.5],
-                  rotate: Math.random() * 720,
+                  x: `${p.x}vw`,
+                  y: `${p.y}vh`,
+                  scale: p.scale,
+                  rotate: p.rotate,
                 }}
-                transition={{ duration: 2 + Math.random() * 2, ease: 'easeOut' }}
+                transition={{ duration: p.duration, ease: 'easeOut' }}
                 className="absolute w-2 h-2 rounded-sm"
                 style={{
-                  background: ['#BE123C', '#0F766E', '#15803D', '#B45309', '#78716C'][i % 5],
+                  background: ['#BE123C', '#0F766E', '#15803D', '#B45309', '#78716C'][p.colorIndex],
                 }}
               />
             ))}

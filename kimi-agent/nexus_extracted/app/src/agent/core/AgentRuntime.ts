@@ -151,7 +151,7 @@ export class AgentRuntime {
         // Sync plan state
         const taskIndex = this.state.currentPlan!.tasks.findIndex(t => t.id === taskId);
         if (taskIndex !== -1) {
-          this.state.currentPlan!.tasks[taskIndex].status = status as any;
+          this.state.currentPlan!.tasks[taskIndex].status = status as Task['status'];
         }
 
         this.dispatchAction({
@@ -226,7 +226,7 @@ export class AgentRuntime {
     await this.processGoal(text);
   }
 
-  private async onWorkspaceAction(action: string, metadata?: any): Promise<void> {
+  private async onWorkspaceAction(action: string, metadata?: Record<string, unknown>): Promise<void> {
     console.log(`[AgentRuntime] Workspace action: ${action}`, metadata);
     if (action === 'REPLAN') {
       const goal = this.memory.getGoal();

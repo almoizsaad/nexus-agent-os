@@ -1,6 +1,6 @@
 export type MemoryType = 'episodic' | 'semantic' | 'working' | 'session';
 
-export interface MemoryEntry<T = any> {
+export interface MemoryEntry<T = unknown> {
   id: string;
   type: MemoryType;
   content: T;

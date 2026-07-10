@@ -54,14 +54,14 @@ export class MemoryManager {
    */
   public async store(
     type: MemoryType, 
-    content: any, 
+    content: unknown, 
     tags: string[] = [], 
     importance: number = 0.5,
-    metadata: Record<string, any> = {}
+    metadata: Record<string, unknown> = {}
   ): Promise<string> {
     // Phase 4.1: Basic limit check
     const currentCount = (await this.storage.list({ types: [type] })).length;
-    const limit = (this.config.limits as any)[type] || this.config.limits.persistent;
+    const limit = (this.config.limits as Record<string, number>)[type] || this.config.limits.persistent;
     
     if (currentCount >= limit) {
       console.warn(`[MemoryManager] Limit reached for ${type} memory. Compressing...`);
@@ -115,15 +115,15 @@ export class MemoryManager {
   /**
    * For backward compatibility.
    */
-  public async recall(key: string): Promise<any> {
+  public async recall(key: string): Promise<unknown> {
     return this.retrieve(key);
   }
 
   /**
    * Specifically for session-based event logging (Episodic).
    */
-  public async addSessionEvent(event: any): Promise<void> {
-    await this.store('session', event, ['episodic', event.type], 0.3);
+  public async addSessionEvent(event: unknown): Promise<void> {
+    await this.store('session', event, ['episodic', (event as { type: string }).type], 0.3);
   }
 
   /**
@@ -153,7 +153,7 @@ export class MemoryManager {
   /**
    * Automatic consolidation with Reflection Engine.
    */
-  public async consolidateWithReflection(workflowId: string, reflection: any): Promise<void> {
+  public async consolidateWithReflection(workflowId: string, reflection: unknown): Promise<void> {
     await this.store('semantic', {
       type: 'reflection',
       workflowId,
@@ -169,14 +169,14 @@ export class MemoryManager {
   }
 
   // Backward compatibility methods
-  public async remember(key: string, value: any): Promise<void> {
+  public async remember(key: string, value: unknown): Promise<void> {
     await this.store('semantic', { key, value }, ['legacy', key], 0.5);
   }
 
-  public async retrieve(key: string): Promise<any> {
+  public async retrieve(key: string): Promise<unknown> {
     const results = await this.recallMemories(key, 1);
     if (results.length > 0 && results[0].tags.includes('legacy')) {
-      return (results[0].content as any).value;
+      return (results[0].content as Record<string, unknown>).value;
     }
     return results.length > 0 ? results[0].content : null;
   }
@@ -184,17 +184,17 @@ export class MemoryManager {
   /**
    * Old recall method returned the value directly.
    */
-  public async recallOld(key: string): Promise<any> {
+  public async recallOld(key: string): Promise<unknown> {
     return this.retrieve(key);
   }
 
   /**
    * Old search method returned values.
    */
-  public async search(queryText: string): Promise<any[]> {
+  public async search(queryText: string): Promise<unknown[]> {
     const entries = await this.recallMemories(queryText, 10);
     return entries.map(e => {
-      if (e.tags.includes('legacy')) return (e.content as any).value;
+      if (e.tags.includes('legacy')) return (e.content as Record<string, unknown>).value;
       return e.content;
     });
   }
@@ -210,6 +210,6 @@ export class MemoryManager {
 
   public async recallGoal(): Promise<string | null> {
     const memories = await this.storage.list({ types: ['working'], tags: ['goal'], limit: 1 });
-    return memories.length > 0 ? (memories[0].content as any).currentGoal : null;
+    return memories.length > 0 ? (memories[0].content as Record<string, string>).currentGoal : null;
   }
 }
