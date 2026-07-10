@@ -6,7 +6,7 @@ export interface ReflectionResult {
   lessonsLearned: string[];
   mistakes: string[];
   improvements: string[];
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 export interface ExecutionAnalysis {
@@ -20,7 +20,7 @@ export interface ExecutionAnalysis {
 }
 
 export interface IExecutionAnalyzer {
-  analyze(workflowId: string, events: any[]): Promise<ExecutionAnalysis>;
+  analyze(workflowId: string, events: unknown[]): Promise<ExecutionAnalysis>;
 }
 
 export interface ISelfReflectionEngine {
@@ -36,5 +36,5 @@ export interface IFailureAnalyzer {
 }
 
 export interface ISuccessAnalyzer {
-  analyzeSuccess(taskId: string, result: any): Promise<string>;
+  analyzeSuccess(taskId: string, result: unknown): Promise<string>;
 }

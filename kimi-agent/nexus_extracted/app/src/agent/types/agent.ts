@@ -61,7 +61,7 @@ export interface UpdateWorkspaceAction {
   payload: {
     files?: Array<{ path: string; content: string }>;
     deleteFiles?: string[];
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
   };
 }
 
@@ -106,7 +106,7 @@ export interface RenderComponentAction {
   type: typeof AgentActionType.RENDER_COMPONENT;
   payload: {
     componentId: string;
-    props: Record<string, any>;
+    props: Record<string, unknown>;
     position?: 'sidebar' | 'main' | 'modal';
   };
 }
@@ -144,7 +144,7 @@ export interface WorkspaceActionEvent extends AgentEvent {
   payload: {
     action: string;
     path?: string;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
   };
 }
 
@@ -152,7 +152,7 @@ export interface ToolResultEvent extends AgentEvent {
   type: typeof AgentEventType.TOOL_RESULT;
   payload: {
     toolName: string;
-    result: any;
+    result: unknown;
     success: boolean;
   };
 }
@@ -171,7 +171,7 @@ export interface ErrorEvent extends AgentEvent {
   payload: {
     code: string;
     message: string;
-    details?: any;
+    details?: unknown;
     fatal: boolean;
   };
 }

@@ -14,8 +14,8 @@ export type MessageListener<T> = (message: T) => void;
 /**
  * EventBus provides a framework-independent, decoupled communication layer
  */
-export class EventBus<M extends { type: string; payload: any } = AgentMessage> {
-  private listeners: Map<string, Set<MessageListener<any>>> = new Map();
+export class EventBus<M extends { type: string; payload: unknown } = AgentMessage> {
+  private listeners: Map<string, Set<MessageListener<M>>> = new Map();
 
   /**
    * Subscribes to a specific topic.
@@ -31,7 +31,7 @@ export class EventBus<M extends { type: string; payload: any } = AgentMessage> {
       this.listeners.set(topic, new Set());
     }
     
-    this.listeners.get(topic)!.add(listener);
+    this.listeners.get(topic)!.add(listener as MessageListener<M>);
 
     return () => this.unsubscribe(topic, listener);
   }
@@ -47,7 +47,7 @@ export class EventBus<M extends { type: string; payload: any } = AgentMessage> {
   ): void {
     const topicListeners = this.listeners.get(topic);
     if (topicListeners) {
-      topicListeners.delete(listener);
+      topicListeners.delete(listener as MessageListener<M>);
       if (topicListeners.size === 0) {
         this.listeners.delete(topic);
       }

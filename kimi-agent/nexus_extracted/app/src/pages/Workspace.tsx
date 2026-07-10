@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Hexagon, Send, Mic, Paperclip, Sparkles, User, Bot,
@@ -21,6 +21,16 @@ export default function Workspace() {
   const { result, isAnalyzing, progress, analyzeIntent, getPredictions } = useIntent();
   const { metrics, recommendations } = useWorkspaceAgent();
   const setWorkspaceComponents = useWorkspaceStore(s => s.setComponents);
+
+  const { getFilteredEntries, clearEntries, filterLevel, setFilterLevel } = useLogStore();
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [input, setInput] = useState('');
+  const [chatOpen, setChatOpen] = useState(true);
+  const [activeModule, setActiveModule] = useState('travel');
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [userScrolledUp, setUserScrolledUp] = useState(false);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const [confettiParticles, setConfettiParticles] = useState<{
     x: number;
@@ -62,16 +72,6 @@ export default function Workspace() {
       })));
     }
   }, [result, setWorkspaceComponents]);
-  const { getFilteredEntries, clearEntries, filterLevel, setFilterLevel } = useLogStore();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [input, setInput] = useState('');
-  const [chatOpen, setChatOpen] = useState(true);
-  const [activeModule, setActiveModule] = useState('travel');
-  const [showConfetti, setShowConfetti] = useState(false);
-  const [isStreaming, setIsStreaming] = useState(false);
-  const [userScrolledUp, setUserScrolledUp] = useState(false);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
-
   const predictions = getPredictions();
   const filteredLogs = getFilteredEntries();
 
@@ -203,7 +203,7 @@ export default function Workspace() {
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3000);
     }
-  }, [analyzeIntent]);
+  }, [analyzeIntent, setMessages, setIsStreaming, setShowConfetti]);
 
   const handlePredictionSelect = useCallback((suggestion: PredictiveSuggestion) => {
     const messages: Record<string, string> = {

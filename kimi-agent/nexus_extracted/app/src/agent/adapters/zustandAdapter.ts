@@ -43,7 +43,7 @@ export function setupZustandAdapter() {
       case AgentActionType.UPDATE_PLAN:
         // Optionally update reasoning in intentStore based on plan
         if (action.payload.tasks) {
-          intentStore.setReasoning(`Current Plan: ${action.payload.tasks.map((t: any) => t.id).join(', ')}`);
+          intentStore.setReasoning(`Current Plan: ${action.payload.tasks.map((t: { id: string }) => t.id).join(', ')}`);
         }
         break;
 

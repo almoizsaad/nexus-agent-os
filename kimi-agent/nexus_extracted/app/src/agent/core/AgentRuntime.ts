@@ -1,5 +1,5 @@
 import { AgentEventType, AgentActionType } from '../types/agent';
-import type { AgentState, AgentEvent, AgentStatus, Planner, Executor, Plan } from '../types/agent';
+import type { AgentState, AgentEvent, AgentStatus, Planner, Executor, Plan, Task } from '../types/agent';
 import type { AgentProtocolEvent } from '../protocol/events';
 import type { AgentProtocolAction } from '../protocol/actions';
 import { EventBus } from './EventBus';

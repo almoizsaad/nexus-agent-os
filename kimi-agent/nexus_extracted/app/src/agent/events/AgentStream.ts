@@ -20,7 +20,7 @@ export class AgentStream {
     this.emitStatus('thinking', `Planning for: ${goal}`);
   }
 
-  public executingTool(toolName: string, args?: any): void {
+  public executingTool(toolName: string, args?: Record<string, unknown>): void {
     this.emitStatus('executing', `Executing tool: ${toolName}`, 0, { toolName, args });
   }
 
@@ -44,7 +44,7 @@ export class AgentStream {
     status: string, 
     message: string, 
     progress?: number, 
-    data?: any
+    data?: Record<string, unknown>
   ): void {
     this.eventBus.publish('agent:actions', {
       type: 'AGENT_UPDATE',
