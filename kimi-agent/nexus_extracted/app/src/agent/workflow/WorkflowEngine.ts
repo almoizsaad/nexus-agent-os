@@ -8,6 +8,7 @@ import type { StructuredTask } from '../planner/schemas';
 export class WorkflowEngine {
   private executor: Executor;
   private maxRetries = 1;
+  private events: any[] = [];
 
   constructor(executor: Executor) {
     this.executor = executor;
@@ -15,6 +16,7 @@ export class WorkflowEngine {
 
   public async executePlan(plan: Plan, onUpdate?: (taskId: string, status: string, result?: any) => void): Promise<boolean> {
     console.log(`[WorkflowEngine] Starting execution for plan: ${plan.id}`);
+    this.events = [{ type: 'workflow_start', workflowId: plan.id, timestamp: Date.now() }];
     const graph = new TaskGraph(plan.tasks as StructuredTask[]);
     
     while (!graph.isComplete()) {
@@ -55,18 +57,25 @@ export class WorkflowEngine {
 
         if (success) {
           graph.markCompleted(task.id);
+          this.events.push({ taskId: task.id, status: 'completed', timestamp: Date.now(), result });
           onUpdate?.(task.id, 'completed', result);
         } else {
           graph.markFailed(task.id);
+          this.events.push({ taskId: task.id, status: 'failed', timestamp: Date.now(), result });
           onUpdate?.(task.id, 'failed', result);
           this.handleTaskFailure(task, result);
         }
       }));
     }
 
+    this.events.push({ type: 'workflow_end', workflowId: plan.id, timestamp: Date.now() });
     const finalSuccess = !graph.hasFailed();
     console.log(`[WorkflowEngine] Execution finished. Success: ${finalSuccess}`);
     return finalSuccess;
+  }
+
+  public getExecutionEvents(): any[] {
+    return this.events;
   }
 
   private handleTaskFailure(task: StructuredTask, result: any): void {

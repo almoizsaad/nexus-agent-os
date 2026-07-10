@@ -137,6 +137,19 @@ export class MemoryManager {
     // In a real system, we might delete the ones NOT in compressed.
   }
 
+  /**
+   * Automatic consolidation with Reflection Engine.
+   */
+  public async consolidateWithReflection(workflowId: string, reflection: any): Promise<void> {
+    await this.store('semantic', {
+      type: 'reflection',
+      workflowId,
+      reflection
+    }, ['reflection', 'learning'], 0.9, { workflowId });
+
+    console.log(`[MemoryManager] Persisted reflection for workflow: ${workflowId}`);
+  }
+
   public async clear(): Promise<void> {
     await this.storage.clear();
     (this.index as MemoryIndex).clear();
