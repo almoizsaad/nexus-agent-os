@@ -8,4 +8,9 @@ export interface LLMProvider {
    * @param schema The expected structure of the response.
    */
   generateStructuredOutput<T>(prompt: string, schema: any): Promise<T>;
+
+  /**
+   * Generates a vector embedding for the given text.
+   */
+  embed(text: string): Promise<number[]>;
 }

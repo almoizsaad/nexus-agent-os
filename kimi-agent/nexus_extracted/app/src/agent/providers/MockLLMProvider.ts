@@ -33,4 +33,34 @@ export class MockLLMProvider implements LLMProvider {
 
     throw new Error('[MockLLMProvider] No mock response configured for this prompt.');
   }
+
+  public async embed(text: string): Promise<number[]> {
+    const size = 128;
+    const embedding = new Array(size).fill(0);
+    const words = text.toLowerCase().split(/\W+/).filter(w => w.length > 0);
+
+    for (const word of words) {
+      let hash = 0;
+      for (let i = 0; i < word.length; i++) {
+        const char = word.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+      }
+
+      for (let i = 0; i < size; i++) {
+        const x = Math.sin(hash + i) * 10000;
+        embedding[i] += x - Math.floor(x);
+      }
+    }
+
+    // Normalize
+    const norm = Math.sqrt(embedding.reduce((sum, val) => sum + val * val, 0));
+    if (norm > 0) {
+      for (let i = 0; i < size; i++) {
+        embedding[i] /= norm;
+      }
+    }
+
+    return embedding;
+  }
 }
