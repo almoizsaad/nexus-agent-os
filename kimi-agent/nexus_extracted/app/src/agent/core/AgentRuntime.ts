@@ -1,5 +1,5 @@
 import { AgentEventType, AgentActionType } from '../types/agent';
-import type { AgentState, AgentEvent, AgentStatus, Planner, Executor, Memory, Plan } from '../types/agent';
+import type { AgentState, AgentEvent, AgentStatus, Planner, Executor, Plan } from '../types/agent';
 import type { AgentProtocolEvent } from '../protocol/events';
 import type { AgentProtocolAction } from '../protocol/actions';
 import { EventBus } from './EventBus';
@@ -38,6 +38,11 @@ export class AgentRuntime {
       this.handleEvent(event);
       this.memory.addSessionEvent(event);
     });
+
+    // Subscribe to incoming actions (e.g. from workspace)
+    this.eventBus.subscribe<AgentProtocolAction>('agent:actions', (action) => {
+      this.handleAction(action);
+    });
   }
 
   private getInitialState(): AgentState {
@@ -70,10 +75,18 @@ export class AgentRuntime {
       case AgentEventType.USER_MESSAGE:
         await this.onUserMessage(event.payload.text);
         break;
+      case AgentEventType.WORKSPACE_ACTION:
+        await this.onWorkspaceAction(event.payload.action, event.payload.metadata);
+        break;
       case AgentEventType.TOOL_RESULT:
         await this.onToolResult(event.payload.toolName, event.payload.result);
         break;
     }
+  }
+
+  private handleAction(action: AgentProtocolAction): void {
+    // Process actions received by the agent (e.g. manual overrides or approvals)
+    console.debug(`[AgentRuntime] Received action: ${action.type}`);
   }
 
   public async processGoal(goal: string): Promise<void> {
@@ -83,6 +96,7 @@ export class AgentRuntime {
     }
 
     this.state.status = 'thinking';
+    this.memory.setGoal(goal);
     this.stream.thinking('Analyzing goal and generating autonomous plan...');
 
     try {
@@ -163,8 +177,16 @@ export class AgentRuntime {
     await this.processGoal(text);
   }
 
-  private async onToolResult(_toolName: string, _result: unknown): Promise<void> {
-    // Handled by WorkflowEngine callbacks
+  private async onWorkspaceAction(action: string, metadata?: any): Promise<void> {
+    console.log(`[AgentRuntime] Workspace action: ${action}`, metadata);
+    if (action === 'REPLAN') {
+      const goal = this.memory.getGoal();
+      if (goal) await this.processGoal(goal);
+    }
+  }
+
+  private async onToolResult(toolName: string, result: unknown): Promise<void> {
+    console.log(`[AgentRuntime] Reactive tool result for ${toolName}:`, result);
   }
 
   public registerPlanner(planner: Planner): void {
@@ -176,7 +198,7 @@ export class AgentRuntime {
     this.workflowEngine = new WorkflowEngine(executor);
   }
 
-  public registerMemory(_memory: Memory): void {
-    // MemoryManager is internal but this allows future external registration
+  public registerMemory(memory: MemoryManager): void {
+    this.memory = memory;
   }
 }

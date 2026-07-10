@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Info, AlertCircle, Pencil } from 'lucide-react';
 
 export const springTransition = {
@@ -46,7 +46,7 @@ export function ErrorState({ error, onRetry }: { error: string; onRetry?: () => 
   );
 }
 
-export function EditableCard({ children, title, onSave }: { children: React.ReactNode; title?: string; onSave?: (val: string) => void }) {
+export function EditableCard({ children, title, onSave }: { children: ReactNode; title?: string; onSave?: (val: string) => void }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(title || '');
 

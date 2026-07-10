@@ -1,20 +1,21 @@
 import { agent } from '../bootstrap/createAgent';
-import { AgentActionType } from '../types/agent';
+import { AgentActionType, AgentEventType } from '../types/agent';
 import type { AgentProtocolAction } from '../types/agent';
 import { useWorkspaceStore } from '../../workspace/state/workspaceStore';
 import type { WorkspaceComponent } from '../../workspace/state/workspaceTypes';
+import { globalWorkspaceBus } from '../../workspace/events/WorkspaceEventBus';
 
 /**
- * WorkspaceAdapter maps Agent actions into Workspace state changes.
+ * WorkspaceAdapter maps Agent actions into Workspace state changes
+ * and bridges Workspace events back to the Agent.
  */
 export function setupWorkspaceAdapter() {
   const workspace = useWorkspaceStore.getState();
 
+  // 1. Agent -> Workspace (Actions)
   agent.eventBus.subscribe<AgentProtocolAction>('agent:actions', (action) => {
     switch (action.type) {
       case AgentActionType.UPDATE_WORKSPACE:
-        // For simple file updates, we might just log. 
-        // But if the agent sends UI components, we map them.
         if (action.payload.metadata?.components) {
           const components = action.payload.metadata.components as WorkspaceComponent[];
           workspace.setComponents(components);
@@ -22,24 +23,26 @@ export function setupWorkspaceAdapter() {
         break;
 
       case AgentActionType.AGENT_UPDATE:
-        // We can update component statuses based on agent progress
-        if (action.payload.data?.taskId) {
-          // Find component associated with this task if any
-        }
+        // Handle global agent status if needed
         break;
-        
-      // NEW CUSTOM ACTIONS for workspace
-      case 'SHOW_COMPONENT' as any:
+
+      case AgentActionType.RENDER_COMPONENT:
         workspace.addComponent(action.payload as unknown as WorkspaceComponent);
         break;
+    }
+  });
 
-      case 'REMOVE_COMPONENT' as any:
-        workspace.removeComponent((action.payload as any).id);
-        break;
-
-      case 'SET_WORKSPACE_STATE' as any:
-        workspace.setComponents((action.payload as any).components);
-        break;
+  // 2. Workspace -> Agent (Bridge)
+  globalWorkspaceBus.onEvent((event) => {
+    if (event.type === 'REQUEST_AGENT_ACTION') {
+      agent.eventBus.publish('agent:events', {
+        type: AgentEventType.WORKSPACE_ACTION,
+        payload: {
+          action: event.payload.action,
+          metadata: event.payload.metadata,
+        },
+        timestamp: Date.now(),
+      });
     }
   });
 }

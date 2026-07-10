@@ -1,5 +1,6 @@
 import type { Executor, Task } from '../types/agent';
 import { ToolRegistry } from '../tools/ToolRegistry';
+import type { StructuredTask } from '../planner/schemas';
 
 /**
  * TaskExecutor is responsible for executing individual tasks by mapping them
@@ -60,7 +61,10 @@ export class TaskExecutor implements Executor {
    * Maps a task to a tool name.
    * Prioritizes the 'tool' field from StructuredTask, falls back to description.
    */
-  private resolveToolName(task: any): string {
-    return task.tool || task.description;
+  private resolveToolName(task: Task | StructuredTask): string {
+    if ('tool' in task) {
+      return task.tool;
+    }
+    return task.description;
   }
 }

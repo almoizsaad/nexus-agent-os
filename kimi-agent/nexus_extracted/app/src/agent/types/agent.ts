@@ -22,12 +22,6 @@ export type AgentActionType = typeof AgentActionType[keyof typeof AgentActionTyp
 
 export type AgentStatus = 'idle' | 'thinking' | 'executing' | 'error';
 
-export interface AgentState {
-  status: AgentStatus;
-  currentPlan?: Plan;
-  history: AgentEvent[];
-}
-
 export interface Task {
   id: string;
   description: string;
@@ -43,9 +37,10 @@ export interface Plan {
   createdAt: number;
 }
 
-export interface AgentAction {
-  type: AgentActionType;
-  payload: Record<string, unknown>;
+export interface AgentState {
+  status: AgentStatus;
+  currentPlan?: Plan;
+  history: AgentEvent[];
 }
 
 export interface AgentEvent {
@@ -54,7 +49,142 @@ export interface AgentEvent {
   timestamp: number;
 }
 
-// Interfaces for future extension points
+export interface AgentAction {
+  type: AgentActionType;
+  payload: Record<string, unknown>;
+}
+
+// --- Protocol Actions ---
+
+export interface UpdateWorkspaceAction {
+  type: typeof AgentActionType.UPDATE_WORKSPACE;
+  payload: {
+    files?: Array<{ path: string; content: string }>;
+    deleteFiles?: string[];
+    metadata?: Record<string, any>;
+  };
+}
+
+export interface RequestToolAction {
+  type: typeof AgentActionType.REQUEST_TOOL;
+  payload: {
+    toolName: string;
+    args: Record<string, unknown>;
+  };
+}
+
+export interface ShowNotificationAction {
+  type: typeof AgentActionType.SHOW_NOTIFICATION;
+  payload: {
+    message: string;
+    level: 'info' | 'warning' | 'error' | 'success';
+  };
+}
+
+export interface UpdatePlanAction {
+  type: typeof AgentActionType.UPDATE_PLAN;
+  payload: {
+    planId: string;
+    tasks: Array<{
+      id: string;
+      status: 'pending' | 'in-progress' | 'completed' | 'failed';
+    }>;
+  };
+}
+
+export interface AgentUpdateAction {
+  type: typeof AgentActionType.AGENT_UPDATE;
+  payload: {
+    status: string;
+    message?: string;
+    progress?: number;
+    data?: Record<string, unknown>;
+  };
+}
+
+export interface RenderComponentAction {
+  type: typeof AgentActionType.RENDER_COMPONENT;
+  payload: {
+    componentId: string;
+    props: Record<string, any>;
+    position?: 'sidebar' | 'main' | 'modal';
+  };
+}
+
+export interface RequireApprovalAction {
+  type: typeof AgentActionType.REQUIRE_APPROVAL;
+  payload: {
+    requestId: string;
+    message: string;
+    action: AgentProtocolAction;
+  };
+}
+
+export type AgentProtocolAction =
+  | UpdateWorkspaceAction
+  | RequestToolAction
+  | ShowNotificationAction
+  | UpdatePlanAction
+  | AgentUpdateAction
+  | RenderComponentAction
+  | RequireApprovalAction;
+
+// --- Protocol Events ---
+
+export interface UserMessageEvent extends AgentEvent {
+  type: typeof AgentEventType.USER_MESSAGE;
+  payload: {
+    text: string;
+    sender: 'user';
+  };
+}
+
+export interface WorkspaceActionEvent extends AgentEvent {
+  type: typeof AgentEventType.WORKSPACE_ACTION;
+  payload: {
+    action: string;
+    path?: string;
+    metadata?: Record<string, any>;
+  };
+}
+
+export interface ToolResultEvent extends AgentEvent {
+  type: typeof AgentEventType.TOOL_RESULT;
+  payload: {
+    toolName: string;
+    result: any;
+    success: boolean;
+  };
+}
+
+export interface AgentUpdateEvent extends AgentEvent {
+  type: typeof AgentEventType.AGENT_UPDATE;
+  payload: {
+    status: string;
+    message?: string;
+    progress?: number;
+  };
+}
+
+export interface ErrorEvent extends AgentEvent {
+  type: typeof AgentEventType.ERROR;
+  payload: {
+    code: string;
+    message: string;
+    details?: any;
+    fatal: boolean;
+  };
+}
+
+export type AgentProtocolEvent = 
+  | UserMessageEvent 
+  | WorkspaceActionEvent 
+  | ToolResultEvent 
+  | AgentUpdateEvent
+  | ErrorEvent;
+
+// --- Extension Points ---
+
 export interface Planner {
   generatePlan(goal: string, state: AgentState): Promise<Plan>;
 }
@@ -68,6 +198,3 @@ export interface Memory {
   retrieve(key: string): Promise<unknown>;
   search(query: string): Promise<unknown[]>;
 }
-
-export type { AgentProtocolAction } from '../protocol/actions';
-export type { AgentProtocolEvent } from '../protocol/events';

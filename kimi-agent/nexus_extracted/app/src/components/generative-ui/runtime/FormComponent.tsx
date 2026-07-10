@@ -1,11 +1,11 @@
-import React from 'react';
+import type { FormEvent } from 'react';
 import { componentEvents } from '../../../workspace/events/componentEvents';
 
 export function FormComponent({ id, data }: { id: string; data: Record<string, unknown> }) {
   const fields = (data?.fields as Array<{ label: string; value: string }>) || [];
   const message = (data?.message as string) || '';
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     componentEvents.action(id, 'SUBMIT_FORM', { fields });
   };
