@@ -101,8 +101,8 @@ export class AgentRuntime {
 
     try {
       // Recall relevant context from memory
-      const context = await this.memory.recall(goal);
-      const enhancedGoal = context ? `${goal} (Context: ${JSON.stringify(context)})` : goal;
+      const context = await this.memory.recallMemories(goal);
+      const enhancedGoal = context.length > 0 ? `${goal} (Context: ${JSON.stringify(context)})` : goal;
 
       this.stream.planning(enhancedGoal);
       const plan = await this.planner.generatePlan(enhancedGoal, this.state);
@@ -148,6 +148,10 @@ export class AgentRuntime {
       if (success) {
         this.state.status = 'idle';
         await this.memory.remember(goal, { completed: true, planId: plan.id });
+        
+        // Phase 4.1: Consolidate session into semantic memory
+        await this.memory.consolidateSession(plan.id);
+        
         this.stream.completing('Goal accomplished successfully.');
       }
 
