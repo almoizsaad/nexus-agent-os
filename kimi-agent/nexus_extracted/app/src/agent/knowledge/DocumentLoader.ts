@@ -45,7 +45,7 @@ export class DocumentLoader {
         try {
           const parsed = JSON.parse(content);
           return JSON.stringify(parsed, null, 2);
-        } catch (e) {
+        } catch {
           return content;
         }
       case 'markdown':

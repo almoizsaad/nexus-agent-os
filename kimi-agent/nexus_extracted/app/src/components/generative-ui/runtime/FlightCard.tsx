@@ -7,7 +7,7 @@ export function FlightCard({ id, data }: { id: string; data: Record<string, unkn
   const items = (data?.items as Array<Record<string, string>>) || [];
   if (items.length === 0) return <EmptyState title="Flight Options" />;
 
-  const handleSelect = (item: any) => {
+  const handleSelect = (item: Record<string, unknown>) => {
     componentEvents.select(id, item);
   };
 

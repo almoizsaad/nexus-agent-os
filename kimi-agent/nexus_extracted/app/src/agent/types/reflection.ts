@@ -1,3 +1,12 @@
+export interface ExecutionEvent {
+  type?: string;
+  workflowId?: string;
+  taskId?: string;
+  status?: string;
+  timestamp: number;
+  result?: unknown;
+}
+
 export interface ReflectionResult {
   workflowId: string;
   timestamp: number;
@@ -20,7 +29,7 @@ export interface ExecutionAnalysis {
 }
 
 export interface IExecutionAnalyzer {
-  analyze(workflowId: string, events: unknown[]): Promise<ExecutionAnalysis>;
+  analyze(workflowId: string, events: ExecutionEvent[]): Promise<ExecutionAnalysis>;
 }
 
 export interface ISelfReflectionEngine {

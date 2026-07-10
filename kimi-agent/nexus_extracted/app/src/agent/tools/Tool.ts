@@ -1,7 +1,7 @@
 /**
  * Interface representing a tool that can be executed by the Agent OS.
  */
-export interface Tool<TInput = any, TOutput = any> {
+export interface Tool<TInput = unknown, TOutput = unknown> {
   /**
    * The unique name of the tool.
    */

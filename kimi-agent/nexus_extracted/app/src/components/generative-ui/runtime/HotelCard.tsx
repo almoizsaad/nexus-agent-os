@@ -7,7 +7,7 @@ export function HotelCard({ id, data }: { id: string; data: Record<string, unkno
   const items = (data?.items as Array<Record<string, unknown>>) || [];
   if (items.length === 0) return <EmptyState title="Hotel Recommendations" />;
 
-  const handleSelect = (item: any) => {
+  const handleSelect = (item: Record<string, unknown>) => {
     componentEvents.select(id, item);
   };
 

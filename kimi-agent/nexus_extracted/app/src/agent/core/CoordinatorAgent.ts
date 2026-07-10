@@ -66,15 +66,19 @@ export class CoordinatorAgent extends AgentRuntime {
     // Decompose and delegate
     await this.coordinator.coordinatePlan(plan);
     
-    this.eventBus.publish('agent:events', {
+    this._eventBus.publish('agent:events', {
       type: AgentEventType.AGENT_UPDATE,
       payload: { planId: plan.id, coordinatorId: this.identity?.id, status: 'PLAN_STARTED' },
       timestamp: Date.now()
-    } as any);
+    });
   }
 
   private async handleTaskResult(message: AgentCommunicationMessage, success: boolean): Promise<void> {
-    const { planId, taskId, result, error } = message.payload as any;
+    const payload = message.payload as Record<string, unknown>;
+    const planId = payload.planId as string;
+    const taskId = payload.taskId as string;
+    const result = payload.result;
+    const error = payload.error as string;
     const plan = this.activePlans.get(planId);
     
     if (!plan) return;
@@ -130,11 +134,16 @@ export class CoordinatorAgent extends AgentRuntime {
       await this.coordinator.coordinatePlan(newPlan);
     } catch (e) {
       console.error(`[CoordinatorAgent] Replanning failed:`, e);
-      this.eventBus.publish('agent:events', {
+      this._eventBus.publish('agent:events', {
         type: AgentEventType.ERROR,
-        payload: { planId: plan.id, error: 'Replanning failed', code: 'REPLAN_FAILED', fatal: false },
+        payload: { 
+          message: 'Replanning failed', 
+          code: 'REPLAN_FAILED', 
+          fatal: false,
+          details: { planId: plan.id }
+        },
         timestamp: Date.now()
-      } as any);
+      });
     }
   }
 
@@ -145,16 +154,19 @@ export class CoordinatorAgent extends AgentRuntime {
   private async finalizePlan(plan: CooperativePlan): Promise<void> {
     console.info(`[CoordinatorAgent] Plan ${plan.id} completed successfully.`);
     const results = plan.tasks.map(t => ({ taskId: t.id, result: t.metadata?.result }));
-    this.eventBus.publish('agent:events', {
+    this._eventBus.publish('agent:events', {
       type: AgentEventType.AGENT_UPDATE,
       payload: { planId: plan.id, results, status: 'PLAN_COMPLETED' },
       timestamp: Date.now()
-    } as any);
+    });
     this.activePlans.delete(plan.id);
   }
 
   private handleSubPlan(message: AgentCommunicationMessage): void {
-    const { planId, taskId, subPlan } = message.payload as any;
+    const payload = message.payload as Record<string, unknown>;
+    const planId = payload.planId as string;
+    const taskId = payload.taskId as string;
+    const subPlan = payload.subPlan as CooperativePlan;
     const mainPlan = this.activePlans.get(planId);
     
     if (mainPlan) {
@@ -165,27 +177,29 @@ export class CoordinatorAgent extends AgentRuntime {
   }
 
   private handleApproval(message: AgentCommunicationMessage): void {
-    const { planId } = message.payload as any;
+    const payload = message.payload as Record<string, unknown>;
+    const planId = payload.planId as string;
     this.consensus.approvePlan(planId, message.sender as string);
     
     const required = Math.ceil((this.consensus.getConsensus(planId)?.approvals.length || 0) / 2) + 1; // Simple majority
     if (this.consensus.resolveConsensus(planId, required) === 'agreed') {
-      this.eventBus.publish('agent:events', {
+      this._eventBus.publish('agent:events', {
         type: AgentEventType.AGENT_UPDATE,
         payload: { planId, status: 'PLAN_AGREED' },
         timestamp: Date.now()
-      } as any);
+      });
     }
   }
 
   private handleRejection(message: AgentCommunicationMessage): void {
-    const { planId } = message.payload as any;
+    const payload = message.payload as Record<string, unknown>;
+    const planId = payload.planId as string;
     this.consensus.rejectPlan(planId);
-    this.eventBus.publish('agent:events', {
+    this._eventBus.publish('agent:events', {
       type: AgentEventType.AGENT_UPDATE,
-      payload: { planId, status: 'PLAN_REJECTED', reason: (message.payload as any).reason },
+      payload: { planId, status: 'PLAN_REJECTED', reason: payload.reason },
       timestamp: Date.now()
-    } as any);
+    });
   }
 
   public getActivePlan(planId: string): CooperativePlan | undefined {

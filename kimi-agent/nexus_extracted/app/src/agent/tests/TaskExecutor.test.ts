@@ -6,7 +6,7 @@ import type { Tool } from '../tools/Tool';
 class MockTool implements Tool {
   name = 'test_tool';
   description = 'A test tool';
-  async execute(input: any) {
+  async execute(input: unknown) {
     return { result: 'success', input };
   }
 }

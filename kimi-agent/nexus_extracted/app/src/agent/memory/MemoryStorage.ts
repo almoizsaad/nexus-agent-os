@@ -35,7 +35,7 @@ export class MemoryStorage implements IMemoryStorage {
           if (this.matchesQuery(entry, query)) {
             entries.push(entry);
           }
-        } catch (e) {
+        } catch {
           // Skip malformed entries
         }
       }

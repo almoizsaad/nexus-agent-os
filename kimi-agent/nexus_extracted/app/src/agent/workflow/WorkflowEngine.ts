@@ -2,6 +2,7 @@ import type { Executor, Plan } from '../types/agent';
 import { TaskGraph } from './TaskGraph';
 import type { StructuredTask } from '../planner/schemas';
 import type { IPerformanceMonitor } from '../types/improvement';
+import type { ExecutionEvent } from '../types/reflection';
 
 /**
  * WorkflowEngine orchestrates the execution of a Plan using a TaskGraph.
@@ -10,14 +11,14 @@ export class WorkflowEngine {
   private executor: Executor;
   private monitor?: IPerformanceMonitor;
   private maxRetries = 1;
-  private events: any[] = [];
+  private events: ExecutionEvent[] = [];
 
   constructor(executor: Executor, monitor?: IPerformanceMonitor) {
     this.executor = executor;
     this.monitor = monitor;
   }
 
-  public async executePlan(plan: Plan, onUpdate?: (taskId: string, status: string, result?: any) => void): Promise<boolean> {
+  public async executePlan(plan: Plan, onUpdate?: (taskId: string, status: string, result?: unknown) => void): Promise<boolean> {
     const startTime = Date.now();
     console.log(`[WorkflowEngine] Starting execution for plan: ${plan.id}`);
     this.events = [{ type: 'workflow_start', workflowId: plan.id, timestamp: Date.now() }];
@@ -38,14 +39,14 @@ export class WorkflowEngine {
         onUpdate?.(task.id, 'in-progress');
 
         let success = false;
-        let result: any;
+        let result: unknown;
         let attempts = 0;
 
         while (!success && attempts <= this.maxRetries) {
           attempts++;
           try {
             result = await this.executor.executeTask(task, {});
-            success = result.success !== false; // Assume success unless explicitly false
+            success = (result as { success?: boolean }).success !== false; // Assume success unless explicitly false
           } catch (error) {
             console.error(`[WorkflowEngine] Error executing task ${task.id}:`, error);
             result = { success: false, error: String(error) };
@@ -81,11 +82,11 @@ export class WorkflowEngine {
     return finalSuccess;
   }
 
-  public getExecutionEvents(): any[] {
+  public getExecutionEvents(): ExecutionEvent[] {
     return this.events;
   }
 
-  private handleTaskFailure(task: StructuredTask, result: any): void {
+  private handleTaskFailure(task: StructuredTask, result: unknown): void {
     console.error(`[WorkflowEngine] Task ${task.id} failed definitively. Result:`, result);
     // Future: Trigger self-correction or re-planning
   }

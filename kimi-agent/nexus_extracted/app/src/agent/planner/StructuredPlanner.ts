@@ -1,4 +1,5 @@
 import type { AgentState } from '../types/agent';
+import type { StructuredPlan } from './schemas';
 
 /**
  * StructuredPlanner handles the logic of constructing prompts and parsing 
@@ -25,7 +26,7 @@ export class StructuredPlanner {
   /**
    * Logic for parsing or refining the structured output can be added here.
    */
-  public refinePlan(plan: any): any {
+  public refinePlan(plan: StructuredPlan): StructuredPlan {
     // Ensure all tasks have IDs and dependencies
     return plan;
   }

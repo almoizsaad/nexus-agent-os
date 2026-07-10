@@ -203,7 +203,7 @@ export class AgentRuntime {
         });
 
         if (status === 'failed') {
-          this._selfCorrection.handleTaskFailure(taskId, result?.error || 'Unknown error');
+          this._selfCorrection.handleTaskFailure(taskId, (result as { error?: string })?.error || 'Unknown error');
         }
       });
 

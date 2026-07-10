@@ -6,7 +6,7 @@
 export interface ComponentDefinition {
   type: string;
   name: string;
-  component: React.ComponentType<any>;
+  component: React.ComponentType<{ id: string; data: Record<string, unknown> }>;
   description?: string;
   icon?: string;
 }

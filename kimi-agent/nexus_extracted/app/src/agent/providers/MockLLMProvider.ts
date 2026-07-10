@@ -4,13 +4,13 @@ import type { LLMProvider } from './LLMProvider';
  * A mock LLM provider for testing and development.
  */
 export class MockLLMProvider implements LLMProvider {
-  private mockResponse: any = null;
+  private mockResponse: unknown = null;
 
-  public setMockResponse(response: any): void {
+  public setMockResponse(response: unknown): void {
     this.mockResponse = response;
   }
 
-  public async generateStructuredOutput<T>(prompt: string, _schema: any): Promise<T> {
+  public async generateStructuredOutput<T>(prompt: string, _schema: unknown): Promise<T> {
     console.log(`[MockLLMProvider] Received prompt: ${prompt.substring(0, 100)}...`);
     
     if (this.mockResponse) {

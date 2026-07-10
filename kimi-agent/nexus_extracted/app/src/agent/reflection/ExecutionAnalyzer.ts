@@ -1,7 +1,7 @@
-import type { IExecutionAnalyzer, ExecutionAnalysis } from '../types/reflection';
+import type { IExecutionAnalyzer, ExecutionAnalysis, ExecutionEvent } from '../types/reflection';
 
 export class ExecutionAnalyzer implements IExecutionAnalyzer {
-  public async analyze(workflowId: string, events: any[]): Promise<ExecutionAnalysis> {
+  public async analyze(workflowId: string, events: ExecutionEvent[]): Promise<ExecutionAnalysis> {
     const taskEvents = events.filter(e => e.taskId);
     const completed = taskEvents.filter(e => e.status === 'completed');
     const failed = taskEvents.filter(e => e.status === 'failed');
@@ -9,7 +9,7 @@ export class ExecutionAnalyzer implements IExecutionAnalyzer {
     // In a real system, we'd track retries and duration from timestamps
     // For now, we'll derive them from events
     const retries = events.filter(e => e.type === 'retry').length;
-    const errors = failed.map(f => f.result?.error || 'Unknown error');
+    const errors = failed.map(f => (f.result as { error?: string })?.error || 'Unknown error');
 
     // Calculate duration if timestamps are available
     let duration = 0;

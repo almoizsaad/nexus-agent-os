@@ -1,4 +1,12 @@
-import type { IKnowledgeDatabase, KnowledgeEntry, ChunkingOptions, IEmbeddingStore } from '../types/knowledge';
+import type { 
+  IKnowledgeDatabase, 
+  KnowledgeEntry, 
+  ChunkingOptions, 
+  IEmbeddingStore,
+  KnowledgeSourceType,
+  DocumentFormat,
+  KnowledgeMetadata
+} from '../types/knowledge';
 import type { LLMProvider } from '../providers/LLMProvider';
 import { Chunker } from './Chunker';
 import { DocumentLoader } from './DocumentLoader';
@@ -25,8 +33,8 @@ export class KnowledgeIndexer {
 
   public async indexDocument(
     source: string,
-    type: any,
-    format: any,
+    type: KnowledgeSourceType,
+    format: DocumentFormat,
     content?: string
   ): Promise<string[]> {
     const doc = await this.loader.load(source, type, format, content);
@@ -46,7 +54,7 @@ export class KnowledgeIndexer {
         content: chunk,
         embedding,
         metadata: {
-          ...doc.metadata as any,
+          ...doc.metadata as KnowledgeMetadata,
           chunkIndex: i,
           totalChunks: chunks.length,
           originalId,

@@ -83,7 +83,7 @@ export class KnowledgeDatabase implements IKnowledgeDatabase {
         try {
           const entry = JSON.parse(localStorage.getItem(key)!) as KnowledgeEntry;
           entries.push(entry);
-        } catch (e) {
+        } catch {
           // Skip malformed entries
         }
       }

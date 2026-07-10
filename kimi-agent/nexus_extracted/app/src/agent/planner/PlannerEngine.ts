@@ -34,7 +34,7 @@ export class PlannerEngine implements Planner {
       return {
         ...refinedPlan,
         createdAt: refinedPlan.createdAt || Date.now(),
-        tasks: refinedPlan.tasks.map((t: any) => ({
+        tasks: refinedPlan.tasks.map((t) => ({
           ...t,
           status: 'pending' as const
         }))

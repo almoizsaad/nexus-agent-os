@@ -101,7 +101,7 @@ export interface UpdatePlanAction {
     planId: string;
     tasks: Array<{
       id: string;
-      status: 'pending' | 'in-progress' | 'completed' | 'failed';
+      status: 'pending' | 'in-progress' | 'running' | 'completed' | 'failed';
     }>;
   };
 }

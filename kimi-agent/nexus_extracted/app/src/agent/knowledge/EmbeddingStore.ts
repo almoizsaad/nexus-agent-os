@@ -34,7 +34,7 @@ export class EmbeddingStore implements IEmbeddingStore {
           const id = key.replace(this.prefix, '');
           const embedding = JSON.parse(localStorage.getItem(key)!) as number[];
           results.push({ id, embedding });
-        } catch (e) {
+        } catch {
           // Skip malformed entries
         }
       }

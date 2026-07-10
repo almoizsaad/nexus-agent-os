@@ -7,7 +7,7 @@ class AdvancedMockTool implements AdvancedTool {
   description = 'desc';
   inputSchema = { type: 'object', required: ['id'] };
   outputSchema = {};
-  async execute(_input: any) { return { ok: true }; }
+  async execute(_input: unknown) { return { ok: true }; }
 }
 
 describe('ToolProtocol', () => {

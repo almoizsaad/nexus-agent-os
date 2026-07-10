@@ -16,8 +16,8 @@ export class FailureAnalyzer implements IFailureAnalyzer {
 }
 
 export class SuccessAnalyzer implements ISuccessAnalyzer {
-  public async analyzeSuccess(taskId: string, result: any): Promise<string> {
-    const complexity = result && typeof result === 'object' ? Object.keys(result).length : 0;
+  public async analyzeSuccess(taskId: string, result: unknown): Promise<string> {
+    const complexity = result && typeof result === 'object' ? Object.keys(result as object).length : 0;
     if (complexity > 10) {
       return `Task ${taskId} succeeded with high data volume. Performance was optimal.`;
     }

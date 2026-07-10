@@ -1,4 +1,4 @@
-import type { IKnowledgeDatabase, IEmbeddingStore } from '../types/knowledge';
+import type { IKnowledgeDatabase, IEmbeddingStore, KnowledgeMetadata } from '../types/knowledge';
 import type { LLMProvider } from '../providers/LLMProvider';
 
 export class KnowledgeUpdater {
@@ -16,7 +16,7 @@ export class KnowledgeUpdater {
     this.llmProvider = llmProvider;
   }
 
-  public async updateEntry(id: string, content: string, metadata?: any): Promise<void> {
+  public async updateEntry(id: string, content: string, metadata?: Partial<KnowledgeMetadata>): Promise<void> {
     const existing = await this.database.get(id);
     if (!existing) {
       throw new Error(`Entry with id ${id} not found.`);
@@ -31,7 +31,7 @@ export class KnowledgeUpdater {
         ...existing.metadata,
         ...metadata,
         updatedAt: Date.now()
-      }
+      } as KnowledgeMetadata
     });
 
     await this.embeddingStore.save(id, embedding);

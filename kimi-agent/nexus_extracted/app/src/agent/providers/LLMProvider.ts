@@ -7,7 +7,7 @@ export interface LLMProvider {
    * @param prompt The prompt to send to the LLM.
    * @param schema The expected structure of the response.
    */
-  generateStructuredOutput<T>(prompt: string, schema: any): Promise<T>;
+  generateStructuredOutput<T>(prompt: string, schema: unknown): Promise<T>;
 
   /**
    * Generates a vector embedding for the given text.

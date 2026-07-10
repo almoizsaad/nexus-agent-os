@@ -78,7 +78,7 @@ describe('Reflection Engine', () => {
     const failureMsg = await failureAnalyzer.analyzeFailure('task-99', 'timeout error');
     expect(failureMsg).toContain('Suggest increasing timeout');
 
-    const complexResult: any = {};
+    const complexResult: Record<string, number> = {};
     for (let i = 0; i < 15; i++) complexResult[`key${i}`] = i;
 
     const successMsg = await successAnalyzer.analyzeSuccess('task-100', complexResult);

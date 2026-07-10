@@ -40,14 +40,15 @@ export class AgentManager {
       if (identity.role === 'coordinator') {
         // Create a CoordinatorAgent with the registry
         const baseRuntime = runtimeFactory(identity, channel);
+        
         return new CoordinatorAgent(
           eventBus,
           this.registry,
-          baseRuntime.planner,
-          baseRuntime.executor,
-          (baseRuntime as any).monitor,
-          (baseRuntime as any).improvementEngine,
-          (baseRuntime as any).suggestions,
+          baseRuntime.planner || undefined,
+          baseRuntime.executor || undefined,
+          baseRuntime.monitor,
+          baseRuntime.improvementEngine,
+          baseRuntime.suggestions,
           identity,
           channel
         );

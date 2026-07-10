@@ -59,32 +59,34 @@ export class ToolRegistry {
   /**
    * Validates input against a tool's schema.
    */
-  public validateInput(name: string, input: any): boolean {
+  public validateInput(name: string, input: unknown): boolean {
     const tool = this.getTool(name);
     if (!tool || !isAdvancedTool(tool)) return true; // Default to true if no schema
     
+    if (typeof input !== 'object' || input === null) return false;
+
     // Basic structural validation (can be replaced with AJV or Zod)
-    const required = tool.inputSchema.required || [];
-    return required.every((key: string) => key in input);
+    const required = (tool.inputSchema as { required?: string[] }).required || [];
+    return required.every((key: string) => key in (input as Record<string, unknown>));
   }
 
   /**
    * Executes a tool with validation.
    */
-  public async executeWithValidation<TInput = any, TOutput = any>(
+  public async executeWithValidation<TInput = unknown, TOutput = unknown>(
     name: string,
     input: TInput
   ): Promise<TOutput> {
     if (!this.validateInput(name, input)) {
       throw new Error(`[ToolRegistry] Input validation failed for tool "${name}".`);
     }
-    return this.executeTool(name, input);
+    return this.executeTool<TInput, TOutput>(name, input);
   }
 
   /**
    * Executes a tool safely by its name.
    */
-  public async executeTool<TInput = any, TOutput = any>(
+  public async executeTool<TInput = unknown, TOutput = unknown>(
     name: string,
     input: TInput
   ): Promise<TOutput> {
@@ -94,7 +96,7 @@ export class ToolRegistry {
     }
 
     try {
-      return await tool.execute(input);
+      return await tool.execute(input) as TOutput;
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       throw new Error(`[ToolRegistry] Error executing tool "${name}": ${message}`);
