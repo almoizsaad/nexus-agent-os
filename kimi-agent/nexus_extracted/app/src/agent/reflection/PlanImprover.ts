@@ -14,7 +14,7 @@ export class PlanImprover implements IPlanImprover {
       suggestions.push('Refine task descriptions to reduce ambiguity.');
     }
 
-    if (reflection.metadata.duration > 20000) {
+    if (typeof reflection.metadata.duration === 'number' && reflection.metadata.duration > 20000) {
       suggestions.push('Analyze bottlenecks in long-running tasks.');
     }
 
