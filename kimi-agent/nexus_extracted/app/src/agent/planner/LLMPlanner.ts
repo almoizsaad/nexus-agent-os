@@ -8,6 +8,8 @@ import { PlanValidator } from './PlanValidator';
 import type { IPerformanceMonitor } from '../types/improvement';
 import type { IKnowledgeGraph } from '../types/knowledge';
 import { KnowledgeLinker } from '../knowledge/KnowledgeLinker';
+import type { ISafetyGuard } from '../types/safety';
+import { SafetyGuard } from '../core/SafetyLayer';
 
 /**
  * LLMPlanner uses a Large Language Model to generate autonomous plans.
@@ -22,13 +24,15 @@ export class LLMPlanner implements Planner {
   private monitor?: IPerformanceMonitor;
   private graph?: IKnowledgeGraph;
   private linker?: KnowledgeLinker;
+  private safetyGuard: ISafetyGuard;
 
   constructor(
     provider: LLMProvider, 
     toolRegistry: ToolRegistry,
     fallbackPlanner?: Planner,
     monitor?: IPerformanceMonitor,
-    graph?: IKnowledgeGraph
+    graph?: IKnowledgeGraph,
+    safetyGuard?: ISafetyGuard
   ) {
     this.provider = provider;
     this.toolRegistry = toolRegistry;
@@ -40,6 +44,7 @@ export class LLMPlanner implements Planner {
     if (graph) {
       this.linker = new KnowledgeLinker(graph);
     }
+    this.safetyGuard = safetyGuard || new SafetyGuard();
   }
 
   /**
@@ -85,6 +90,13 @@ export class LLMPlanner implements Planner {
         })),
         createdAt: Date.now()
       };
+
+      // Phase 6.3: Safety Evaluation
+      const safetyReport = await this.safetyGuard.evaluatePlan(plan);
+      if (!safetyReport.passed) {
+        console.error('[LLMPlanner] Plan rejected by Safety Layer:', safetyReport.errors);
+        throw new Error(`Safety Violation: ${safetyReport.errors.join('; ')}`);
+      }
 
       if (this.graph && this.linker) {
         await this.recordPlanInGraph(plan);

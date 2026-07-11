@@ -6,6 +6,8 @@ import { ToolRegistry } from '../tools/ToolRegistry';
 import { StructuredPlanner } from './StructuredPlanner';
 import type { IKnowledgeGraph } from '../types/knowledge';
 import { KnowledgeLinker } from '../knowledge/KnowledgeLinker';
+import type { ISafetyGuard } from '../types/safety';
+import { SafetyGuard } from '../core/SafetyLayer';
 
 /**
  * PlannerEngine coordinates the LLM-based planning process.
@@ -16,8 +18,9 @@ export class PlannerEngine implements Planner {
   private structuredPlanner: StructuredPlanner;
   private graph?: IKnowledgeGraph;
   private linker?: KnowledgeLinker;
+  private safetyGuard: ISafetyGuard;
 
-  constructor(provider: LLMProvider, toolRegistry: ToolRegistry, graph?: IKnowledgeGraph) {
+  constructor(provider: LLMProvider, toolRegistry: ToolRegistry, graph?: IKnowledgeGraph, safetyGuard?: ISafetyGuard) {
     this.provider = provider;
     this.toolRegistry = toolRegistry;
     this.structuredPlanner = new StructuredPlanner();
@@ -25,6 +28,7 @@ export class PlannerEngine implements Planner {
     if (graph) {
       this.linker = new KnowledgeLinker(graph);
     }
+    this.safetyGuard = safetyGuard || new SafetyGuard();
   }
 
   public async generatePlan(goal: string, state: AgentState): Promise<Plan> {
@@ -47,6 +51,13 @@ export class PlannerEngine implements Planner {
           status: 'pending' as const
         }))
       };
+
+      // Phase 6.3: Safety Evaluation
+      const safetyReport = await this.safetyGuard.evaluatePlan(plan);
+      if (!safetyReport.passed) {
+        console.error('[PlannerEngine] Plan rejected by Safety Layer:', safetyReport.errors);
+        throw new Error(`Safety Violation: ${safetyReport.errors.join('; ')}`);
+      }
 
       if (this.graph && this.linker) {
         await this.recordPlanInGraph(plan);
