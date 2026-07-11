@@ -22,10 +22,10 @@ describe('Dependency Injection Integration', () => {
     const agent = createAgent();
     
     // Runtime's event bus should be the same as the global one
-    expect((agent.runtime as any)._eventBus).toBe(agent.eventBus);
+    expect((agent.runtime as unknown as { _eventBus: EventBus })._eventBus).toBe(agent.eventBus);
     
     // Knowledge graph should be shared
-    expect((agent.runtime as any)._knowledgeGraph).toBe(agent.knowledgeGraph);
+    expect(agent.runtime.knowledgeGraph).toBe(agent.knowledgeGraph);
   });
 
   it('should allow overriding services in container', () => {
@@ -37,6 +37,6 @@ describe('Dependency Injection Integration', () => {
     
     const agent = createAgent(container);
     expect(agent.eventBus).toBe(mockBus);
-    expect((agent.runtime as any)._eventBus).toBe(mockBus);
+    expect((agent.runtime as unknown as { _eventBus: EventBus })._eventBus).toBe(mockBus);
   });
 });

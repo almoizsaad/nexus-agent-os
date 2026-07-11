@@ -2,7 +2,8 @@ import { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWorkspaceStore } from '@/workspace/state/workspaceStore';
 import { globalComponentRegistry } from '@/registry/ComponentRegistry';
-import { CardSkeleton, EmptyState, ErrorState, springTransition } from './runtime/Shared';
+import { CardSkeleton, EmptyState, ErrorState } from './runtime/Shared';
+import { springTransition } from '../../lib/constants';
 
 interface DynamicLayoutProps {
   intent: string;

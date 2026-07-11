@@ -4,6 +4,7 @@ import { EmbeddingStore } from '../knowledge/EmbeddingStore';
 import { VectorSearch } from '../knowledge/VectorSearch';
 import { KnowledgeIndexer } from '../knowledge/KnowledgeIndexer';
 import { MockLLMProvider } from '../providers/MockLLMProvider';
+import type { KnowledgeMetadata } from '../types/knowledge';
 
 describe('Knowledge Store', () => {
   let db: KnowledgeDatabase;
@@ -46,7 +47,7 @@ describe('Knowledge Store', () => {
 
   it('should filter by tags', async () => {
     await indexer.indexDocument('doc1', 'file', 'txt', 'Content 1');
-    await db.update((await db.search('Content 1'))[0].id, { metadata: { tags: ['important'] } } as any);
+    await db.update((await db.search('Content 1'))[0].id, { metadata: { tags: ['important'] } as unknown as KnowledgeMetadata });
 
     await indexer.indexDocument('doc2', 'file', 'txt', 'Content 2');
 

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Hotel, Star } from 'lucide-react';
-import { EditableCard, EmptyState, springTransition } from './Shared';
+import { EditableCard, EmptyState } from './Shared';
+import { springTransition } from '../../../lib/constants';
 import { componentEvents } from '../../../workspace/events/componentEvents';
 
 export function HotelCard({ id, data }: { id: string; data: Record<string, unknown> }) {

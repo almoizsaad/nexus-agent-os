@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Calendar } from 'lucide-react';
-import { EditableCard, EmptyState, springTransition } from './Shared';
+import { EditableCard, EmptyState } from './Shared';
+import { springTransition } from '../../../lib/constants';
 import { componentEvents } from '../../../workspace/events/componentEvents';
 
 export function TimelineView({ id, data }: { id: string; data: Record<string, unknown> }) {

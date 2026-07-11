@@ -4,6 +4,7 @@ import { AgentStream } from '../events/AgentStream';
 import { ThoughtManager } from '../reflection/ThoughtManager';
 import { PersistentMemory } from '../memory/PersistentMemory';
 import { ThoughtAnalyzer } from '../reflection/ThoughtAnalyzer';
+import type { Thought, ThoughtChain } from '../types/thought';
 
 import { UnifiedEventBus } from '../core/UnifiedEventBus';
 
@@ -67,7 +68,7 @@ describe('Thought Protocol', () => {
   });
 
   it('should analyze thought chains', async () => {
-    const chain = {
+    const chain: ThoughtChain = {
       id: 'chain-1',
       agentId: 'agent-1',
       workflowId: 'wf-1',
@@ -77,7 +78,7 @@ describe('Thought Protocol', () => {
         { id: '2', timestamp: Date.now(), content: 'Plan X', type: 'plan', agentId: 'agent-1', parentId: '1' },
         { id: '3', timestamp: Date.now(), content: 'Decision Y', type: 'decision', agentId: 'agent-1', parentId: '2' }
       ]
-    } as any;
+    };
 
     const analysis = await analyzer.analyzeChain(chain);
     
@@ -90,7 +91,7 @@ describe('Thought Protocol', () => {
     const thoughts = [
       { id: '1', timestamp: Date.now(), content: 'Thinking...', type: 'reasoning', agentId: 'agent-1' },
       { id: '2', timestamp: Date.now() + 1, content: 'Thinking...', type: 'reasoning', agentId: 'agent-1' }
-    ] as any;
+    ] as Thought[];
 
     const anomalies = await analyzer.detectAnomalies(thoughts);
     expect(anomalies).toHaveLength(1);

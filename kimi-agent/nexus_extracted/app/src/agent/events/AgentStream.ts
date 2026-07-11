@@ -1,5 +1,5 @@
 import type { EventBus } from '../core/EventBus';
-import { AgentEventType } from '../types/agent';
+import { AgentEventType, type ThoughtGeneratedEvent } from '../types/agent';
 import type { Thought, ThoughtType } from '../types/thought';
 
 /**
@@ -27,7 +27,7 @@ export class AgentStream {
       type: AgentEventType.THOUGHT_GENERATED,
       payload: { thought },
       timestamp: Date.now()
-    } as unknown as AgentEventType);
+    } as unknown as ThoughtGeneratedEvent);
 
     // Also emit as a status update for UI visibility
     this.emitStatus('thinking', content, undefined, { thoughtId: thought.id, type });

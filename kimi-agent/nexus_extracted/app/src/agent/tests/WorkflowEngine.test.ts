@@ -3,6 +3,7 @@ import { WorkflowEngine } from '../workflow/WorkflowEngine';
 import { TaskExecutor } from '../executor/TaskExecutor';
 import { ToolRegistry } from '../tools/ToolRegistry';
 import type { StructuredPlan } from '../planner/schemas';
+import type { Plan } from '../types/agent';
 
 describe('WorkflowEngine', () => {
   it('should execute tasks in parallel based on dependencies', async () => {
@@ -24,7 +25,7 @@ describe('WorkflowEngine', () => {
       ]
     };
 
-    const success = await engine.executePlan(plan as any);
+    const success = await engine.executePlan(plan as unknown as Plan);
     expect(success).toBe(true);
     expect(executor.executeTask).toHaveBeenCalledTimes(2);
   });
