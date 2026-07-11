@@ -45,7 +45,16 @@ export class AgentInbox {
     if (this.queue.length > 0 && this.handlers.size > 0) {
       const message = this.poll();
       if (message) {
-        this.handlers.forEach(handler => handler(message));
+        // Break synchronous recursion by notifying in next tick
+        setTimeout(() => {
+          this.handlers.forEach(handler => {
+            try {
+              handler(message);
+            } catch (error) {
+              console.error('[AgentInbox] Error in message handler:', error);
+            }
+          });
+        }, 0);
       }
     }
   }

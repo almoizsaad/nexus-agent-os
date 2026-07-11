@@ -94,7 +94,10 @@ export class CoordinatorAgent extends AgentRuntime {
       if (readyTasks.length > 0) {
         this._stream.thought(`Decomposition revealed ${readyTasks.length} new tasks ready for delegation.`, 'reasoning', { planId });
         for (const task of readyTasks) {
-          await this.coordinator.delegateTask(task, plan.id);
+          // Double check status to avoid race conditions if multiple tasks completed at once
+          if (task.status === 'pending') {
+            await this.coordinator.delegateTask(task, plan.id);
+          }
         }
       } else if (this.isPlanComplete(plan)) {
         await this.finalizePlan(plan);
@@ -123,7 +126,21 @@ export class CoordinatorAgent extends AgentRuntime {
     }
   }
 
+  private replanAttempts: Map<string, number> = new Map();
+
   private async replan(plan: CooperativePlan, failedTaskId: string, error: string): Promise<void> {
+    const attempts = this.replanAttempts.get(plan.id) || 0;
+    if (attempts >= 2) {
+      console.error(`[CoordinatorAgent] Max replan attempts reached for plan ${plan.id}. Aborting.`);
+      this._eventBus.publish('agent:events', {
+        type: AgentEventType.AGENT_UPDATE,
+        payload: { missionId: plan.id, planId: plan.id, status: 'PLAN_FAILED', error: 'Max replan attempts reached' },
+        timestamp: Date.now()
+      });
+      return;
+    }
+    this.replanAttempts.set(plan.id, attempts + 1);
+
     if (!this.planner) return;
 
     console.info(`[CoordinatorAgent] Replanning for plan ${plan.id} due to failure in task ${failedTaskId}`);

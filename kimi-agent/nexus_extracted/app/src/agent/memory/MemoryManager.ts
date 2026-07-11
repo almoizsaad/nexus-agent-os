@@ -30,7 +30,7 @@ export class MemoryManager {
   private config: MemoryConfig = {
     limits: {
       working: 10,
-      session: 100,
+      session: 500,
       persistent: 1000,
     },
     expiration: {
@@ -64,10 +64,13 @@ export class MemoryManager {
     const limit = (this.config.limits as Record<string, number>)[type] || this.config.limits.persistent;
     
     if (currentCount >= limit) {
-      console.warn(`[MemoryManager] Limit reached for ${type} memory. Compressing...`);
+      console.warn(`[MemoryManager] Limit reached for ${type} memory. Pruning...`);
       const entries = await this.storage.list({ types: [type] });
-      await this.compressor.compress(entries);
-      // In a real system, we would prune the storage here.
+      // Keep only the most recent 20%
+      const toDelete = entries.slice(0, Math.floor(entries.length * 0.8));
+      for (const e of toDelete) {
+        await this.storage.delete(e.id);
+      }
     }
 
     const entry: MemoryEntry = {
