@@ -1,23 +1,18 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createAgent } from '../bootstrap/createAgent';
-import { ServiceContainer } from '../core/ServiceContainer';
-import { PerformanceMonitor } from '../improvement/PerformanceMonitor';
 import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
-import { MockLLMProvider } from '../providers/MockLLMProvider';
 import { MemoryManager } from '../memory/MemoryManager';
 
 describe('Phase 8.4 — Performance Benchmarks', () => {
-  let agent: any;
-  let monitor: PerformanceMonitor;
+  let agent: ReturnType<typeof createAgent>;
 
   beforeEach(() => {
     agent = createAgent();
-    monitor = agent.container.resolve(PerformanceMonitor);
   });
 
   it('Benchmark: System Startup (Cold)', async () => {
     const start = performance.now();
-    const newAgent = createAgent();
+    createAgent();
     const duration = performance.now() - start;
     
     console.log(`[Benchmark] Cold Startup: ${duration.toFixed(2)}ms`);

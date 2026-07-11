@@ -1,11 +1,10 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { createAgent } from '../bootstrap/createAgent';
 import { AgentFactory } from '../core/AgentFactory';
 import { ExecutiveBrain } from '../core/ExecutiveBrain';
 import { CoordinatorAgent } from '../core/CoordinatorAgent';
 import { MockLLMProvider } from '../providers/MockLLMProvider';
-import { AgentEventType } from '../types/agent';
-import { TaskPlanner } from '../planner/TaskPlanner';
+import { AgentEventType, AgentRole } from '../types/agent';
 import { AgentInbox } from '../core/AgentInbox';
 import { AgentOutbox } from '../core/AgentOutbox';
 import { MessageRouter } from '../core/MessageRouter';
@@ -15,7 +14,7 @@ import { EventBus } from '../core/EventBus';
 import { AgentRegistry } from '../core/AgentRegistry';
 
 describe('Mission Validation - End-to-End', () => {
-  let agent: any;
+  let agent: ReturnType<typeof createAgent>;
   let brain: ExecutiveBrain;
   let coordinator: CoordinatorAgent;
   let provider: MockLLMProvider;
@@ -29,7 +28,7 @@ describe('Mission Validation - End-to-End', () => {
     const messageBus = new AgentMessageBus(eventBus);
     const router = new MessageRouter(registry, messageBus);
     
-    const identity = { id: 'coordinator', name: 'Coordinator', role: 'coordinator' as any, capabilities: ['coordination'] };
+    const identity = { id: 'coordinator', name: 'Coordinator', role: 'coordinator' as AgentRole, capabilities: ['coordination'] };
     const inbox = new AgentInbox();
     const outbox = new AgentOutbox(router);
     const channel = new AgentChannel(identity.id, inbox, outbox);
@@ -40,7 +39,7 @@ describe('Mission Validation - End-to-End', () => {
     coordinator = factory.createCoordinator(identity, channel);
     
     // Register a worker agent to actually execute tasks
-    const workerIdentity = { id: 'worker', name: 'Worker', role: 'worker' as any, capabilities: ['execution'] };
+    const workerIdentity = { id: 'worker', name: 'Worker', role: 'worker' as AgentRole, capabilities: ['execution'] };
     const workerInbox = new AgentInbox();
     const workerOutbox = new AgentOutbox(router);
     const workerChannel = new AgentChannel(workerIdentity.id, workerInbox, workerOutbox);
@@ -57,7 +56,7 @@ describe('Mission Validation - End-to-End', () => {
     // Make sure worker can handle TASK_ASSIGNMENT
     workerChannel.onMessage(async (message) => {
       if (message.type === 'TASK_ASSIGNMENT') {
-        const payload = message.payload as any;
+        const payload = message.payload as { taskId: string; description: string; tool: string; metadata?: Record<string, unknown>; planId: string };
         // Map back to processGoal or similar, but simpler is just execute via runtime
         const result = await worker.executor?.executeTask({
           id: payload.taskId,
@@ -83,8 +82,8 @@ describe('Mission Validation - End-to-End', () => {
     brain = new ExecutiveBrain(agent.eventBus, coordinator);
 
     // Register tools safely
-    const registerSafe = (tool: any) => {
-      try { agent.toolRegistry.register(tool); } catch (e) {}
+    const registerSafe = (tool: { name: string; description: string; execute: (args: unknown) => Promise<unknown> }) => {
+      try { agent.toolRegistry.register(tool as any); } catch { /* ignore */ }
     };
 
     registerSafe({ 
@@ -105,7 +104,7 @@ describe('Mission Validation - End-to-End', () => {
     registerSafe({ 
       name: 'research_topic', 
       description: 'Research topic', 
-      execute: async (input: any) => ({ summary: `Summary of ${input.topic}` }) 
+      execute: async (input: { topic: string }) => ({ summary: `Summary of ${input.topic}` }) 
     });
   });
 
@@ -120,10 +119,10 @@ describe('Mission Validation - End-to-End', () => {
     // Wait for mission completion
     // We can monitor events
     let completed = false;
-    agent.eventBus.subscribe('agent:events', (event: any) => {
+    agent.eventBus.subscribe('agent:events', (event: { type: string; payload?: Record<string, unknown> }) => {
       console.log(`[TestEvent] Type: ${event.type}, Status: ${event.payload?.status}, MissionId: ${event.payload?.missionId}`);
       if (event.type === AgentEventType.AGENT_UPDATE) {
-        const payload = event.payload as any;
+        const payload = event.payload as Record<string, unknown>;
         if (payload.missionId === missionId && payload.status === 'PLAN_COMPLETED') {
           completed = true;
         }
@@ -146,26 +145,24 @@ describe('Mission Validation - End-to-End', () => {
     const mission = brain.getGoalManager().getMission(missionId);
     expect(mission?.status).toBe('completed');
   }, 15000);
+it('should execute a Research & Knowledge mission', async () => {
+  provider.setMockResponse({
+    id: 'res-1',
+    goal: 'Research AI Agents',
+    reasoning: 'Need to research the topic and then summarize findings.',
+    tasks: [
+      { id: 'T1', description: 'Research topic', tool: 'research_topic', metadata: { topic: 'AI Agents' }, dependencies: [] }
+    ]
+  });
 
-  it('should execute a Research & Knowledge mission', async () => {
-    provider.setMockResponse({
-      id: 'res-1',
-      goal: 'Research AI Agents',
-      reasoning: 'Need to research the topic and then summarize findings.',
-      tasks: [
-        { id: 'T1', description: 'Research topic', tool: 'research_topic', metadata: { topic: 'AI Agents' }, dependencies: [] }
-      ]
-    });
-
-    const startTime = Date.now();
-    const missionId = await brain.createMission('AI Research', {
+  const missionId = await brain.createMission('AI Research', {
       description: 'Research AI Agents and save to knowledge graph.',
       successCriteria: ['Topic researched']
     });
 
     let completed = false;
     agent.eventBus.subscribe('agent:events', (event) => {
-      if (event.type === AgentEventType.AGENT_UPDATE && (event.payload as any).missionId === missionId && (event.payload as any).status === 'PLAN_COMPLETED') {
+      if (event.type === AgentEventType.AGENT_UPDATE && (event.payload as Record<string, any>).missionId === missionId && (event.payload as Record<string, any>).status === 'PLAN_COMPLETED') {
         completed = true;
       }
     });
@@ -206,11 +203,10 @@ describe('Mission Validation - End-to-End', () => {
 
     // Wait for events
     let failed = false;
-    let recovering = false;
     agent.eventBus.subscribe('agent:events', (event) => {
       if (event.type === AgentEventType.AGENT_UPDATE) {
-        const payload = event.payload as any;
-        if (payload.status === 'PLAN_FAILED') failed = true;
+        const payload = event.payload as Record<string, any>;
+        if (payload.missionId === missionId && payload.status === 'PLAN_FAILED') failed = true;
       }
     });
 

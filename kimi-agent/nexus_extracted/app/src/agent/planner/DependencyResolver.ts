@@ -2,7 +2,7 @@ import type { CooperativePlan, DelegatedTask } from '../types/planning';
 
 export class DependencyResolver {
   private getTaskDependencies(task: DelegatedTask): string[] {
-    return (task as any).dependencies || (task.metadata?.dependencies as string[]) || [];
+    return task.dependencies || (task.metadata?.dependencies as string[]) || [];
   }
 
   public resolveExecutionOrder(plan: CooperativePlan): DelegatedTask[] {

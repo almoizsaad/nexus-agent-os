@@ -34,6 +34,7 @@ export interface Task {
   id: string;
   description: string;
   status: 'pending' | 'in-progress' | 'running' | 'completed' | 'failed';
+  dependencies?: string[];
   metadata?: Record<string, unknown>;
 }
 

@@ -4,7 +4,7 @@ import { AgentFactory } from '../core/AgentFactory';
 import { ExecutiveBrain } from '../core/ExecutiveBrain';
 import { CoordinatorAgent } from '../core/CoordinatorAgent';
 import { MockLLMProvider } from '../providers/MockLLMProvider';
-import { AgentEventType } from '../types/agent';
+import { AgentRole } from '../types/agent';
 import { AgentInbox } from '../core/AgentInbox';
 import { AgentOutbox } from '../core/AgentOutbox';
 import { MessageRouter } from '../core/MessageRouter';
@@ -17,7 +17,7 @@ import { UnifiedEventBus } from '../core/UnifiedEventBus';
 import { ServiceContainer } from '../core/ServiceContainer';
 
 describe('Phase 8.3 — Failure Testing', () => {
-  let agent: any;
+  let agent: ReturnType<typeof createAgent>;
   let brain: ExecutiveBrain;
   let coordinator: CoordinatorAgent;
   let provider: MockLLMProvider;
@@ -36,12 +36,12 @@ describe('Phase 8.3 — Failure Testing', () => {
     const messageBus = new AgentMessageBus(eventBus);
     const router = new MessageRouter(registry, messageBus);
     
-    const identity = { id: 'coordinator', name: 'Coordinator', role: 'coordinator' as any, capabilities: ['coordination'] };
+    const identity = { id: 'coordinator', name: 'Coordinator', role: 'coordinator' as AgentRole, capabilities: ['coordination'] };
     const channel = new AgentChannel(identity.id, new AgentInbox(), new AgentOutbox(router));
     messageBus.subscribe(identity.id, (msg) => channel.inbox.push(msg));
     coordinator = factory.createCoordinator(identity, channel);
     
-    const workerIdentity = { id: 'worker', name: 'Worker', role: 'worker' as any, capabilities: ['execution'] };
+    const workerIdentity = { id: 'worker', name: 'Worker', role: 'worker' as AgentRole, capabilities: ['execution'] };
     const workerChannel = new AgentChannel(workerIdentity.id, new AgentInbox(), new AgentOutbox(router));
     messageBus.subscribe(workerIdentity.id, (msg) => workerChannel.inbox.push(msg));
     const worker = factory.createAgent(workerIdentity, workerChannel);
@@ -51,7 +51,7 @@ describe('Phase 8.3 — Failure Testing', () => {
     
     workerChannel.onMessage(async (message) => {
       if (message.type === 'TASK_ASSIGNMENT') {
-        const payload = message.payload as any;
+        const payload = message.payload as { taskId: string; description: string; tool: string; metadata?: Record<string, unknown>; planId: string };
         const result = await worker.executor?.executeTask({
           id: payload.taskId,
           description: payload.description,
@@ -76,11 +76,11 @@ describe('Phase 8.3 — Failure Testing', () => {
 
   const waitForStatus = async (missionId: string, statuses: string[], timeout = 10000) => {
     return new Promise<string>((resolve) => {
-      const unsubscribe = eventBus.subscribe('agent:events', (event: any) => {
-        const payload = event.payload || event;
-        if (payload.missionId === missionId && statuses.includes(payload.status)) {
+      const unsubscribe = eventBus.subscribe('agent:events', (event: { payload?: Record<string, unknown> }) => {
+        const payload = (event.payload || event) as Record<string, unknown>;
+        if (payload.missionId === missionId && statuses.includes(payload.status as string)) {
           unsubscribe();
-          resolve(payload.status);
+          resolve(payload.status as string);
         }
       });
       setTimeout(() => { unsubscribe(); resolve('timeout'); }, timeout);

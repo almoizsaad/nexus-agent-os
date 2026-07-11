@@ -4,7 +4,7 @@ import { AgentFactory } from '../core/AgentFactory';
 import { ExecutiveBrain } from '../core/ExecutiveBrain';
 import { CoordinatorAgent } from '../core/CoordinatorAgent';
 import { MockLLMProvider } from '../providers/MockLLMProvider';
-import { AgentEventType } from '../types/agent';
+import { AgentRole } from '../types/agent';
 import { AgentInbox } from '../core/AgentInbox';
 import { AgentOutbox } from '../core/AgentOutbox';
 import { MessageRouter } from '../core/MessageRouter';
@@ -17,7 +17,7 @@ import { UnifiedEventBus } from '../core/UnifiedEventBus';
 import { ServiceContainer } from '../core/ServiceContainer';
 
 describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
-  let agent: any;
+  let agent: ReturnType<typeof createAgent>;
   let brain: ExecutiveBrain;
   let coordinator: CoordinatorAgent;
   let provider: MockLLMProvider;
@@ -37,7 +37,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     const messageBus = new AgentMessageBus(eventBus);
     const router = new MessageRouter(registry, messageBus);
     
-    const identity = { id: 'coordinator', name: 'Coordinator', role: 'coordinator' as any, capabilities: ['coordination'] };
+    const identity = { id: 'coordinator', name: 'Coordinator', role: 'coordinator' as AgentRole, capabilities: ['coordination'] };
     const inbox = new AgentInbox();
     const outbox = new AgentOutbox(router);
     const channel = new AgentChannel(identity.id, inbox, outbox);
@@ -45,7 +45,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     messageBus.subscribe(identity.id, (msg) => inbox.push(msg));
     coordinator = factory.createCoordinator(identity, channel);
     
-    const workerIdentity = { id: 'worker', name: 'Worker', role: 'worker' as any, capabilities: ['execution', 'coding', 'research'] };
+    const workerIdentity = { id: 'worker', name: 'Worker', role: 'worker' as AgentRole, capabilities: ['execution', 'coding', 'research'] };
     const workerInbox = new AgentInbox();
     const workerOutbox = new AgentOutbox(router);
     const workerChannel = new AgentChannel(workerIdentity.id, workerInbox, workerOutbox);
@@ -58,7 +58,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     
     workerChannel.onMessage(async (message) => {
       if (message.type === 'TASK_ASSIGNMENT') {
-        const payload = message.payload as any;
+        const payload = message.payload as { taskId: string; description: string; tool: string; metadata?: Record<string, unknown>; planId: string };
         const result = await worker.executor?.executeTask({
           id: payload.taskId,
           description: payload.description,
@@ -81,9 +81,9 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     brain = new ExecutiveBrain(agent.eventBus, coordinator);
 
     const toolRegistry = agent.container.resolve(ToolRegistry);
-    const registerSafe = (tool: any) => {
-      try { toolRegistry.register(tool); } catch (e) {
-        try { toolRegistry.unregister(tool.name); toolRegistry.register(tool); } catch (e2) {}
+    const registerSafe = (tool: { name: string; description: string; execute: (args: unknown) => Promise<unknown> }) => {
+      try { toolRegistry.register(tool as any); } catch {
+        try { toolRegistry.unregister(tool.name); toolRegistry.register(tool as any); } catch { /* ignore */ }
       }
     };
 
@@ -100,7 +100,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     registerSafe({ 
       name: 'research_topic', 
       description: 'Research topic', 
-      execute: async (input: any) => {
+      execute: async (input: { topic: string }) => {
         const summary = `Summary of ${input.topic}`;
         await coordinator.knowledgeGraph.createNode({
           type: 'entity',
@@ -113,7 +113,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     registerSafe({ 
       name: 'write_code', 
       description: 'Write code', 
-      execute: async (input: any) => ({ code: `// Code for ${input.feature}` }) 
+      execute: async (input: { feature: string }) => ({ code: `// Code for ${input.feature}` }) 
     });
     registerSafe({ 
       name: 'run_tests', 
@@ -130,9 +130,9 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     return new Promise<{ completed: boolean, failed: boolean, duration: number, missionId: string }>((resolve) => {
       const startWait = Date.now();
       
-      const unsubscribe = agent.eventBus.subscribe('agent:events', (event: any) => {
-        const payload = event.payload || event;
-        const mId = payload.missionId || payload.planId;
+      const unsubscribe = agent.eventBus.subscribe('agent:events', (event: { payload?: Record<string, unknown> }) => {
+        const payload = (event.payload || event) as Record<string, unknown>;
+        const mId = (payload.missionId || payload.planId) as string;
         
         if (!targetId || targetId === 'any' || mId === targetId) {
           if (payload.status === 'PLAN_COMPLETED' || payload.status === 'completed') {
@@ -161,7 +161,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
 
   it('Mission: Trip Planning (Multi-step Tool Execution)', async () => {
     const missionPromise = waitForMissionCompletion('any');
-    const missionId = await brain.createMission('Trip to Paris', {
+    await brain.createMission('Trip to Paris', {
       description: 'Plan a full trip to Paris including flights and hotels.',
       successCriteria: ['Flight found', 'Hotel found']
     });
@@ -180,7 +180,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     });
 
     const missionPromise = waitForMissionCompletion('any');
-    const missionId = await brain.createMission('AI Research', {
+    await brain.createMission('AI Research', {
       description: 'Research AI Agents and save to knowledge graph.',
       successCriteria: ['Topic researched']
     });
@@ -203,7 +203,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     });
 
     const missionPromise = waitForMissionCompletion('any');
-    const missionId = await brain.createMission('Coding Mission', {
+    await brain.createMission('Coding Mission', {
       description: 'Implement Auth and verify with tests.',
       successCriteria: ['Code written', 'Tests passed']
     });
@@ -236,7 +236,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     });
 
     const missionPromise = waitForMissionCompletion('any', 20000);
-    const missionId = await brain.createMission('Recovery Test', {
+    await brain.createMission('Recovery Test', {
       description: 'This mission should fail and then attempt recovery.',
       successCriteria: ['Recovered']
     });
