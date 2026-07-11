@@ -1,11 +1,16 @@
 import { EventBus } from '../../agent/core/EventBus';
+import { globalUnifiedBus } from '../../agent/core/UnifiedEventBus';
 import type { WorkspaceEvent } from './types';
 
 /**
  * WorkspaceEventBus specializes the generic EventBus for UI-Agent interactions.
  */
 export class WorkspaceEventBus extends EventBus<WorkspaceEvent> {
-  public static TOPIC = 'workspace:events';
+  public static TOPIC = 'workspace.events';
+
+  constructor() {
+    super(globalUnifiedBus);
+  }
 
   public emit(event: WorkspaceEvent): void {
     console.log(`[WorkspaceEventBus] Emitting: ${event.type} from ${event.source}`);
