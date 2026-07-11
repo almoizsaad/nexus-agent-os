@@ -2,6 +2,7 @@ import { AgentRuntime } from './AgentRuntime';
 import { PlannerCoordinator } from '../planner/PlannerCoordinator';
 import { PlannerConsensus } from '../planner/PlannerConsensus';
 import { AgentRegistry } from './AgentRegistry';
+import type { Mission } from '../types/mission';
 import type { CooperativePlan } from '../types/planning';
 import type { AgentCommunicationMessage } from '../types/communication';
 import { EventBus } from './EventBus';
@@ -139,6 +140,17 @@ export class CoordinatorAgent extends AgentRuntime {
     } catch (e) {
       console.error(`[CoordinatorAgent] Replanning failed:`, e);
       this._eventBus.publish('agent:events', {
+        type: AgentEventType.AGENT_UPDATE,
+        payload: { 
+          missionId: plan.id,
+          planId: plan.id, 
+          status: 'PLAN_FAILED',
+          error: 'Replanning failed'
+        },
+        timestamp: Date.now()
+      });
+      
+      this._eventBus.publish('agent:events', {
         type: AgentEventType.ERROR,
         payload: { 
           message: 'Replanning failed', 
@@ -155,12 +167,55 @@ export class CoordinatorAgent extends AgentRuntime {
     return plan.tasks.every(t => t.status === 'completed');
   }
 
+  public async startMission(mission: Mission): Promise<void> {
+    this._stream.thought(`Starting coordination for mission: ${mission.title}`, 'plan', { missionId: mission.id });
+    
+    if (!this.planner) {
+      throw new Error('Planner not initialized on CoordinatorAgent');
+    }
+
+    const goal = `${mission.goal.description}. Success criteria: ${mission.goal.successCriteria.join(', ')}`;
+    const plan = await this.planner.generatePlan(goal, this.getState()) as CooperativePlan;
+    
+    plan.id = mission.id; // Using missionId as planId for simplicity
+    plan.coordinatorId = this.identity?.id || 'unknown';
+    
+    // Track missionId in metadata of tasks
+    plan.tasks.forEach(t => {
+      t.metadata = { ...t.metadata, missionId: mission.id };
+    });
+
+    await this.startCooperativePlan(plan);
+  }
+
+  public async pauseMission(missionId: string): Promise<void> {
+    const plan = this.activePlans.get(missionId);
+    if (plan) {
+      this._stream.thought(`Pausing mission: ${missionId}`, 'system');
+      // In a real implementation, we would stop active tasks in workflow engine
+      this._eventBus.publish('agent:events', {
+        type: AgentEventType.AGENT_UPDATE,
+        payload: { missionId, status: 'PLAN_PAUSED' },
+        timestamp: Date.now()
+      });
+    }
+  }
+
+  public async resumeMission(missionId: string): Promise<void> {
+    const plan = this.activePlans.get(missionId);
+    if (plan) {
+      this._stream.thought(`Resuming mission: ${missionId}`, 'system');
+      // Re-trigger coordination
+      await this.coordinator.coordinatePlan(plan);
+    }
+  }
+
   private async finalizePlan(plan: CooperativePlan): Promise<void> {
     console.info(`[CoordinatorAgent] Plan ${plan.id} completed successfully.`);
     const results = plan.tasks.map(t => ({ taskId: t.id, result: t.metadata?.result }));
     this._eventBus.publish('agent:events', {
       type: AgentEventType.AGENT_UPDATE,
-      payload: { planId: plan.id, results, status: 'PLAN_COMPLETED' },
+      payload: { missionId: plan.id, planId: plan.id, results, status: 'PLAN_COMPLETED' },
       timestamp: Date.now()
     });
     this.activePlans.delete(plan.id);
