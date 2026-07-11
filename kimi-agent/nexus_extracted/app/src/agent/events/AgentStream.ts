@@ -28,6 +28,10 @@ export class AgentStream {
     this.emitStatus('idle', message, 100);
   }
 
+  public reflecting(workflowId: string): void {
+    this.emitStatus('thinking', `Reflecting on workflow: ${workflowId}`);
+  }
+
   public error(message: string, fatal: boolean = false): void {
     this.eventBus.publish('agent:events', {
       type: AgentEventType.ERROR,

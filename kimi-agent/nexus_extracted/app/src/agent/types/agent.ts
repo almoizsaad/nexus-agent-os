@@ -5,6 +5,7 @@ export const AgentEventType = {
   AGENT_UPDATE: 'AGENT_UPDATE',
   ERROR: 'ERROR',
   AGENT_LIFECYCLE: 'AGENT_LIFECYCLE',
+  REFLECTION: 'REFLECTION',
 } as const;
 
 export type AgentEventType = typeof AgentEventType[keyof typeof AgentEventType];
@@ -220,13 +221,29 @@ export interface AgentLifecycleEvent extends AgentEvent {
   };
 }
 
+export interface AgentReflectionEvent extends AgentEvent {
+  type: typeof AgentEventType.REFLECTION;
+  payload: {
+    workflowId: string;
+    reflection: {
+      success: boolean;
+      confidenceScore: number;
+      lessonsLearned: string[];
+      mistakes: string[];
+      improvements: string[];
+    };
+    metadata?: Record<string, unknown>;
+  };
+}
+
 export type AgentProtocolEvent = 
   | UserMessageEvent 
   | WorkspaceActionEvent 
   | ToolResultEvent 
   | AgentUpdateEvent
   | ErrorEvent
-  | AgentLifecycleEvent;
+  | AgentLifecycleEvent
+  | AgentReflectionEvent;
 
 // --- Extension Points ---
 

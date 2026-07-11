@@ -1,5 +1,15 @@
 import { AgentEventType, AgentActionType } from '../types/agent';
-import type { AgentState, AgentEvent, AgentStatus, Planner, Executor, Plan, Task, AgentIdentity } from '../types/agent';
+import type { 
+  AgentState, 
+  AgentEvent, 
+  AgentStatus, 
+  Planner, 
+  Executor, 
+  Plan, 
+  Task, 
+  AgentIdentity,
+  AgentReflectionEvent
+} from '../types/agent';
 import type { AgentProtocolEvent } from '../protocol/events';
 import type { AgentProtocolAction } from '../protocol/actions';
 import { EventBus } from './EventBus';
@@ -9,12 +19,19 @@ import { SelfCorrection } from './SelfCorrection';
 import { AgentStream } from '../events/AgentStream';
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
 import { AgentChannel } from './AgentChannel';
+import { ReflectionEngine } from '../reflection/ReflectionEngine';
+import { ExecutionAnalyzer } from '../reflection/ExecutionAnalyzer';
 import type { 
   IPerformanceMonitor, 
   IImprovementEngine, 
   SystemMetrics,
   OptimizationRecommendation
 } from '../types/improvement';
+import type { 
+  ISelfReflectionEngine, 
+  IExecutionAnalyzer,
+  ExecutionEvent
+} from '../types/reflection';
 
 export class AgentRuntime {
   protected _state: AgentState;
@@ -30,6 +47,8 @@ export class AgentRuntime {
   protected _monitor?: IPerformanceMonitor;
   protected _improvementEngine?: IImprovementEngine;
   protected _suggestions?: OptimizationSuggestions;
+  protected _reflectionEngine: ISelfReflectionEngine;
+  protected _executionAnalyzer: IExecutionAnalyzer;
   protected _identity?: AgentIdentity;
   protected _channel?: AgentChannel;
 
@@ -64,6 +83,9 @@ export class AgentRuntime {
     this._memory = new MemoryManager(monitor);
     this._selfCorrection = new SelfCorrection(this);
     
+    this._reflectionEngine = new ReflectionEngine();
+    this._executionAnalyzer = new ExecutionAnalyzer();
+
     if (this._executor) {
       this._workflowEngine = new WorkflowEngine(this._executor, monitor);
     }
@@ -207,7 +229,7 @@ export class AgentRuntime {
         }
       });
 
-      // Self-Improvement: Generate recommendations after each workflow attempt
+      // Self-Improvement: Baseline recommendations
       this.runSelfImprovement();
 
       if (success) {
@@ -218,6 +240,11 @@ export class AgentRuntime {
         await this._memory.consolidateSession(plan.id);
         
         this._stream.completing('Goal accomplished successfully.');
+
+        // Phase 6.1: Asynchronous Reflection (includes ImprovementEngine)
+        this.runReflection(plan.id).catch(err => {
+          console.error('[AgentRuntime] Reflection failed:', err);
+        });
       }
 
     } catch (error) {
@@ -251,6 +278,69 @@ export class AgentRuntime {
       if (recommendations.length > 0) {
         console.log(`[AgentRuntime] Generated ${recommendations.length} optimization suggestions.`);
       }
+    }
+  }
+
+  private async runReflection(workflowId: string): Promise<void> {
+    try {
+      this._stream.reflecting(workflowId);
+
+      // 1. Map history to ExecutionEvents
+      const events: ExecutionEvent[] = this._state.history
+        .filter(e => e.payload.workflowId === workflowId || (e.payload.metadata as Record<string, unknown>)?.workflowId === workflowId)
+        .map(e => ({
+          type: e.type,
+          workflowId: (e.payload.workflowId as string) || (e.payload.metadata as Record<string, unknown>)?.workflowId as string,
+          taskId: e.payload.taskId as string,
+          status: e.payload.status as string,
+          timestamp: e.timestamp,
+          result: e.payload.result
+        }));
+
+      // 2. Analyze execution
+      const analysis = await this._executionAnalyzer.analyze(workflowId, events);
+
+      // 3. Reflect on analysis
+      const reflection = await this._reflectionEngine.reflect(analysis);
+
+      // 4. Store in memory (Persistent/Semantic)
+      await this._memory.consolidateWithReflection(workflowId, reflection);
+      
+      // 4b. Store in session memory (Episodic)
+      await this._memory.addSessionEvent({
+        type: AgentEventType.REFLECTION,
+        workflowId,
+        reflection,
+        timestamp: Date.now()
+      });
+
+      // 5. Emit reflection event
+      const reflectionEvent: AgentReflectionEvent = {
+        type: AgentEventType.REFLECTION,
+        payload: {
+          workflowId,
+          reflection: {
+            success: reflection.success,
+            confidenceScore: reflection.confidenceScore,
+            lessonsLearned: reflection.lessonsLearned,
+            mistakes: reflection.mistakes,
+            improvements: reflection.improvements
+          },
+          metadata: reflection.metadata
+        },
+        timestamp: Date.now()
+      };
+
+      this._eventBus.publish('agent:events', reflectionEvent);
+      
+      // 6. Invoke ImprovementEngine again after reflection
+      this.runSelfImprovement();
+
+      console.log(`[AgentRuntime] Reflection completed for workflow: ${workflowId}`);
+
+    } catch (error) {
+      console.error(`[AgentRuntime] Error during reflection for ${workflowId}:`, error);
+      // Reflection failures should not crash the runtime
     }
   }
 
