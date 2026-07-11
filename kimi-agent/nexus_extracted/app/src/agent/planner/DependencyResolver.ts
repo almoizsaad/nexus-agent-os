@@ -1,6 +1,10 @@
 import type { CooperativePlan, DelegatedTask } from '../types/planning';
 
 export class DependencyResolver {
+  private getTaskDependencies(task: DelegatedTask): string[] {
+    return (task as any).dependencies || (task.metadata?.dependencies as string[]) || [];
+  }
+
   public resolveExecutionOrder(plan: CooperativePlan): DelegatedTask[] {
     const visited = new Set<string>();
     const ordered: DelegatedTask[] = [];
@@ -12,7 +16,7 @@ export class DependencyResolver {
       const task = taskMap.get(taskId);
       if (!task) return;
 
-      const dependencies = (task.metadata?.dependencies as string[]) || [];
+      const dependencies = this.getTaskDependencies(task);
       dependencies.forEach(depId => visit(depId));
 
       visited.add(taskId);
@@ -27,7 +31,7 @@ export class DependencyResolver {
     return plan.tasks.filter(task => {
       if (completedTaskIds.has(task.id)) return false;
       
-      const dependencies = (task.metadata?.dependencies as string[]) || [];
+      const dependencies = this.getTaskDependencies(task);
       return dependencies.some(depId => !completedTaskIds.has(depId));
     });
   }
@@ -36,7 +40,7 @@ export class DependencyResolver {
     return plan.tasks.filter(task => {
       if (completedTaskIds.has(task.id) || runningTaskIds.has(task.id)) return false;
       
-      const dependencies = (task.metadata?.dependencies as string[]) || [];
+      const dependencies = this.getTaskDependencies(task);
       return dependencies.every(depId => completedTaskIds.has(depId));
     });
   }

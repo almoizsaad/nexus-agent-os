@@ -40,7 +40,9 @@ export class PlannerCoordinator {
         .map(t => t.id)
     );
     
-    return this.dependencyResolver.getReadyTasks(plan, completedTaskIds, runningTaskIds);
+    const ready = this.dependencyResolver.getReadyTasks(plan, completedTaskIds, runningTaskIds);
+    console.log(`[PlannerCoordinator] Ready tasks for plan ${plan.id}: ${ready.map(t => t.id).join(', ')} (Completed: ${Array.from(completedTaskIds).join(', ')}, Running: ${Array.from(runningTaskIds).join(', ')})`);
+    return ready;
   }
 
   public async delegateTask(task: DelegatedTask, planId: string): Promise<void> {
