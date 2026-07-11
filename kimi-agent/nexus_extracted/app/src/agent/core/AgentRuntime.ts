@@ -67,6 +67,7 @@ export class AgentRuntime {
   public get identity(): AgentIdentity | undefined { return this._identity; }
   public get channel(): AgentChannel | undefined { return this._channel; }
   public get knowledgeGraph(): KnowledgeGraph { return this._knowledgeGraph; }
+  public get memory(): MemoryManager { return this._memory; }
 
   constructor(
     eventBus: EventBus, 

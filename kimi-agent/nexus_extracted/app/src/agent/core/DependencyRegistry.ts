@@ -17,6 +17,8 @@ import type { AgentIdentity } from '../types/agent';
 import { AgentChannel } from './AgentChannel';
 import { AgentStream } from '../events/AgentStream';
 
+import { MemoryManager } from '../memory/MemoryManager';
+
 export class DependencyRegistry {
   public static registerCoreServices(container: ServiceContainer): void {
     // Singletons - only if not already registered
@@ -24,6 +26,7 @@ export class DependencyRegistry {
     if (!container.has(AgentStream)) container.registerSingleton(AgentStream, (c) => new AgentStream(c.resolve(EventBus)));
     if (!container.has(ToolRegistry)) container.registerSingleton(ToolRegistry, new ToolRegistry());
     if (!container.has(PerformanceMonitor)) container.registerSingleton(PerformanceMonitor, new PerformanceMonitor());
+    if (!container.has(MemoryManager)) container.registerSingleton(MemoryManager, (c) => new MemoryManager(c.resolve(PerformanceMonitor)));
     if (!container.has(ImprovementEngine)) container.registerSingleton(ImprovementEngine, new ImprovementEngine());
     if (!container.has(OptimizationSuggestions)) container.registerSingleton(OptimizationSuggestions, new OptimizationSuggestions());
     if (!container.has(KnowledgeGraph)) container.registerSingleton(KnowledgeGraph, new KnowledgeGraph());
