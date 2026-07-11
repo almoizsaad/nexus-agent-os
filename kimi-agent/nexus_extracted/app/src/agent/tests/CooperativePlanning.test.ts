@@ -107,6 +107,7 @@ describe('Cooperative Planning', () => {
 
     // Mock delegateTask to avoid side-effect failures
     // @ts-expect-error - Accessing private member for testing
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const delegateSpy = vi.spyOn(coordinator.coordinator, 'delegateTask').mockImplementation(async (task: any) => {
       task.status = 'pending'; // Keep as pending for the retry test expectation
       return;
@@ -123,6 +124,7 @@ describe('Cooperative Planning', () => {
     };
     
     // Trigger message handler directly for test
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await (coordinator as any).handleTaskResult(failMessage, false);
     
     expect(plan.tasks[0].metadata?.retries).toBe(1);

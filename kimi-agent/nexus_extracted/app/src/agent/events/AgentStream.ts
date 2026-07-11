@@ -27,7 +27,7 @@ export class AgentStream {
       type: AgentEventType.THOUGHT_GENERATED,
       payload: { thought },
       timestamp: Date.now()
-    } as any);
+    } as unknown as AgentEventType);
 
     // Also emit as a status update for UI visibility
     this.emitStatus('thinking', content, undefined, { thoughtId: thought.id, type });

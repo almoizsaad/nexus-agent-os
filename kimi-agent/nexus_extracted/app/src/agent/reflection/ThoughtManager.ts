@@ -19,9 +19,10 @@ export class ThoughtManager {
 
   private setupListeners(): void {
     // Listen for thought generation events
-    this.eventBus.subscribe('agent:thoughts', (event: any) => {
-      if (event.type === 'THOUGHT_GENERATED') {
-        const { thought } = event.payload;
+    this.eventBus.subscribe('agent:thoughts', (event: unknown) => {
+      const e = event as { type: string; payload: { thought: Thought } };
+      if (e.type === 'THOUGHT_GENERATED') {
+        const { thought } = e.payload;
         this.handleThought(thought);
       }
     });

@@ -1,12 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { Info, AlertCircle, Pencil } from 'lucide-react';
 
-export const springTransition = {
-  type: 'spring' as const,
-  stiffness: 300,
-  damping: 30,
-};
-
 export function CardSkeleton() {
   return (
     <div className="nexus-card p-4 space-y-3 animate-pulse">

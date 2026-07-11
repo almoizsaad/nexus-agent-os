@@ -1,5 +1,6 @@
 "use client"
 
+/* eslint-disable react-refresh/only-export-components */
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -610,7 +611,10 @@ function SidebarMenuSkeleton({
   const [width, setWidth] = React.useState("70%");
   
   React.useEffect(() => {
-    setWidth(`${Math.floor(Math.random() * 40) + 50}%`);
+    const timeoutId = setTimeout(() => {
+      setWidth(`${Math.floor(Math.random() * 40) + 50}%`);
+    }, 0);
+    return () => clearTimeout(timeoutId);
   }, []);
 
   return (

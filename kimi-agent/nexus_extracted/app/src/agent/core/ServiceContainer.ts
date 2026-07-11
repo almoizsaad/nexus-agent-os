@@ -2,10 +2,8 @@ import type { IServiceContainer, ServiceIdentifier, ServiceDescriptor } from '..
 
 export class ServiceContainer implements IServiceContainer {
   private descriptors: Map<ServiceIdentifier, ServiceDescriptor> = new Map();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private singletonInstances: Map<ServiceIdentifier, any> = new Map();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private scopedInstances: Map<ServiceIdentifier, any> = new Map();
+  private singletonInstances: Map<ServiceIdentifier, unknown> = new Map();
+  private scopedInstances: Map<ServiceIdentifier, unknown> = new Map();
   private parent?: IServiceContainer;
 
   constructor(parent?: IServiceContainer) {
@@ -20,14 +18,13 @@ export class ServiceContainer implements IServiceContainer {
     this.descriptors.set(descriptor.identifier, descriptor);
   }
 
-  public registerSingleton<T>(identifier: ServiceIdentifier<T>, value: T | { new (...args: any[]): T } | ((c: IServiceContainer) => T)): void {
+  public registerSingleton<T>(identifier: ServiceIdentifier<T>, value: T | { new (...args: unknown[]): T } | ((c: IServiceContainer) => T)): void {
     const descriptor: ServiceDescriptor<T> = {
       identifier,
       lifetime: 'singleton'
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (typeof value === 'function' && (value as any).prototype?.constructor === value) {
+    if (typeof value === 'function' && 'prototype' in value && (value as { prototype: { constructor: unknown } }).prototype?.constructor === value) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       descriptor.implementation = value as { new (...args: any[]): T };
     } else if (typeof value === 'function') {
@@ -39,14 +36,13 @@ export class ServiceContainer implements IServiceContainer {
     this.register(descriptor);
   }
 
-  public registerTransient<T>(identifier: ServiceIdentifier<T>, value: { new (...args: any[]): T } | ((c: IServiceContainer) => T)): void {
+  public registerTransient<T>(identifier: ServiceIdentifier<T>, value: { new (...args: unknown[]): T } | ((c: IServiceContainer) => T)): void {
     const descriptor: ServiceDescriptor<T> = {
       identifier,
       lifetime: 'transient'
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (typeof value === 'function' && (value as any).prototype?.constructor === value) {
+    if (typeof value === 'function' && 'prototype' in value && (value as { prototype: { constructor: unknown } }).prototype?.constructor === value) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       descriptor.implementation = value as { new (...args: any[]): T };
     } else {
@@ -56,14 +52,13 @@ export class ServiceContainer implements IServiceContainer {
     this.register(descriptor);
   }
 
-  public registerScoped<T>(identifier: ServiceIdentifier<T>, value: { new (...args: any[]): T } | ((c: IServiceContainer) => T)): void {
+  public registerScoped<T>(identifier: ServiceIdentifier<T>, value: { new (...args: unknown[]): T } | ((c: IServiceContainer) => T)): void {
     const descriptor: ServiceDescriptor<T> = {
       identifier,
       lifetime: 'scoped'
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (typeof value === 'function' && (value as any).prototype?.constructor === value) {
+    if (typeof value === 'function' && 'prototype' in value && (value as { prototype: { constructor: unknown } }).prototype?.constructor === value) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       descriptor.implementation = value as { new (...args: any[]): T };
     } else {
@@ -91,14 +86,14 @@ export class ServiceContainer implements IServiceContainer {
         }
         this.singletonInstances.set(identifier, this.createInstance(descriptor));
       }
-      return this.singletonInstances.get(identifier);
+      return this.singletonInstances.get(identifier) as T;
     }
 
     if (descriptor.lifetime === 'scoped') {
       if (!this.scopedInstances.has(identifier)) {
         this.scopedInstances.set(identifier, this.createInstance(descriptor));
       }
-      return this.scopedInstances.get(identifier);
+      return this.scopedInstances.get(identifier) as T;
     }
 
     // Transient
