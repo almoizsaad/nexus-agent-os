@@ -29,6 +29,51 @@ export interface VectorSearchResult {
   entry: KnowledgeEntry;
 }
 
+export type NodeType = 'entity' | 'concept' | 'document' | 'tool' | 'agent' | 'plan';
+export type RelationType = 'supports' | 'contradicts' | 'depends_on' | 'causes' | 'improves' | 'references';
+
+export interface GraphNode {
+  id: string;
+  type: NodeType;
+  label: string;
+  properties: Record<string, unknown>;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface GraphEdge {
+  id: string;
+  sourceId: string;
+  targetId: string;
+  type: RelationType;
+  weight: number; // 0-1
+  properties: Record<string, unknown>;
+  createdAt: number;
+}
+
+export interface IKnowledgeGraph {
+  createNode(node: Omit<GraphNode, 'id' | 'createdAt' | 'updatedAt'>): Promise<GraphNode>;
+  getNode(id: string): Promise<GraphNode | null>;
+  updateNode(id: string, properties: Partial<GraphNode>): Promise<GraphNode>;
+  deleteNode(id: string): Promise<void>;
+  
+  createRelation(
+    sourceId: string, 
+    targetId: string, 
+    type: RelationType, 
+    weight?: number, 
+    properties?: Record<string, unknown>
+  ): Promise<GraphEdge>;
+  getRelation(id: string): Promise<GraphEdge | null>;
+  deleteRelation(id: string): Promise<void>;
+
+  findRelated(nodeId: string, options?: { type?: RelationType; depth?: number; limit?: number }): Promise<Array<{ node: GraphNode; edge: GraphEdge }>>;
+  shortestPath(startNodeId: string, endNodeId: string): Promise<GraphNode[]>;
+  importanceScore(nodeId: string): Promise<number>;
+  
+  searchNodes(query: string, type?: NodeType): Promise<GraphNode[]>;
+}
+
 export interface SearchOptions {
   limit?: number;
   threshold?: number;

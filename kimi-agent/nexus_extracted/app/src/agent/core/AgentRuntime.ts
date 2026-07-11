@@ -21,6 +21,7 @@ import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions'
 import { AgentChannel } from './AgentChannel';
 import { ReflectionEngine } from '../reflection/ReflectionEngine';
 import { ExecutionAnalyzer } from '../reflection/ExecutionAnalyzer';
+import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
 import type { 
   IPerformanceMonitor, 
   IImprovementEngine, 
@@ -43,6 +44,7 @@ export class AgentRuntime {
   protected _memory: MemoryManager;
   protected _workflowEngine: WorkflowEngine | null = null;
   protected _selfCorrection: SelfCorrection;
+  protected _knowledgeGraph: KnowledgeGraph;
   
   protected _monitor?: IPerformanceMonitor;
   protected _improvementEngine?: IImprovementEngine;
@@ -59,6 +61,7 @@ export class AgentRuntime {
   public get suggestions(): OptimizationSuggestions | undefined { return this._suggestions; }
   public get identity(): AgentIdentity | undefined { return this._identity; }
   public get channel(): AgentChannel | undefined { return this._channel; }
+  public get knowledgeGraph(): KnowledgeGraph { return this._knowledgeGraph; }
 
   constructor(
     eventBus: EventBus, 
@@ -68,7 +71,8 @@ export class AgentRuntime {
     improvementEngine?: IImprovementEngine,
     suggestions?: OptimizationSuggestions,
     identity?: AgentIdentity,
-    channel?: AgentChannel
+    channel?: AgentChannel,
+    knowledgeGraph?: KnowledgeGraph
   ) {
     this._eventBus = eventBus;
     this._stream = new AgentStream(eventBus);
@@ -80,10 +84,11 @@ export class AgentRuntime {
     this._identity = identity;
     this._channel = channel;
 
+    this._knowledgeGraph = knowledgeGraph || new KnowledgeGraph();
     this._memory = new MemoryManager(monitor);
     this._selfCorrection = new SelfCorrection(this);
     
-    this._reflectionEngine = new ReflectionEngine();
+    this._reflectionEngine = new ReflectionEngine(this._knowledgeGraph);
     this._executionAnalyzer = new ExecutionAnalyzer();
 
     if (this._executor) {

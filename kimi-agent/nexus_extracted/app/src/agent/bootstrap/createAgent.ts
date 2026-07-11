@@ -11,6 +11,7 @@ import { ImprovementEngine } from '../improvement/ImprovementEngine';
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
 import { AgentManager } from '../core/AgentManager';
 import { AgentChannel } from '../core/AgentChannel';
+import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
 import type { AgentIdentity } from '../types/agent';
 
 /**
@@ -22,20 +23,21 @@ export function createAgent() {
   const monitor = new PerformanceMonitor();
   const improvementEngine = new ImprovementEngine();
   const suggestions = new OptimizationSuggestions();
+  const knowledgeGraph = new KnowledgeGraph();
   
   // Register default tools
   toolRegistry.register(new MockWeatherTool());
   
   const provider = new MockLLMProvider();
   const fallbackPlanner = new TaskPlanner();
-  const planner = new LLMPlanner(provider, toolRegistry, fallbackPlanner, monitor);
+  const planner = new LLMPlanner(provider, toolRegistry, fallbackPlanner, monitor, knowledgeGraph);
   
   const executor = new TaskExecutor(toolRegistry, monitor);
   
-  const runtime = new AgentRuntime(eventBus, planner, executor, monitor, improvementEngine, suggestions);
+  const runtime = new AgentRuntime(eventBus, planner, executor, monitor, improvementEngine, suggestions, undefined, undefined, knowledgeGraph);
 
   const manager = new AgentManager(eventBus, (identity: AgentIdentity, channel: AgentChannel) => {
-    return new AgentRuntime(eventBus, planner, executor, monitor, improvementEngine, suggestions, identity, channel);
+    return new AgentRuntime(eventBus, planner, executor, monitor, improvementEngine, suggestions, identity, channel, knowledgeGraph);
   });
 
   return {
@@ -48,7 +50,8 @@ export function createAgent() {
     provider,
     monitor,
     improvementEngine,
-    suggestions
+    suggestions,
+    knowledgeGraph
   };
 }
 

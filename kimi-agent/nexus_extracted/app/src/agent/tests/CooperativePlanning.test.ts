@@ -106,8 +106,9 @@ describe('Cooperative Planning', () => {
     };
 
     // Mock delegateTask to avoid side-effect failures
-    const delegateSpy = vi.spyOn((coordinator as unknown as { coordinator: { delegateTask: unknown } }).coordinator, 'delegateTask').mockImplementation(async (task: unknown) => {
-      (task as { status: string }).status = 'pending'; // Keep as pending for the retry test expectation
+    // @ts-expect-error - Accessing private member for testing
+    const delegateSpy = vi.spyOn(coordinator.coordinator, 'delegateTask').mockImplementation(async (task: any) => {
+      task.status = 'pending'; // Keep as pending for the retry test expectation
       return;
     });
     

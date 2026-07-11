@@ -4,6 +4,8 @@ import { PlanSchema } from './schemas';
 import type { StructuredPlan } from './schemas';
 import { ToolRegistry } from '../tools/ToolRegistry';
 import { StructuredPlanner } from './StructuredPlanner';
+import type { IKnowledgeGraph } from '../types/knowledge';
+import { KnowledgeLinker } from '../knowledge/KnowledgeLinker';
 
 /**
  * PlannerEngine coordinates the LLM-based planning process.
@@ -12,11 +14,17 @@ export class PlannerEngine implements Planner {
   private provider: LLMProvider;
   private toolRegistry: ToolRegistry;
   private structuredPlanner: StructuredPlanner;
+  private graph?: IKnowledgeGraph;
+  private linker?: KnowledgeLinker;
 
-  constructor(provider: LLMProvider, toolRegistry: ToolRegistry) {
+  constructor(provider: LLMProvider, toolRegistry: ToolRegistry, graph?: IKnowledgeGraph) {
     this.provider = provider;
     this.toolRegistry = toolRegistry;
     this.structuredPlanner = new StructuredPlanner();
+    this.graph = graph;
+    if (graph) {
+      this.linker = new KnowledgeLinker(graph);
+    }
   }
 
   public async generatePlan(goal: string, state: AgentState): Promise<Plan> {
@@ -31,7 +39,7 @@ export class PlannerEngine implements Planner {
 
       const refinedPlan = this.structuredPlanner.refinePlan(structuredPlan);
 
-      return {
+      const plan: Plan = {
         ...refinedPlan,
         createdAt: refinedPlan.createdAt || Date.now(),
         tasks: refinedPlan.tasks.map((t) => ({
@@ -39,9 +47,40 @@ export class PlannerEngine implements Planner {
           status: 'pending' as const
         }))
       };
+
+      if (this.graph && this.linker) {
+        await this.recordPlanInGraph(plan);
+      }
+
+      return plan;
     } catch (error) {
       console.error('[PlannerEngine] Failed to generate plan:', error);
       throw error;
+    }
+  }
+
+  private async recordPlanInGraph(plan: Plan): Promise<void> {
+    if (!this.graph || !this.linker) return;
+
+    // Create plan node
+    const planNode = await this.graph.createNode({
+      type: 'plan',
+      label: `Plan: ${plan.goal}`,
+      properties: { 
+        planId: plan.id,
+        goal: plan.goal,
+        createdAt: plan.createdAt
+      }
+    });
+
+    // Create task nodes and link them
+    for (const task of plan.tasks) {
+      const taskNode = await this.graph.createNode({
+        type: 'plan',
+        label: `Task: ${task.description}`,
+        properties: { taskId: task.id, description: task.description }
+      });
+      await this.linker.linkNodes(planNode.id, taskNode.id, 'depends_on', 1.0);
     }
   }
 }

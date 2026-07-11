@@ -6,6 +6,8 @@ import type { StructuredPlan } from './schemas';
 import { PlannerParser } from './PlannerParser';
 import { PlanValidator } from './PlanValidator';
 import type { IPerformanceMonitor } from '../types/improvement';
+import type { IKnowledgeGraph } from '../types/knowledge';
+import { KnowledgeLinker } from '../knowledge/KnowledgeLinker';
 
 /**
  * LLMPlanner uses a Large Language Model to generate autonomous plans.
@@ -18,12 +20,15 @@ export class LLMPlanner implements Planner {
   private validator: PlanValidator;
   private fallbackPlanner?: Planner;
   private monitor?: IPerformanceMonitor;
+  private graph?: IKnowledgeGraph;
+  private linker?: KnowledgeLinker;
 
   constructor(
     provider: LLMProvider, 
     toolRegistry: ToolRegistry,
     fallbackPlanner?: Planner,
-    monitor?: IPerformanceMonitor
+    monitor?: IPerformanceMonitor,
+    graph?: IKnowledgeGraph
   ) {
     this.provider = provider;
     this.toolRegistry = toolRegistry;
@@ -31,6 +36,10 @@ export class LLMPlanner implements Planner {
     this.validator = new PlanValidator(toolRegistry);
     this.fallbackPlanner = fallbackPlanner;
     this.monitor = monitor;
+    this.graph = graph;
+    if (graph) {
+      this.linker = new KnowledgeLinker(graph);
+    }
   }
 
   /**
@@ -65,7 +74,7 @@ export class LLMPlanner implements Planner {
       this.monitor?.trackPlanner(confidence, structuredPlan.tasks.length);
 
       // 4. Return as standard Plan
-      return {
+      const plan: Plan = {
         id: structuredPlan.id || crypto.randomUUID(),
         goal: structuredPlan.goal || goal,
         reasoning: structuredPlan.reasoning,
@@ -77,6 +86,12 @@ export class LLMPlanner implements Planner {
         createdAt: Date.now()
       };
 
+      if (this.graph && this.linker) {
+        await this.recordPlanInGraph(plan);
+      }
+
+      return plan;
+
     } catch (error) {
       console.error('[LLMPlanner] LLM Planning failed:', error);
       
@@ -86,6 +101,31 @@ export class LLMPlanner implements Planner {
       }
       
       throw error;
+    }
+  }
+
+  private async recordPlanInGraph(plan: Plan): Promise<void> {
+    if (!this.graph || !this.linker) return;
+
+    // Create plan node
+    const planNode = await this.graph.createNode({
+      type: 'plan',
+      label: `Plan: ${plan.goal}`,
+      properties: { 
+        planId: plan.id,
+        goal: plan.goal,
+        createdAt: plan.createdAt
+      }
+    });
+
+    // Create task nodes and link them
+    for (const task of plan.tasks) {
+      const taskNode = await this.graph.createNode({
+        type: 'plan',
+        label: `Task: ${task.description}`,
+        properties: { taskId: task.id, description: task.description }
+      });
+      await this.linker.linkNodes(planNode.id, taskNode.id, 'depends_on', 1.0);
     }
   }
 

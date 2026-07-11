@@ -1,6 +1,18 @@
 import type { ISelfReflectionEngine, ReflectionResult, ExecutionAnalysis } from '../types/reflection';
+import type { IKnowledgeGraph } from '../types/knowledge';
+import { KnowledgeLinker } from '../knowledge/KnowledgeLinker';
 
 export class ReflectionEngine implements ISelfReflectionEngine {
+  private graph?: IKnowledgeGraph;
+  private linker?: KnowledgeLinker;
+
+  constructor(graph?: IKnowledgeGraph) {
+    this.graph = graph;
+    if (graph) {
+      this.linker = new KnowledgeLinker(graph);
+    }
+  }
+
   public async reflect(analysis: ExecutionAnalysis): Promise<ReflectionResult> {
     const success = analysis.failedTasks === 0;
     const confidenceScore = this.calculateConfidence(analysis);
@@ -25,7 +37,7 @@ export class ReflectionEngine implements ISelfReflectionEngine {
       improvements.push('Workflow duration exceeded 10s. Consider parallelizing more tasks or optimizing tool performance.');
     }
 
-    return {
+    const result: ReflectionResult = {
       workflowId: analysis.workflowId,
       timestamp: Date.now(),
       success,
@@ -39,6 +51,48 @@ export class ReflectionEngine implements ISelfReflectionEngine {
         retries: analysis.retries
       }
     };
+
+    if (this.graph && this.linker) {
+      await this.recordReflectionInGraph(result);
+    }
+
+    return result;
+  }
+
+  private async recordReflectionInGraph(reflection: ReflectionResult): Promise<void> {
+    if (!this.graph || !this.linker) return;
+
+    // Create reflection node
+    const reflectionNode = await this.graph.createNode({
+      type: 'concept',
+      label: `Reflection: ${reflection.workflowId}`,
+      properties: {
+        workflowId: reflection.workflowId,
+        success: reflection.success,
+        confidenceScore: reflection.confidenceScore,
+        timestamp: reflection.timestamp
+      }
+    });
+
+    // Create mistake nodes and link them
+    for (const mistake of reflection.mistakes) {
+      const mistakeNode = await this.graph.createNode({
+        type: 'concept',
+        label: `Mistake: ${mistake.substring(0, 50)}...`,
+        properties: { mistake, workflowId: reflection.workflowId }
+      });
+      await this.linker.linkNodes(reflectionNode.id, mistakeNode.id, 'contradicts', 0.8);
+    }
+
+    // Create improvement nodes and link them
+    for (const improvement of reflection.improvements) {
+      const improvementNode = await this.graph.createNode({
+        type: 'concept',
+        label: `Improvement: ${improvement.substring(0, 50)}...`,
+        properties: { improvement, workflowId: reflection.workflowId }
+      });
+      await this.linker.linkNodes(reflectionNode.id, improvementNode.id, 'improves', 0.9);
+    }
   }
 
   private calculateConfidence(analysis: ExecutionAnalysis): number {

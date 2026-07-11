@@ -46,7 +46,9 @@ describe('Reflection Lifecycle Integration', () => {
     }, { timeout: 5000 });
 
     // Verify reflection event
-    const reflectionEvent = eventListener.mock.calls.find(call => call[0].type === AgentEventType.REFLECTION)[0];
+    const reflectionCall = eventListener.mock.calls.find(call => call[0].type === AgentEventType.REFLECTION);
+    expect(reflectionCall).toBeDefined();
+    const reflectionEvent = reflectionCall![0];
     expect(reflectionEvent.type).toBe(AgentEventType.REFLECTION);
     expect(reflectionEvent.payload.reflection.success).toBe(true);
     expect(reflectionEvent.payload.reflection.lessonsLearned.length).toBeGreaterThan(0);
