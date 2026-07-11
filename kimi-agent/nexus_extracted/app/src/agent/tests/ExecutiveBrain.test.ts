@@ -21,7 +21,7 @@ describe('ExecutiveBrain', () => {
         createdAt: Date.now()
       })
     };
-    coordinator = new CoordinatorAgent(eventBus, registry, mockPlanner as any);
+    coordinator = new CoordinatorAgent(eventBus, registry, mockPlanner as unknown as Planner);
     brain = new ExecutiveBrain(eventBus, coordinator);
   });
 
@@ -68,7 +68,7 @@ describe('ExecutiveBrain', () => {
   });
 
   it('should handle mission cancellation', async () => {
-    const pauseMissionSpy = vi.spyOn(coordinator, 'pauseMission').mockResolvedValue(undefined);
+    vi.spyOn(coordinator, 'pauseMission').mockResolvedValue(undefined);
     
     const goal: MissionGoal = {
       description: 'Test Goal',

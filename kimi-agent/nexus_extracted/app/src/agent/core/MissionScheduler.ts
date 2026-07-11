@@ -1,6 +1,6 @@
 import { GoalManager } from './GoalManager';
 import { PriorityManager } from './PriorityManager';
-import { Mission, MissionStatus } from '../types/mission';
+import { Mission } from '../types/mission';
 import { EventBus } from './EventBus';
 import { AgentEventType } from '../types/agent';
 

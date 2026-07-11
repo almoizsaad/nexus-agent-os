@@ -16,8 +16,8 @@ const priorityColors: Record<MissionPriority, string> = {
 };
 
 export const MissionSummary: React.FC<MissionSummaryProps> = ({ mission }) => {
-  const elapsedTime = React.useMemo(() => {
-    return Math.floor((Date.now() - mission.createdAt) / 60000);
+  const formattedDate = React.useMemo(() => {
+    return new Date(mission.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }, [mission.createdAt]);
 
   return (
@@ -65,10 +65,10 @@ export const MissionSummary: React.FC<MissionSummaryProps> = ({ mission }) => {
         <div className="p-3 rounded-lg bg-white/5 border border-white/5 space-y-1">
           <div className="text-[10px] font-mono text-muted-foreground uppercase flex items-center gap-1.5">
             <Clock className="w-3 h-3" />
-            Elapsed Time
+            Started At
           </div>
           <div className="text-xs font-medium">
-            {elapsedTime}m
+            Started at {formattedDate}
           </div>
         </div>
       </div>

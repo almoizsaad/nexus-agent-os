@@ -4,7 +4,7 @@ import { MissionScheduler } from './MissionScheduler';
 import { DecisionSupervisor } from './DecisionSupervisor';
 import { CoordinatorAgent } from './CoordinatorAgent';
 import { EventBus } from './EventBus';
-import { Mission, MissionGoal } from '../types/mission';
+import { MissionGoal } from '../types/mission';
 import { AgentEventType } from '../types/agent';
 
 export class ExecutiveBrain {

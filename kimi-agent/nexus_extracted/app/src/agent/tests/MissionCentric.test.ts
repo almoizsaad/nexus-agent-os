@@ -4,7 +4,7 @@ import { Mission } from '../types/mission';
 
 describe('MissionCentric Workspace', () => {
   it('should manage mission state correctly', () => {
-    const { addMission, missions, setActiveMission, activeMissionId } = useMissionStore.getState();
+    const { addMission, setActiveMission } = useMissionStore.getState();
     
     const mockMission: Mission = {
       id: 'test-mission',
@@ -37,7 +37,7 @@ describe('MissionCentric Workspace', () => {
   });
 
   it('should update mission status and timeline', () => {
-    const { updateMissionStatus, addTimelineEntry, missions } = useMissionStore.getState();
+    const { updateMissionStatus, addTimelineEntry } = useMissionStore.getState();
     
     updateMissionStatus('test-mission', 'running');
     expect(useMissionStore.getState().missions['test-mission'].status).toBe('running');

@@ -19,6 +19,7 @@ import { SelfCorrection } from './SelfCorrection';
 import { AgentStream } from '../events/AgentStream';
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
 import { AgentChannel } from './AgentChannel';
+import { Logger } from '../../lib/utils/logger';
 import { ReflectionEngine } from '../reflection/ReflectionEngine';
 import { ExecutionAnalyzer } from '../reflection/ExecutionAnalyzer';
 import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
@@ -56,6 +57,7 @@ export class AgentRuntime {
   protected _executionAnalyzer: IExecutionAnalyzer;
   protected _identity?: AgentIdentity;
   protected _channel?: AgentChannel;
+  private _unsubscribers: Array<() => void> = [];
 
   public get planner(): Planner | null { return this._planner; }
   public get executor(): Executor | null { return this._executor; }
@@ -104,15 +106,17 @@ export class AgentRuntime {
     this._state = this.getInitialState();
 
     // Subscribe to incoming agent events
-    this._eventBus.subscribe<AgentProtocolEvent>('agent:events', (event) => {
+    const unsubEvents = this._eventBus.subscribe<AgentProtocolEvent>('agent:events', (event) => {
       this.handleEvent(event);
       this._memory.addSessionEvent(event);
     });
+    this._unsubscribers.push(unsubEvents);
 
     // Subscribe to incoming actions (e.g. from workspace)
-    this._eventBus.subscribe<AgentProtocolAction>('agent:actions', (action) => {
+    const unsubActions = this._eventBus.subscribe<AgentProtocolAction>('agent:actions', (action) => {
       this.handleAction(action);
     });
+    this._unsubscribers.push(unsubActions);
   }
 
   private getInitialState(): AgentState {
@@ -268,6 +272,30 @@ export class AgentRuntime {
     this._eventBus.publish('agent:actions', action);
   }
 
+  public destroy(): void {
+    Logger.info(`[AgentRuntime] Destroying agent: ${this._identity?.id || 'unknown'}`);
+    this._unsubscribers.forEach(unsub => unsub());
+    this._unsubscribers = [];
+    this._memory.clear();
+  }
+
+  public healthCheck(): { status: 'healthy' | 'unhealthy'; details: Record<string, unknown> } {
+    const details: Record<string, unknown> = {
+      status: this._state.status,
+      planner: !!this._planner,
+      executor: !!this._executor,
+      workflowEngine: !!this._workflowEngine,
+      timestamp: Date.now()
+    };
+
+    const isHealthy = this._state.status !== 'error' && !!this._planner && !!this._executor;
+    
+    return {
+      status: isHealthy ? 'healthy' : 'unhealthy',
+      details
+    };
+  }
+
   public getStatus(): AgentStatus {
     return this._state.status;
   }
@@ -287,7 +315,7 @@ export class AgentRuntime {
       this._suggestions.updateSuggestions(recommendations);
       
       if (recommendations.length > 0) {
-        console.log(`[AgentRuntime] Generated ${recommendations.length} optimization suggestions.`);
+        Logger.info(`[AgentRuntime] Generated ${recommendations.length} optimization suggestions.`);
       }
     }
   }
@@ -347,10 +375,10 @@ export class AgentRuntime {
       // 6. Invoke ImprovementEngine again after reflection
       this.runSelfImprovement();
 
-      console.log(`[AgentRuntime] Reflection completed for workflow: ${workflowId}`);
+      Logger.info(`[AgentRuntime] Reflection completed for workflow: ${workflowId}`);
 
     } catch (error) {
-      console.error(`[AgentRuntime] Error during reflection for ${workflowId}:`, error);
+      Logger.error(`[AgentRuntime] Error during reflection for ${workflowId}:`, error as Error);
       // Reflection failures should not crash the runtime
     }
   }
@@ -372,7 +400,7 @@ export class AgentRuntime {
   }
 
   private async onWorkspaceAction(action: string, metadata?: Record<string, unknown>): Promise<void> {
-    console.log(`[AgentRuntime] Workspace action: ${action}`, metadata);
+    Logger.info(`[AgentRuntime] Workspace action: ${action}`, metadata);
     if (action === 'REPLAN') {
       const goal = this._memory.getGoal();
       if (goal) await this.processGoal(goal);
@@ -380,7 +408,7 @@ export class AgentRuntime {
   }
 
   private async onToolResult(toolName: string, result: unknown): Promise<void> {
-    console.log(`[AgentRuntime] Reactive tool result for ${toolName}:`, result);
+    Logger.info(`[AgentRuntime] Reactive tool result for ${toolName}:`, { result });
   }
 
   public registerPlanner(planner: Planner): void {

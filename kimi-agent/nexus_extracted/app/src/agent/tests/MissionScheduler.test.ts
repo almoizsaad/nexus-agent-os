@@ -43,7 +43,7 @@ describe('MissionScheduler', () => {
 
   it('should interrupt lower priority missions when capacity is reached', async () => {
     // Set max concurrent to 1 for this test
-    (scheduler as any).maxConcurrentMissions = 1;
+    (scheduler as unknown as { maxConcurrentMissions: number }).maxConcurrentMissions = 1;
     
     const onStart = vi.fn();
     const onPause = vi.fn();
