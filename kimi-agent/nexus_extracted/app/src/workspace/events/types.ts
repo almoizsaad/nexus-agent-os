@@ -7,7 +7,7 @@ export const WorkspaceEventType = {
 
 export type WorkspaceEventType = typeof WorkspaceEventType[keyof typeof WorkspaceEventType];
 
-export interface WorkspaceEvent<T = any> {
+export interface WorkspaceEvent<T = Record<string, unknown>> {
   type: WorkspaceEventType;
   payload: T;
   source: string; // ID of the component that triggered the event

@@ -6,6 +6,11 @@ import type { StructuredPlan } from './schemas';
 import { PlannerParser } from './PlannerParser';
 import { PlanValidator } from './PlanValidator';
 import type { IPerformanceMonitor } from '../types/improvement';
+import type { IKnowledgeGraph } from '../types/knowledge';
+import { KnowledgeLinker } from '../knowledge/KnowledgeLinker';
+import type { ISafetyGuard } from '../types/safety';
+import { SafetyGuard } from '../core/SafetyLayer';
+import { AgentStream } from '../events/AgentStream';
 
 /**
  * LLMPlanner uses a Large Language Model to generate autonomous plans.
@@ -18,12 +23,19 @@ export class LLMPlanner implements Planner {
   private validator: PlanValidator;
   private fallbackPlanner?: Planner;
   private monitor?: IPerformanceMonitor;
+  private graph?: IKnowledgeGraph;
+  private linker?: KnowledgeLinker;
+  private safetyGuard: ISafetyGuard;
+  private stream?: AgentStream;
 
   constructor(
     provider: LLMProvider, 
     toolRegistry: ToolRegistry,
     fallbackPlanner?: Planner,
-    monitor?: IPerformanceMonitor
+    monitor?: IPerformanceMonitor,
+    graph?: IKnowledgeGraph,
+    safetyGuard?: ISafetyGuard,
+    stream?: AgentStream
   ) {
     this.provider = provider;
     this.toolRegistry = toolRegistry;
@@ -31,16 +43,24 @@ export class LLMPlanner implements Planner {
     this.validator = new PlanValidator(toolRegistry);
     this.fallbackPlanner = fallbackPlanner;
     this.monitor = monitor;
+    this.graph = graph;
+    this.stream = stream;
+    if (graph) {
+      this.linker = new KnowledgeLinker(graph);
+    }
+    this.safetyGuard = safetyGuard || new SafetyGuard();
   }
 
   /**
    * Generates a structured plan using the LLM.
    */
   public async generatePlan(goal: string, state: AgentState): Promise<Plan> {
+    this.stream?.thought(`Generating autonomous plan for goal: ${goal}`, 'plan');
     const toolsDescription = this.toolRegistry.describeTools();
     const prompt = this.buildPrompt(goal, state, toolsDescription);
 
     try {
+      this.stream?.thought('Consulting LLM provider for structured task decomposition.', 'reasoning');
       // 1. Generate output from LLM
       const response = await this.provider.generateStructuredOutput<string>(
         prompt,
@@ -48,14 +68,16 @@ export class LLMPlanner implements Planner {
       );
 
       // 2. Parse the response
-      // If the provider already returned an object, we use it, otherwise parse string
       const structuredPlan = typeof response === 'string' 
         ? this.parser.parsePlan<StructuredPlan>(response)
         : response as unknown as StructuredPlan;
 
+      this.stream?.thought(`Generated plan reasoning: ${structuredPlan.reasoning}`, 'observation');
+
       // 3. Validate the plan
       const validation = this.validator.validate(structuredPlan);
       if (!validation.valid) {
+        this.stream?.thought('Plan validation failed. Re-evaluating strategy.', 'reflection');
         console.warn('[LLMPlanner] Plan validation failed:', validation.errors);
         this.monitor?.trackPlanner(0, structuredPlan.tasks?.length || 0);
         throw new Error(`Invalid plan generated: ${validation.errors.join(', ')}`);
@@ -65,7 +87,7 @@ export class LLMPlanner implements Planner {
       this.monitor?.trackPlanner(confidence, structuredPlan.tasks.length);
 
       // 4. Return as standard Plan
-      return {
+      const plan: Plan = {
         id: structuredPlan.id || crypto.randomUUID(),
         goal: structuredPlan.goal || goal,
         reasoning: structuredPlan.reasoning,
@@ -77,6 +99,19 @@ export class LLMPlanner implements Planner {
         createdAt: Date.now()
       };
 
+      // Phase 6.3: Safety Evaluation
+      const safetyReport = await this.safetyGuard.evaluatePlan(plan);
+      if (!safetyReport.passed) {
+        console.error('[LLMPlanner] Plan rejected by Safety Layer:', safetyReport.errors);
+        throw new Error(`Safety Violation: ${safetyReport.errors.join('; ')}`);
+      }
+
+      if (this.graph && this.linker) {
+        await this.recordPlanInGraph(plan);
+      }
+
+      return plan;
+
     } catch (error) {
       console.error('[LLMPlanner] LLM Planning failed:', error);
       
@@ -86,6 +121,31 @@ export class LLMPlanner implements Planner {
       }
       
       throw error;
+    }
+  }
+
+  private async recordPlanInGraph(plan: Plan): Promise<void> {
+    if (!this.graph || !this.linker) return;
+
+    // Create plan node
+    const planNode = await this.graph.createNode({
+      type: 'plan',
+      label: `Plan: ${plan.goal}`,
+      properties: { 
+        planId: plan.id,
+        goal: plan.goal,
+        createdAt: plan.createdAt
+      }
+    });
+
+    // Create task nodes and link them
+    for (const task of plan.tasks) {
+      const taskNode = await this.graph.createNode({
+        type: 'plan',
+        label: `Task: ${task.description}`,
+        properties: { taskId: task.id, description: task.description }
+      });
+      await this.linker.linkNodes(planNode.id, taskNode.id, 'depends_on', 1.0);
     }
   }
 

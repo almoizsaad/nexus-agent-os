@@ -1,0 +1,60 @@
+import type { DelegatedTask } from '../types/planning';
+import { AgentRegistry } from '../core/AgentRegistry';
+import { MessagePriority } from '../types/communication';
+
+export class TaskDelegator {
+  private registry: AgentRegistry;
+
+  constructor(registry: AgentRegistry) {
+    this.registry = registry;
+  }
+
+  public async delegateTask(task: DelegatedTask, planId: string): Promise<boolean> {
+    if (!task.assigneeId) return false;
+
+    const agent = this.registry.getAgent(task.assigneeId);
+    if (!agent) return false;
+
+    const channel = agent.runtime.getChannel();
+    if (!channel) return false;
+
+    try {
+      await channel.sendDirect(task.assigneeId, 'TASK_ASSIGNMENT', {
+        taskId: task.id,
+        planId,
+        description: task.description,
+        tool: task.tool,
+        metadata: task.metadata
+      }, MessagePriority.HIGH);
+      
+      return true;
+    } catch (error) {
+      console.error(`[TaskDelegator] Failed to delegate task ${task.id} to ${task.assigneeId}:`, error);
+      return false;
+    }
+  }
+
+  public async requestSubPlan(task: DelegatedTask, planId: string): Promise<boolean> {
+    if (!task.assigneeId) return false;
+
+    const agent = this.registry.getAgent(task.assigneeId);
+    if (!agent) return false;
+
+    const channel = agent.runtime.getChannel();
+    if (!channel) return false;
+
+    try {
+      await channel.sendDirect(task.assigneeId, 'PLAN_SUBTASK', {
+        taskId: task.id,
+        planId,
+        goal: task.description,
+        context: task.metadata
+      }, MessagePriority.HIGH);
+      
+      return true;
+    } catch (error) {
+      console.error(`[TaskDelegator] Failed to request subplan for task ${task.id} from ${task.assigneeId}:`, error);
+      return false;
+    }
+  }
+}

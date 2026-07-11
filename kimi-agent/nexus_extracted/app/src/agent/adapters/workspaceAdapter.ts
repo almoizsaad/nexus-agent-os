@@ -38,8 +38,8 @@ export function setupWorkspaceAdapter() {
       agent.eventBus.publish('agent:events', {
         type: AgentEventType.WORKSPACE_ACTION,
         payload: {
-          action: event.payload.action,
-          metadata: event.payload.metadata,
+          action: event.payload.actionType as string,
+          metadata: event.payload.args as Record<string, unknown>,
         },
         timestamp: Date.now(),
       });

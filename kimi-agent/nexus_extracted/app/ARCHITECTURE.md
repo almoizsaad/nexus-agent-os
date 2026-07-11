@@ -25,23 +25,23 @@ Nexus is an Intent-Driven Generative UI system that transforms natural language 
           ┌─────────────────────────┼─────────────────────────┐
           │                         │                         │
    ┌──────┴──────┐      ┌──────────┴──────────┐     ┌──────┴──────┐
-   │  Zustand    │      │   TanStack Query    │     │  Framer/   │
-   │   Stores    │      │   (Server State)    │     │    GSAP    │
+   │  Zustand    │      │   Executive Brain   │     │  Framer/   │
+   │   Stores    │      │ (Goal/Mission Mgmt) │     │    GSAP    │
    └──────┬──────┘      └──────────┬──────────┘     └─────────────┘
           │                        │
           │              ┌─────────┴─────────┐
-          │              │   Intent Hook     │
-          │              │  (useIntent.ts)   │
+          │              │  GoalManager.ts   │
+          │              │(Mission Lifecycle)│
           │              └─────────┬─────────┘
           │                        │
           │              ┌─────────┴─────────┐
-          │              │ IntentAnalyzer.ts │
-          │              │ (Moonshot AI API) │
+          │              │ MissionScheduler  │
+          │              │ (Prioritization)  │
           │              └─────────┬─────────┘
           │                        │
           │              ┌─────────┴─────────┐
-          │              │   Moonshot API    │
-          │              │ (api.moonshot.cn) │
+          │              │ CoordinatorAgent  │
+          │              │ (Decomposition)   │
           │              └───────────────────┘
           │
    ┌──────┴──────────────────────────────────────┐
@@ -56,6 +56,23 @@ Nexus is an Intent-Driven Generative UI system that transforms natural language 
    │  └─────────────┘      └───────────────────┘ │
    └─────────────────────────────────────────────┘
 ```
+
+## Executive Brain & Mission Orchestration
+
+The Executive Brain layer is responsible for high-level goal management and multi-mission coordination.
+
+- **ExecutiveBrain**: Top-level controller coordinating missions and agents.
+- **GoalManager**: Tracks mission lifecycle, state, and goal fulfillment.
+- **PriorityManager**: Evaluates mission priorities (Low to Critical) for resource allocation.
+- **MissionScheduler**: Orchestrates mission execution, handling interruptions and rescheduling.
+- **DecisionSupervisor**: Validates critical agent decisions and resolves conflicts.
+
+### Mission Lifecycle
+1. **Creation**: `ExecutiveBrain.createMission()` initializes a mission via `GoalManager`.
+2. **Scheduling**: `MissionScheduler` ranks the mission and decides when to start it.
+3. **Execution**: `CoordinatorAgent.startMission()` decomposes the mission into a plan.
+4. **Monitoring**: `ExecutiveBrain` listens for completion/failure events.
+5. **Recovery**: `ExecutiveBrain` attempts mission recovery if failures occur within retry limits.
 
 ## Data Flow
 
@@ -93,6 +110,13 @@ Nexus is an Intent-Driven Generative UI system that transforms natural language 
    └─→ History-based confidence adjustments
    └─→ Time/season-aware additional suggestions
 ```
+
+## Observability & Diagnostics
+
+- **Structured Logging**: `Logger` utility provides JSON-formatted logs in production for ingestion by monitoring tools.
+- **Health Checks**: `AgentRuntime.healthCheck()` provides real-time status of agent components and operational health.
+- **Performance Metrics**: `PerformanceMonitor` tracks system latency and resource utilization.
+- **CI/CD**: GitHub Actions pipeline ensures code quality and build integrity.
 
 ## Component Hierarchy
 

@@ -4,7 +4,7 @@
 export class PersistentMemory {
   private prefix = 'agent_os_';
 
-  public store(key: string, value: any): void {
+  public store(key: string, value: unknown): void {
     try {
       localStorage.setItem(`${this.prefix}${key}`, JSON.stringify(value));
     } catch (e) {
@@ -12,7 +12,7 @@ export class PersistentMemory {
     }
   }
 
-  public recall(key: string): any {
+  public recall(key: string): unknown {
     try {
       const item = localStorage.getItem(`${this.prefix}${key}`);
       return item ? JSON.parse(item) : null;

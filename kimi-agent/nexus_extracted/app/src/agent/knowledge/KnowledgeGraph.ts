@@ -1,0 +1,186 @@
+import type { 
+  GraphNode, 
+  GraphEdge, 
+  RelationType, 
+  NodeType, 
+  IKnowledgeGraph 
+} from '../types/knowledge';
+
+export class KnowledgeGraph implements IKnowledgeGraph {
+  private nodes: Map<string, GraphNode> = new Map();
+  private edges: Map<string, GraphEdge> = new Map();
+  private adjacencyList: Map<string, string[]> = new Map(); // nodeId -> edgeIds
+
+  public async createNode(node: Omit<GraphNode, 'id' | 'createdAt' | 'updatedAt'>): Promise<GraphNode> {
+    const newNode: GraphNode = {
+      id: crypto.randomUUID(),
+      ...node,
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    };
+    this.nodes.set(newNode.id, newNode);
+    this.adjacencyList.set(newNode.id, []);
+    return newNode;
+  }
+
+  public async getNode(id: string): Promise<GraphNode | null> {
+    return this.nodes.get(id) || null;
+  }
+
+  public async updateNode(id: string, properties: Partial<GraphNode>): Promise<GraphNode> {
+    const existing = this.nodes.get(id);
+    if (!existing) throw new Error(`Node with id ${id} not found`);
+
+    const updated: GraphNode = {
+      ...existing,
+      ...properties,
+      updatedAt: Date.now()
+    };
+    this.nodes.set(id, updated);
+    return updated;
+  }
+
+  public async deleteNode(id: string): Promise<void> {
+    this.nodes.delete(id);
+    const edgeIds = this.adjacencyList.get(id) || [];
+    for (const edgeId of edgeIds) {
+      this.deleteRelation(edgeId);
+    }
+    this.adjacencyList.delete(id);
+  }
+
+  public async createRelation(
+    sourceId: string, 
+    targetId: string, 
+    type: RelationType, 
+    weight: number = 0.5, 
+    properties: Record<string, unknown> = {}
+  ): Promise<GraphEdge> {
+    if (!this.nodes.has(sourceId)) throw new Error(`Source node ${sourceId} not found`);
+    if (!this.nodes.has(targetId)) throw new Error(`Target node ${targetId} not found`);
+
+    const edge: GraphEdge = {
+      id: crypto.randomUUID(),
+      sourceId,
+      targetId,
+      type,
+      weight,
+      properties,
+      createdAt: Date.now()
+    };
+
+    this.edges.set(edge.id, edge);
+    this.adjacencyList.get(sourceId)?.push(edge.id);
+    this.adjacencyList.get(targetId)?.push(edge.id);
+
+    return edge;
+  }
+
+  public async getRelation(id: string): Promise<GraphEdge | null> {
+    return this.edges.get(id) || null;
+  }
+
+  public async deleteRelation(id: string): Promise<void> {
+    const edge = this.edges.get(id);
+    if (!edge) return;
+
+    this.edges.delete(id);
+    
+    const sourceEdges = this.adjacencyList.get(edge.sourceId);
+    if (sourceEdges) {
+      this.adjacencyList.set(edge.sourceId, sourceEdges.filter(eId => eId !== id));
+    }
+
+    const targetEdges = this.adjacencyList.get(edge.targetId);
+    if (targetEdges) {
+      this.adjacencyList.set(edge.targetId, targetEdges.filter(eId => eId !== id));
+    }
+  }
+
+  public async findRelated(
+    nodeId: string, 
+    options?: { type?: RelationType; depth?: number; limit?: number }
+  ): Promise<Array<{ node: GraphNode; edge: GraphEdge }>> {
+    const depth = options?.depth || 1;
+    const limit = options?.limit || 10;
+    const type = options?.type;
+
+    const results: Array<{ node: GraphNode; edge: GraphEdge }> = [];
+    const visited = new Set<string>([nodeId]);
+    const queue: Array<{ id: string; currentDepth: number }> = [{ id: nodeId, currentDepth: 0 }];
+
+    while (queue.length > 0 && results.length < limit) {
+      const { id, currentDepth } = queue.shift()!;
+      if (currentDepth >= depth) continue;
+
+      const edgeIds = this.adjacencyList.get(id) || [];
+      for (const edgeId of edgeIds) {
+        const edge = this.edges.get(edgeId)!;
+        if (type && edge.type !== type) continue;
+
+        const targetId = edge.sourceId === id ? edge.targetId : edge.sourceId;
+        if (visited.has(targetId)) continue;
+
+        visited.add(targetId);
+        const node = this.nodes.get(targetId)!;
+        results.push({ node, edge });
+        queue.push({ id: targetId, currentDepth: currentDepth + 1 });
+
+        if (results.length >= limit) break;
+      }
+    }
+
+    return results;
+  }
+
+  public async shortestPath(startNodeId: string, endNodeId: string): Promise<GraphNode[]> {
+    const queue: Array<{ id: string; path: string[] }> = [{ id: startNodeId, path: [startNodeId] }];
+    const visited = new Set<string>([startNodeId]);
+
+    while (queue.length > 0) {
+      const { id, path } = queue.shift()!;
+      if (id === endNodeId) {
+        return path.map(nodeId => this.nodes.get(nodeId)!);
+      }
+
+      const edgeIds = this.adjacencyList.get(id) || [];
+      for (const edgeId of edgeIds) {
+        const edge = this.edges.get(edgeId)!;
+        const nextId = edge.sourceId === id ? edge.targetId : edge.sourceId;
+        
+        if (!visited.has(nextId)) {
+          visited.add(nextId);
+          queue.push({ id: nextId, path: [...path, nextId] });
+        }
+      }
+    }
+
+    return [];
+  }
+
+  public async importanceScore(nodeId: string): Promise<number> {
+    const node = this.nodes.get(nodeId);
+    if (!node) return 0;
+
+    const edgeIds = this.adjacencyList.get(nodeId) || [];
+    if (this.nodes.size === 0) return 0;
+
+    // Simple degree centrality for now
+    return edgeIds.length / Math.max(1, this.nodes.size - 1);
+  }
+
+  public async searchNodes(query: string, type?: NodeType): Promise<GraphNode[]> {
+    const lowerQuery = query.toLowerCase();
+    return Array.from(this.nodes.values()).filter(node => {
+      const typeMatch = !type || node.type === type;
+      const labelMatch = node.label.toLowerCase().includes(lowerQuery);
+      return typeMatch && labelMatch;
+    });
+  }
+
+  public clear(): void {
+    this.nodes.clear();
+    this.edges.clear();
+    this.adjacencyList.clear();
+  }
+}

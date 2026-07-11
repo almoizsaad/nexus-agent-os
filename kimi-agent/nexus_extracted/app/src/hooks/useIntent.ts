@@ -465,13 +465,8 @@ export function useIntent() {
       let ambiguityCount = 0;
 
       // Check for keyword matches
-      let matchCount = 0;
-      let totalKeywords = 0;
-
       for (const [, config] of Object.entries(INTENT_PATTERNS)) {
         const matches = config.keywords.filter(kw => lowerInput.includes(kw));
-        matchCount += matches.length;
-        totalKeywords += config.keywords.length;
 
         if (matches.length > 0) {
           if (intentMatchScore < matches.length / config.keywords.length) {

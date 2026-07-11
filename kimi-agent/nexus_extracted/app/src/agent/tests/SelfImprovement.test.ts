@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { PerformanceMonitor } from '../improvement/PerformanceMonitor';
 import { ImprovementEngine } from '../improvement/ImprovementEngine';
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
+import type { OptimizationRecommendation } from '../types/improvement';
 
 describe('Self Improvement Layer', () => {
   let monitor: PerformanceMonitor;
@@ -75,8 +76,8 @@ describe('Self Improvement Layer', () => {
   });
 
   it('should manage suggestions through OptimizationSuggestions class', () => {
-    const mockRecs = [
-      { component: 'tool', id: 't1', type: 'latency', description: 'desc', suggestion: 'sug', priority: 'high' } as any
+    const mockRecs: OptimizationRecommendation[] = [
+      { component: 'tool', id: 't1', type: 'latency', description: 'desc', suggestion: 'sug', priority: 'high' }
     ];
     
     suggestions.updateSuggestions(mockRecs);

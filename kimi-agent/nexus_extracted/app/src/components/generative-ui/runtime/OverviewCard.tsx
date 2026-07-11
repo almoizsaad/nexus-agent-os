@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { MapPin, Calendar, Clock, DollarSign } from 'lucide-react';
-import { EditableCard, springTransition } from './Shared';
+import { EditableCard } from './Shared';
+import { springTransition } from '../../../lib/constants';
 import { componentEvents } from '../../../workspace/events/componentEvents';
 
 export function OverviewCard({ id, data }: { id: string; data: Record<string, unknown> }) {

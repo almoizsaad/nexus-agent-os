@@ -9,13 +9,13 @@ export class PlannerParser {
     try {
       // 1. Attempt direct parse
       return JSON.parse(input) as T;
-    } catch (e) {
+    } catch {
       // 2. Attempt to extract from markdown fences
       const jsonMatch = input.match(/```json\n([\s\S]*?)\n```/) || input.match(/```([\s\S]*?)```/);
       if (jsonMatch) {
         try {
           return JSON.parse(jsonMatch[1].trim()) as T;
-        } catch (e2) {
+        } catch {
           // Continue to recovery
         }
       }
@@ -27,7 +27,7 @@ export class PlannerParser {
         try {
           const rawJson = input.substring(firstBrace, lastBrace + 1);
           return JSON.parse(rawJson) as T;
-        } catch (e3) {
+        } catch {
           throw new Error('Failed to recover malformed JSON from LLM response.');
         }
       }

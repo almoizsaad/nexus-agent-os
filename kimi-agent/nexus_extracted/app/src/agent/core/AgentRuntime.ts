@@ -1,5 +1,15 @@
 import { AgentEventType, AgentActionType } from '../types/agent';
-import type { AgentState, AgentEvent, AgentStatus, Planner, Executor, Plan, Task } from '../types/agent';
+import type { 
+  AgentState, 
+  AgentEvent, 
+  AgentStatus, 
+  Planner, 
+  Executor, 
+  Plan, 
+  Task, 
+  AgentIdentity,
+  AgentReflectionEvent
+} from '../types/agent';
 import type { AgentProtocolEvent } from '../protocol/events';
 import type { AgentProtocolAction } from '../protocol/actions';
 import { EventBus } from './EventBus';
@@ -8,27 +18,55 @@ import { MemoryManager } from '../memory/MemoryManager';
 import { SelfCorrection } from './SelfCorrection';
 import { AgentStream } from '../events/AgentStream';
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
+import { AgentChannel } from './AgentChannel';
+import { Logger } from '../../lib/utils/logger';
+import { ReflectionEngine } from '../reflection/ReflectionEngine';
+import { ExecutionAnalyzer } from '../reflection/ExecutionAnalyzer';
+import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
+import { ThoughtManager } from '../reflection/ThoughtManager';
+import { PersistentMemory } from '../memory/PersistentMemory';
 import type { 
   IPerformanceMonitor, 
   IImprovementEngine, 
   SystemMetrics,
   OptimizationRecommendation
 } from '../types/improvement';
+import type { 
+  ISelfReflectionEngine, 
+  IExecutionAnalyzer,
+  ExecutionEvent
+} from '../types/reflection';
 
 export class AgentRuntime {
-  private state: AgentState;
-  private eventBus: EventBus;
-  private stream: AgentStream;
+  protected _state: AgentState;
+  protected _eventBus: EventBus;
+  protected _stream: AgentStream;
   
-  private planner: Planner | null = null;
-  private executor: Executor | null = null;
-  private memory: MemoryManager;
-  private workflowEngine: WorkflowEngine | null = null;
-  private selfCorrection: SelfCorrection;
+  protected _planner: Planner | null = null;
+  protected _executor: Executor | null = null;
+  protected _memory: MemoryManager;
+  protected _workflowEngine: WorkflowEngine | null = null;
+  protected _selfCorrection: SelfCorrection;
+  protected _knowledgeGraph: KnowledgeGraph;
+  protected _thoughtManager: ThoughtManager;
   
-  private monitor?: IPerformanceMonitor;
-  private improvementEngine?: IImprovementEngine;
-  private suggestions?: OptimizationSuggestions;
+  protected _monitor?: IPerformanceMonitor;
+  protected _improvementEngine?: IImprovementEngine;
+  protected _suggestions?: OptimizationSuggestions;
+  protected _reflectionEngine: ISelfReflectionEngine;
+  protected _executionAnalyzer: IExecutionAnalyzer;
+  protected _identity?: AgentIdentity;
+  protected _channel?: AgentChannel;
+  private _unsubscribers: Array<() => void> = [];
+
+  public get planner(): Planner | null { return this._planner; }
+  public get executor(): Executor | null { return this._executor; }
+  public get monitor(): IPerformanceMonitor | undefined { return this._monitor; }
+  public get improvementEngine(): IImprovementEngine | undefined { return this._improvementEngine; }
+  public get suggestions(): OptimizationSuggestions | undefined { return this._suggestions; }
+  public get identity(): AgentIdentity | undefined { return this._identity; }
+  public get channel(): AgentChannel | undefined { return this._channel; }
+  public get knowledgeGraph(): KnowledgeGraph { return this._knowledgeGraph; }
 
   constructor(
     eventBus: EventBus, 
@@ -36,35 +74,49 @@ export class AgentRuntime {
     executor?: Executor,
     monitor?: IPerformanceMonitor,
     improvementEngine?: IImprovementEngine,
-    suggestions?: OptimizationSuggestions
+    suggestions?: OptimizationSuggestions,
+    identity?: AgentIdentity,
+    channel?: AgentChannel,
+    knowledgeGraph?: KnowledgeGraph
   ) {
-    this.eventBus = eventBus;
-    this.stream = new AgentStream(eventBus);
-    this.planner = planner || null;
-    this.executor = executor || null;
-    this.monitor = monitor;
-    this.improvementEngine = improvementEngine;
-    this.suggestions = suggestions;
+    this._eventBus = eventBus;
+    this._stream = new AgentStream(eventBus);
+    this._planner = planner || null;
+    this._executor = executor || null;
+    this._monitor = monitor;
+    this._improvementEngine = improvementEngine;
+    this._suggestions = suggestions;
+    this._identity = identity;
+    this._channel = channel;
 
-    this.memory = new MemoryManager(monitor);
-    this.selfCorrection = new SelfCorrection(this);
+    this._knowledgeGraph = knowledgeGraph || new KnowledgeGraph();
+    this._memory = new MemoryManager(monitor);
+    this._selfCorrection = new SelfCorrection(this);
     
-    if (this.executor) {
-      this.workflowEngine = new WorkflowEngine(this.executor, monitor);
+    const persistentMemory = new PersistentMemory();
+    this._thoughtManager = new ThoughtManager(this._eventBus, persistentMemory);
+    
+    this._reflectionEngine = new ReflectionEngine(this._knowledgeGraph, this._stream);
+    this._executionAnalyzer = new ExecutionAnalyzer();
+
+    if (this._executor) {
+      this._workflowEngine = new WorkflowEngine(this._executor, monitor);
     }
 
-    this.state = this.getInitialState();
+    this._state = this.getInitialState();
 
     // Subscribe to incoming agent events
-    this.eventBus.subscribe<AgentProtocolEvent>('agent:events', (event) => {
+    const unsubEvents = this._eventBus.subscribe<AgentProtocolEvent>('agent:events', (event) => {
       this.handleEvent(event);
-      this.memory.addSessionEvent(event);
+      this._memory.addSessionEvent(event);
     });
+    this._unsubscribers.push(unsubEvents);
 
     // Subscribe to incoming actions (e.g. from workspace)
-    this.eventBus.subscribe<AgentProtocolAction>('agent:actions', (action) => {
+    const unsubActions = this._eventBus.subscribe<AgentProtocolAction>('agent:actions', (action) => {
       this.handleAction(action);
     });
+    this._unsubscribers.push(unsubActions);
   }
 
   private getInitialState(): AgentState {
@@ -75,8 +127,8 @@ export class AgentRuntime {
   }
 
   public reset(): void {
-    this.state = this.getInitialState();
-    this.memory.clear();
+    this._state = this.getInitialState();
+    this._memory.clear();
     this.dispatchAction({
       type: AgentActionType.AGENT_UPDATE,
       payload: {
@@ -86,11 +138,31 @@ export class AgentRuntime {
     });
   }
 
+  public pause(): void {
+    this._state.status = 'paused';
+    this._stream.thinking('Agent has been paused.');
+  }
+
+  public resume(): void {
+    if (this._state.status === 'paused') {
+      this._state.status = 'idle'; // Or return to previous state if tracked
+      this._stream.thinking('Agent has been resumed.');
+    }
+  }
+
   public getCurrentPlan(): Plan | undefined {
-    return this.state.currentPlan;
+    return this._state.currentPlan;
+  }
+
+  public getChannel(): AgentChannel | undefined {
+    return this._channel;
   }
 
   public async handleEvent(event: AgentProtocolEvent): Promise<void> {
+    if (this._state.status === 'paused' && event.type !== AgentEventType.AGENT_UPDATE) {
+      return;
+    }
+    
     this.recordEvent(event);
     
     switch (event.type) {
@@ -112,114 +184,215 @@ export class AgentRuntime {
   }
 
   public async processGoal(goal: string): Promise<void> {
-    if (!this.planner || !this.workflowEngine) {
-      this.stream.error('Planner or WorkflowEngine not initialized.');
+    if (this._state.status === 'paused') {
+      this._stream.error('Agent is paused. Resume to process new goals.');
       return;
     }
 
-    this.state.status = 'thinking';
-    this.memory.setGoal(goal);
-    this.stream.thinking('Analyzing goal and generating autonomous plan...');
+    if (!this._planner || !this._workflowEngine) {
+      this._stream.error('Planner or WorkflowEngine not initialized.');
+      return;
+    }
+
+    this._state.status = 'thinking';
+    this._memory.setGoal(goal);
+    this._stream.thinking('Analyzing goal and generating autonomous plan...');
 
     try {
       // Recall relevant context from memory
-      const context = await this.memory.recallMemories(goal);
+      const context = await this._memory.recallMemories(goal);
       const enhancedGoal = context.length > 0 ? `${goal} (Context: ${JSON.stringify(context)})` : goal;
 
-      this.stream.planning(enhancedGoal);
-      const plan = await this.planner.generatePlan(enhancedGoal, this.state);
-      this.state.currentPlan = JSON.parse(JSON.stringify(plan));
+      this._stream.planning(enhancedGoal);
+      const plan = await this._planner.generatePlan(enhancedGoal, this._state);
+      this._state.currentPlan = JSON.parse(JSON.stringify(plan));
       
-      if (!this.state.currentPlan) return;
+      if (!this._state.currentPlan) return;
 
       this.dispatchAction({
         type: AgentActionType.UPDATE_PLAN,
         payload: {
-          planId: this.state.currentPlan.id,
-          tasks: this.state.currentPlan.tasks.map(t => ({ id: t.id, status: t.status })),
+          planId: this._state.currentPlan.id,
+          tasks: this._state.currentPlan.tasks.map(t => ({ id: t.id, status: t.status })),
         },
       });
 
-      this.state.status = 'executing';
+      this._state.status = 'executing';
       
-      const success = await this.workflowEngine.executePlan(this.state.currentPlan, (taskId, status, result) => {
+      const success = await this._workflowEngine.executePlan(this._state.currentPlan, (taskId, status, result) => {
         if (status === 'in-progress') {
-          const task = this.state.currentPlan!.tasks.find(t => t.id === taskId);
-          this.stream.executingTool(task?.description || taskId);
+          const task = this._state.currentPlan!.tasks.find(t => t.id === taskId);
+          this._stream.executingTool(task?.description || taskId);
         }
 
         // Sync plan state
-        const taskIndex = this.state.currentPlan!.tasks.findIndex(t => t.id === taskId);
+        const taskIndex = this._state.currentPlan!.tasks.findIndex(t => t.id === taskId);
         if (taskIndex !== -1) {
-          this.state.currentPlan!.tasks[taskIndex].status = status as Task['status'];
+          this._state.currentPlan!.tasks[taskIndex].status = status as Task['status'];
         }
 
         this.dispatchAction({
           type: AgentActionType.UPDATE_PLAN,
           payload: {
-            planId: this.state.currentPlan!.id,
-            tasks: this.state.currentPlan!.tasks.map(t => ({ id: t.id, status: t.status })),
+            planId: this._state.currentPlan!.id,
+            tasks: this._state.currentPlan!.tasks.map(t => ({ id: t.id, status: t.status })),
           },
         });
 
         if (status === 'failed') {
-          this.selfCorrection.handleTaskFailure(taskId, result?.error || 'Unknown error');
+          this._selfCorrection.handleTaskFailure(taskId, (result as { error?: string })?.error || 'Unknown error');
         }
       });
 
-      // Self-Improvement: Generate recommendations after each workflow attempt
+      // Self-Improvement: Baseline recommendations
       this.runSelfImprovement();
 
       if (success) {
-        this.state.status = 'idle';
-        await this.memory.remember(goal, { completed: true, planId: plan.id });
+        this._state.status = 'idle';
+        await this._memory.remember(goal, { completed: true, planId: plan.id });
         
         // Phase 4.1: Consolidate session into semantic memory
-        await this.memory.consolidateSession(plan.id);
+        await this._memory.consolidateSession(plan.id);
         
-        this.stream.completing('Goal accomplished successfully.');
+        this._stream.completing('Goal accomplished successfully.');
+
+        // Phase 6.1: Asynchronous Reflection (includes ImprovementEngine)
+        this.runReflection(plan.id).catch(err => {
+          console.error('[AgentRuntime] Reflection failed:', err);
+        });
       }
 
     } catch (error) {
-      this.state.status = 'error';
-      this.stream.error(`Critical error: ${error}`, true);
+      this._state.status = 'error';
+      this._stream.error(`Critical error: ${error}`, true);
     }
   }
 
   public dispatchAction(action: AgentProtocolAction): void {
-    this.eventBus.publish('agent:actions', action);
+    this._eventBus.publish('agent:actions', action);
+  }
+
+  public destroy(): void {
+    Logger.info(`[AgentRuntime] Destroying agent: ${this._identity?.id || 'unknown'}`);
+    this._unsubscribers.forEach(unsub => unsub());
+    this._unsubscribers = [];
+    this._memory.clear();
+  }
+
+  public healthCheck(): { status: 'healthy' | 'unhealthy'; details: Record<string, unknown> } {
+    const details: Record<string, unknown> = {
+      status: this._state.status,
+      planner: !!this._planner,
+      executor: !!this._executor,
+      workflowEngine: !!this._workflowEngine,
+      timestamp: Date.now()
+    };
+
+    const isHealthy = this._state.status !== 'error' && !!this._planner && !!this._executor;
+    
+    return {
+      status: isHealthy ? 'healthy' : 'unhealthy',
+      details
+    };
   }
 
   public getStatus(): AgentStatus {
-    return this.state.status;
+    return this._state.status;
   }
 
   public getMetrics(): SystemMetrics | null {
-    return this.monitor?.getMetrics() || null;
+    return this._monitor?.getMetrics() || null;
   }
 
   public getRecommendations(): OptimizationRecommendation[] {
-    return this.suggestions?.getSuggestions() || [];
+    return this._suggestions?.getSuggestions() || [];
   }
 
   private runSelfImprovement(): void {
-    if (this.monitor && this.improvementEngine && this.suggestions) {
-      const metrics = this.monitor.getMetrics();
-      const recommendations = this.improvementEngine.generateRecommendations(metrics);
-      this.suggestions.updateSuggestions(recommendations);
+    if (this._monitor && this._improvementEngine && this._suggestions) {
+      const metrics = this._monitor.getMetrics();
+      const recommendations = this._improvementEngine.generateRecommendations(metrics);
+      this._suggestions.updateSuggestions(recommendations);
       
       if (recommendations.length > 0) {
-        console.log(`[AgentRuntime] Generated ${recommendations.length} optimization suggestions.`);
+        Logger.info(`[AgentRuntime] Generated ${recommendations.length} optimization suggestions.`);
       }
     }
   }
 
+  private async runReflection(workflowId: string): Promise<void> {
+    try {
+      this._stream.reflecting(workflowId);
+
+      // 1. Map history to ExecutionEvents
+      const events: ExecutionEvent[] = this._state.history
+        .filter(e => e.payload.workflowId === workflowId || (e.payload.metadata as Record<string, unknown>)?.workflowId === workflowId)
+        .map(e => ({
+          type: e.type,
+          workflowId: (e.payload.workflowId as string) || (e.payload.metadata as Record<string, unknown>)?.workflowId as string,
+          taskId: e.payload.taskId as string,
+          status: e.payload.status as string,
+          timestamp: e.timestamp,
+          result: e.payload.result
+        }));
+
+      // 2. Analyze execution
+      const analysis = await this._executionAnalyzer.analyze(workflowId, events);
+
+      // 3. Reflect on analysis
+      const reflection = await this._reflectionEngine.reflect(analysis);
+
+      // 4. Store in memory (Persistent/Semantic)
+      await this._memory.consolidateWithReflection(workflowId, reflection);
+      
+      // 4b. Store in session memory (Episodic)
+      await this._memory.addSessionEvent({
+        type: AgentEventType.REFLECTION,
+        workflowId,
+        reflection,
+        timestamp: Date.now()
+      });
+
+      // 5. Emit reflection event
+      const reflectionEvent: AgentReflectionEvent = {
+        type: AgentEventType.REFLECTION,
+        payload: {
+          workflowId,
+          reflection: {
+            success: reflection.success,
+            confidenceScore: reflection.confidenceScore,
+            lessonsLearned: reflection.lessonsLearned,
+            mistakes: reflection.mistakes,
+            improvements: reflection.improvements
+          },
+          metadata: reflection.metadata
+        },
+        timestamp: Date.now()
+      };
+
+      this._eventBus.publish('agent:events', reflectionEvent);
+      
+      // 6. Invoke ImprovementEngine again after reflection
+      this.runSelfImprovement();
+
+      Logger.info(`[AgentRuntime] Reflection completed for workflow: ${workflowId}`);
+
+    } catch (error) {
+      Logger.error(`[AgentRuntime] Error during reflection for ${workflowId}:`, error as Error);
+      // Reflection failures should not crash the runtime
+    }
+  }
+
   public getState(): AgentState {
-    return { ...this.state };
+    return { 
+      ...this._state,
+      identity: this._identity,
+      metrics: (this._monitor?.getMetrics() as unknown as Record<string, unknown>) || undefined
+    };
   }
 
   private recordEvent(event: AgentEvent): void {
-    this.state.history.push(event);
+    this._state.history.push(event);
   }
 
   private async onUserMessage(text: string): Promise<void> {
@@ -227,27 +400,27 @@ export class AgentRuntime {
   }
 
   private async onWorkspaceAction(action: string, metadata?: Record<string, unknown>): Promise<void> {
-    console.log(`[AgentRuntime] Workspace action: ${action}`, metadata);
+    Logger.info(`[AgentRuntime] Workspace action: ${action}`, metadata);
     if (action === 'REPLAN') {
-      const goal = this.memory.getGoal();
+      const goal = this._memory.getGoal();
       if (goal) await this.processGoal(goal);
     }
   }
 
   private async onToolResult(toolName: string, result: unknown): Promise<void> {
-    console.log(`[AgentRuntime] Reactive tool result for ${toolName}:`, result);
+    Logger.info(`[AgentRuntime] Reactive tool result for ${toolName}:`, { result });
   }
 
   public registerPlanner(planner: Planner): void {
-    this.planner = planner;
+    this._planner = planner;
   }
 
   public registerExecutor(executor: Executor): void {
-    this.executor = executor;
-    this.workflowEngine = new WorkflowEngine(executor);
+    this._executor = executor;
+    this._workflowEngine = new WorkflowEngine(executor);
   }
 
   public registerMemory(memory: MemoryManager): void {
-    this.memory = memory;
+    this._memory = memory;
   }
 }

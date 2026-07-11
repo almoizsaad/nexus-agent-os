@@ -2,7 +2,8 @@ import { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWorkspaceStore } from '@/workspace/state/workspaceStore';
 import { globalComponentRegistry } from '@/registry/ComponentRegistry';
-import { CardSkeleton, EmptyState, ErrorState, springTransition } from './runtime/Shared';
+import { CardSkeleton, EmptyState, ErrorState } from './runtime/Shared';
+import { springTransition } from '../../lib/constants';
 
 interface DynamicLayoutProps {
   intent: string;
@@ -13,7 +14,7 @@ interface DynamicLayoutProps {
 /**
  * ComponentRenderer resolves and renders components from the registry.
  */
-const ComponentRenderer = memo(function ComponentRenderer({ id, type, props }: { id: string; type: string; props: any }) {
+const ComponentRenderer = memo(function ComponentRenderer({ id, type, props }: { id: string; type: string; props: Record<string, unknown> }) {
   const definition = globalComponentRegistry.resolve(type);
 
   if (!definition) {
@@ -76,7 +77,8 @@ const DynamicLayout = memo(function DynamicLayout({ intent, isLoading, error }: 
       >
         {components.map((component, index) => {
           // Calculate responsive column span based on metadata or default
-          const w = component.metadata?.position?.w || 6;
+          const position = (component.metadata?.position as { w?: number }) || {};
+          const w = position.w || 6;
           let colSpan = 'lg:col-span-6';
           if (w <= 4) colSpan = 'lg:col-span-4';
           else if (w <= 6) colSpan = 'lg:col-span-6';

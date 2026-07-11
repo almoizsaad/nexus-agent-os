@@ -6,7 +6,7 @@ import type { Tool } from '../tools/Tool';
 class MockTool implements Tool {
   name = 'test_tool';
   description = 'A test tool';
-  async execute(input: any) {
+  async execute(input: unknown) {
     return { result: 'success', input };
   }
 }
@@ -21,7 +21,7 @@ describe('TaskExecutor', () => {
     const result = await executor.executeTask(task, { data: 'test' });
     
     expect(result.success).toBe(true);
-    expect((result.data as any).result).toBe('success');
+    expect((result.data as Record<string, unknown>).result).toBe('success');
   });
 
   it('should handle missing tools', async () => {

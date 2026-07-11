@@ -13,7 +13,7 @@ export function useWorkspaceAgent() {
   const agent = useAgent();
   const workspace = useWorkspaceStore();
 
-  const sendEvent = useCallback((type: WorkspaceEventType, payload: any, source: string = 'ui') => {
+  const sendEvent = useCallback((type: WorkspaceEventType, payload: Record<string, unknown>, source: string = 'ui') => {
     globalWorkspaceBus.emit({
       type,
       payload,

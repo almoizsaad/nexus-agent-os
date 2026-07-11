@@ -1,9 +1,15 @@
+import type { Thought } from './thought';
+export type { Thought };
+
 export const AgentEventType = {
   USER_MESSAGE: 'USER_MESSAGE',
   WORKSPACE_ACTION: 'WORKSPACE_ACTION',
   TOOL_RESULT: 'TOOL_RESULT',
   AGENT_UPDATE: 'AGENT_UPDATE',
   ERROR: 'ERROR',
+  AGENT_LIFECYCLE: 'AGENT_LIFECYCLE',
+  REFLECTION: 'REFLECTION',
+  THOUGHT_GENERATED: 'THOUGHT_GENERATED',
 } as const;
 
 export type AgentEventType = typeof AgentEventType[keyof typeof AgentEventType];
@@ -16,16 +22,18 @@ export const AgentActionType = {
   AGENT_UPDATE: 'AGENT_UPDATE',
   RENDER_COMPONENT: 'RENDER_COMPONENT',
   REQUIRE_APPROVAL: 'REQUIRE_APPROVAL',
+  SPAWN_AGENT: 'SPAWN_AGENT',
+  TERMINATE_AGENT: 'TERMINATE_AGENT',
 } as const;
 
 export type AgentActionType = typeof AgentActionType[keyof typeof AgentActionType];
 
-export type AgentStatus = 'idle' | 'thinking' | 'executing' | 'error';
+export type AgentStatus = 'idle' | 'thinking' | 'executing' | 'error' | 'paused';
 
 export interface Task {
   id: string;
   description: string;
-  status: 'pending' | 'in-progress' | 'completed' | 'failed';
+  status: 'pending' | 'in-progress' | 'running' | 'completed' | 'failed';
   metadata?: Record<string, unknown>;
 }
 
@@ -37,10 +45,21 @@ export interface Plan {
   createdAt: number;
 }
 
+export type AgentRole = 'orchestrator' | 'worker' | 'specialist' | 'critic' | 'coordinator';
+
+export interface AgentIdentity {
+  id: string;
+  name: string;
+  role: AgentRole;
+  capabilities: string[];
+}
+
 export interface AgentState {
   status: AgentStatus;
   currentPlan?: Plan;
   history: AgentEvent[];
+  identity?: AgentIdentity;
+  metrics?: Record<string, unknown>;
 }
 
 export interface AgentEvent {
@@ -87,7 +106,7 @@ export interface UpdatePlanAction {
     planId: string;
     tasks: Array<{
       id: string;
-      status: 'pending' | 'in-progress' | 'completed' | 'failed';
+      status: 'pending' | 'in-progress' | 'running' | 'completed' | 'failed';
     }>;
   };
 }
@@ -120,6 +139,23 @@ export interface RequireApprovalAction {
   };
 }
 
+export interface SpawnAgentAction {
+  type: typeof AgentActionType.SPAWN_AGENT;
+  payload: {
+    name: string;
+    role: AgentRole;
+    capabilities: string[];
+    goal?: string;
+  };
+}
+
+export interface TerminateAgentAction {
+  type: typeof AgentActionType.TERMINATE_AGENT;
+  payload: {
+    agentId: string;
+  };
+}
+
 export type AgentProtocolAction =
   | UpdateWorkspaceAction
   | RequestToolAction
@@ -127,7 +163,9 @@ export type AgentProtocolAction =
   | UpdatePlanAction
   | AgentUpdateAction
   | RenderComponentAction
-  | RequireApprovalAction;
+  | RequireApprovalAction
+  | SpawnAgentAction
+  | TerminateAgentAction;
 
 // --- Protocol Events ---
 
@@ -163,6 +201,7 @@ export interface AgentUpdateEvent extends AgentEvent {
     status: string;
     message?: string;
     progress?: number;
+    agentId?: string;
   };
 }
 
@@ -173,6 +212,38 @@ export interface ErrorEvent extends AgentEvent {
     message: string;
     details?: unknown;
     fatal: boolean;
+    agentId?: string;
+  };
+}
+
+export interface AgentLifecycleEvent extends AgentEvent {
+  type: typeof AgentEventType.AGENT_LIFECYCLE;
+  payload: {
+    agentId: string;
+    action: 'spawned' | 'destroyed' | 'paused' | 'resumed' | 'restarted';
+    identity: AgentIdentity;
+  };
+}
+
+export interface AgentReflectionEvent extends AgentEvent {
+  type: typeof AgentEventType.REFLECTION;
+  payload: {
+    workflowId: string;
+    reflection: {
+      success: boolean;
+      confidenceScore: number;
+      lessonsLearned: string[];
+      mistakes: string[];
+      improvements: string[];
+    };
+    metadata?: Record<string, unknown>;
+  };
+}
+
+export interface ThoughtGeneratedEvent extends AgentEvent {
+  type: typeof AgentEventType.THOUGHT_GENERATED;
+  payload: {
+    thought: Thought;
   };
 }
 
@@ -181,7 +252,10 @@ export type AgentProtocolEvent =
   | WorkspaceActionEvent 
   | ToolResultEvent 
   | AgentUpdateEvent
-  | ErrorEvent;
+  | ErrorEvent
+  | AgentLifecycleEvent
+  | AgentReflectionEvent
+  | ThoughtGeneratedEvent;
 
 // --- Extension Points ---
 
