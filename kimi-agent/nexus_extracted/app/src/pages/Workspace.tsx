@@ -1,4 +1,3 @@
-import React from 'react';
 import { MissionWorkspace } from '@/components/mission/MissionWorkspace';
 
 export default function Workspace() {

@@ -191,7 +191,7 @@ export class CoordinatorAgent extends AgentRuntime {
   public async pauseMission(missionId: string): Promise<void> {
     const plan = this.activePlans.get(missionId);
     if (plan) {
-      this._stream.thought(`Pausing mission: ${missionId}`, 'system');
+      this._stream.thought(`Pausing mission: ${missionId}`, 'observation');
       // In a real implementation, we would stop active tasks in workflow engine
       this._eventBus.publish('agent:events', {
         type: AgentEventType.AGENT_UPDATE,
@@ -204,7 +204,7 @@ export class CoordinatorAgent extends AgentRuntime {
   public async resumeMission(missionId: string): Promise<void> {
     const plan = this.activePlans.get(missionId);
     if (plan) {
-      this._stream.thought(`Resuming mission: ${missionId}`, 'system');
+      this._stream.thought(`Resuming mission: ${missionId}`, 'observation');
       // Re-trigger coordination
       await this.coordinator.coordinatePlan(plan);
     }

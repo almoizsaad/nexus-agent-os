@@ -1,9 +1,13 @@
-import { Mission } from '../types/mission';
+import type { Mission } from '../types/mission';
 import { EventBus } from './EventBus';
 import { AgentEventType } from '../types/agent';
 
 export class DecisionSupervisor {
-  constructor(private eventBus: EventBus) {}
+  private readonly eventBus: EventBus;
+
+  constructor(eventBus: EventBus) {
+    this.eventBus = eventBus;
+  }
 
   public async authorizeMissionInterruption(activeMission: Mission, newMission: Mission): Promise<boolean> {
     // Basic logic: high/critical priority can always interrupt lower priority
@@ -17,8 +21,8 @@ export class DecisionSupervisor {
       this.eventBus.publish('agent:events', {
         type: AgentEventType.AGENT_UPDATE,
         payload: { 
-          decision: 'INTERRUPTION_AUTHORIZED',
-          details: `Mission ${newMission.title} is authorized to interrupt ${activeMission.title}`
+          status: 'INTERRUPTION_AUTHORIZED',
+          message: `Mission ${newMission.title} is authorized to interrupt ${activeMission.title}`
         },
         timestamp: Date.now()
       });

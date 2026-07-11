@@ -1,6 +1,6 @@
-import { AgentIdentity, Plan } from './agent';
-import { Thought } from './thought';
-import { ReflectionResult } from './reflection';
+import type { AgentIdentity, Plan } from './agent';
+import type { Thought } from './thought';
+import type { ReflectionResult } from './reflection';
 
 export type MissionPriority = 'low' | 'medium' | 'high' | 'critical';
 

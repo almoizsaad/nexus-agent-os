@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { useMissionStore } from '../../stores/missionStore';
-import { Mission } from '../types/mission';
+import type { Mission } from '../types/mission';
 
 describe('MissionCentric Workspace', () => {
   it('should manage mission state correctly', () => {

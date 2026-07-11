@@ -1,4 +1,4 @@
-import { Mission, MissionGoal, MissionStatus } from '../types/mission';
+import type { Mission, MissionGoal, MissionStatus } from '../types/mission';
 
 export class GoalManager {
   private missions: Map<string, Mission> = new Map();

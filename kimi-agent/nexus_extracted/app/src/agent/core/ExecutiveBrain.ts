@@ -1,34 +1,30 @@
 import { GoalManager } from './GoalManager';
 import { PriorityManager } from './PriorityManager';
 import { MissionScheduler } from './MissionScheduler';
-import { DecisionSupervisor } from './DecisionSupervisor';
 import { CoordinatorAgent } from './CoordinatorAgent';
 import { EventBus } from './EventBus';
-import { MissionGoal } from '../types/mission';
+import type { MissionGoal } from '../types/mission';
 import { AgentEventType } from '../types/agent';
 
 export class ExecutiveBrain {
-  private goalManager: GoalManager;
-  private priorityManager: PriorityManager;
-  private scheduler: MissionScheduler;
-  private supervisor: DecisionSupervisor;
-  private coordinator: CoordinatorAgent;
-  private eventBus: EventBus;
+  private readonly goalManager: GoalManager;
+  private readonly priorityManager: PriorityManager;
+  private readonly scheduler: MissionScheduler;
+  private readonly coordinator: CoordinatorAgent;
+  private readonly eventBus: EventBus;
 
   constructor(
     eventBus: EventBus,
     coordinator: CoordinatorAgent,
     goalManager?: GoalManager,
     priorityManager?: PriorityManager,
-    scheduler?: MissionScheduler,
-    supervisor?: DecisionSupervisor
+    scheduler?: MissionScheduler
   ) {
     this.eventBus = eventBus;
     this.coordinator = coordinator;
     this.goalManager = goalManager || new GoalManager();
     this.priorityManager = priorityManager || new PriorityManager();
     this.scheduler = scheduler || new MissionScheduler(this.goalManager, this.priorityManager, this.eventBus);
-    this.supervisor = supervisor || new DecisionSupervisor(this.eventBus);
 
     this.scheduler.setCallbacks({
       onStart: async (mission) => {

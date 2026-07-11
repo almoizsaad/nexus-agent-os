@@ -1,4 +1,5 @@
 import type { Thought } from './thought';
+export type { Thought };
 
 export const AgentEventType = {
   USER_MESSAGE: 'USER_MESSAGE',

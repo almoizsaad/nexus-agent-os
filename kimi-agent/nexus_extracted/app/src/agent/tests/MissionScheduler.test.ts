@@ -3,7 +3,7 @@ import { MissionScheduler } from '../core/MissionScheduler';
 import { GoalManager } from '../core/GoalManager';
 import { PriorityManager } from '../core/PriorityManager';
 import { EventBus } from '../core/EventBus';
-import { MissionGoal } from '../types/mission';
+import type { MissionGoal } from '../types/mission';
 
 describe('MissionScheduler', () => {
   let scheduler: MissionScheduler;

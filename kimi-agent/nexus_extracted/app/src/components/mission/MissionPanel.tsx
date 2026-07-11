@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mission } from '@/agent/types/mission';
+import type { Mission } from '@/agent/types/mission';
 import { MissionProgress } from './MissionProgress';
 import { MissionHistory } from './MissionHistory';
 import { MissionSummary } from './MissionSummary';

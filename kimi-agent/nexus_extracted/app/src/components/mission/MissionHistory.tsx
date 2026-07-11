@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mission, MissionTimelineEntry } from '@/agent/types/mission';
+import type { Mission, MissionTimelineEntry } from '@/agent/types/mission';
 import { Brain, Zap, Search, Shield, Save, BookOpen, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 interface MissionHistoryProps {
@@ -42,7 +42,7 @@ export const MissionHistory: React.FC<MissionHistoryProps> = ({ mission }) => {
               {entry.description}
             </p>
             
-            {entry.data && (
+            {!!entry.data && (
               <div className="mt-2 p-2 rounded bg-white/5 border border-white/5 font-mono text-[10px] overflow-hidden truncate">
                 {JSON.stringify(entry.data)}
               </div>

@@ -5,8 +5,9 @@ import { MissionPanel } from './MissionPanel';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Plus, Target, LayoutDashboard, History, Settings } from 'lucide-react';
-import { ParticleCanvas } from '../generative-ui/ParticleCanvas';
-import { Mission } from '@/agent/types/mission';
+import ParticleCanvas from '../generative-ui/ParticleCanvas';
+import type { Mission } from '@/agent/types/mission';
+import { Card } from '../ui/card';
 
 export const MissionWorkspace: React.FC = () => {
   const { missions, activeMissionId, setActiveMission, addMission } = useMissionStore();
@@ -50,7 +51,7 @@ export const MissionWorkspace: React.FC = () => {
           { id: 't-3', timestamp: Date.now() - 3000000, type: 'action', title: 'Task Executed', description: 'Schema validation completed successfully.' },
         ],
         thoughts: [
-          { content: 'I should verify the replication lag before initiating the final cutover.', timestamp: Date.now(), type: 'observation' }
+          { id: crypto.randomUUID(), agentId: 'system', content: 'I should verify the replication lag before initiating the final cutover.', timestamp: Date.now(), type: 'observation' }
         ],
         reflections: [
           { workflowId: 'w-1', timestamp: Date.now() - 2000000, success: true, confidenceScore: 0.95, lessonsLearned: ['Parallel schema validation is faster than sequential'], mistakes: [], improvements: [], metadata: {} }

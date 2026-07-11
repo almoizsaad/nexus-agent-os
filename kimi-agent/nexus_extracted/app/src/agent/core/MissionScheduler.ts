@@ -1,20 +1,28 @@
 import { GoalManager } from './GoalManager';
 import { PriorityManager } from './PriorityManager';
-import { Mission } from '../types/mission';
+import type { Mission } from '../types/mission';
 import { EventBus } from './EventBus';
 import { AgentEventType } from '../types/agent';
 
 export class MissionScheduler {
-  private maxConcurrentMissions = 3;
+  private readonly maxConcurrentMissions = 3;
   private onStart?: (mission: Mission) => Promise<void>;
   private onPause?: (missionId: string) => Promise<void>;
   private onResume?: (missionId: string) => Promise<void>;
 
+  private readonly goalManager: GoalManager;
+  private readonly priorityManager: PriorityManager;
+  private readonly eventBus: EventBus;
+
   constructor(
-    private goalManager: GoalManager,
-    private priorityManager: PriorityManager,
-    private eventBus: EventBus
-  ) {}
+    goalManager: GoalManager,
+    priorityManager: PriorityManager,
+    eventBus: EventBus
+  ) {
+    this.goalManager = goalManager;
+    this.priorityManager = priorityManager;
+    this.eventBus = eventBus;
+  }
 
   public setCallbacks(callbacks: {
     onStart: (mission: Mission) => Promise<void>;

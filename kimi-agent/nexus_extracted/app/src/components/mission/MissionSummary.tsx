@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mission, MissionPriority } from '@/agent/types/mission';
+import type { Mission, MissionPriority } from '@/agent/types/mission';
 import { Badge } from '@/components/ui/badge';
 import { Target, Shield, Clock, Brain } from 'lucide-react';
 import { cn } from '@/lib/utils';

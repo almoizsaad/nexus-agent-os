@@ -2,8 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ExecutiveBrain } from '../core/ExecutiveBrain';
 import { CoordinatorAgent } from '../core/CoordinatorAgent';
 import { EventBus } from '../core/EventBus';
-import { MissionGoal } from '../types/mission';
+import type { MissionGoal } from '../types/mission';
 import { AgentRegistry } from '../core/AgentRegistry';
+import type { Planner } from '../types/agent';
 
 describe('ExecutiveBrain', () => {
   let brain: ExecutiveBrain;

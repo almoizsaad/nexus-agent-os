@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Mission, MissionPriority, MissionStatus } from '@/agent/types/mission';
+import type { Mission, MissionPriority, MissionStatus } from '@/agent/types/mission';
 import { Target, AlertCircle, CheckCircle2, Clock, Play, Pause, Square } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

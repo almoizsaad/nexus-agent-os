@@ -1,4 +1,4 @@
-import { Mission, MissionPriority } from '../types/mission';
+import type { Mission, MissionPriority } from '../types/mission';
 
 export class PriorityManager {
   private priorityWeights: Record<MissionPriority, number> = {
