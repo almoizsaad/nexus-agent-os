@@ -22,6 +22,8 @@ import { AgentChannel } from './AgentChannel';
 import { ReflectionEngine } from '../reflection/ReflectionEngine';
 import { ExecutionAnalyzer } from '../reflection/ExecutionAnalyzer';
 import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
+import { ThoughtManager } from '../reflection/ThoughtManager';
+import { PersistentMemory } from '../memory/PersistentMemory';
 import type { 
   IPerformanceMonitor, 
   IImprovementEngine, 
@@ -45,6 +47,7 @@ export class AgentRuntime {
   protected _workflowEngine: WorkflowEngine | null = null;
   protected _selfCorrection: SelfCorrection;
   protected _knowledgeGraph: KnowledgeGraph;
+  protected _thoughtManager: ThoughtManager;
   
   protected _monitor?: IPerformanceMonitor;
   protected _improvementEngine?: IImprovementEngine;
@@ -88,7 +91,10 @@ export class AgentRuntime {
     this._memory = new MemoryManager(monitor);
     this._selfCorrection = new SelfCorrection(this);
     
-    this._reflectionEngine = new ReflectionEngine(this._knowledgeGraph);
+    const persistentMemory = new PersistentMemory();
+    this._thoughtManager = new ThoughtManager(this._eventBus, persistentMemory);
+    
+    this._reflectionEngine = new ReflectionEngine(this._knowledgeGraph, this._stream);
     this._executionAnalyzer = new ExecutionAnalyzer();
 
     if (this._executor) {

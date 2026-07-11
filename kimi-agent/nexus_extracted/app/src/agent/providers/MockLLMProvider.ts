@@ -10,7 +10,8 @@ export class MockLLMProvider implements LLMProvider {
     this.mockResponse = response;
   }
 
-  public async generateStructuredOutput<T>(prompt: string, _schema: unknown): Promise<T> {
+  public async generateStructuredOutput<T>(prompt: string): Promise<T> {
+
     console.log(`[MockLLMProvider] Received prompt: ${prompt.substring(0, 100)}...`);
     
     if (this.mockResponse) {

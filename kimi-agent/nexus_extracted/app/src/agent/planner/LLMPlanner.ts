@@ -10,6 +10,7 @@ import type { IKnowledgeGraph } from '../types/knowledge';
 import { KnowledgeLinker } from '../knowledge/KnowledgeLinker';
 import type { ISafetyGuard } from '../types/safety';
 import { SafetyGuard } from '../core/SafetyLayer';
+import { AgentStream } from '../events/AgentStream';
 
 /**
  * LLMPlanner uses a Large Language Model to generate autonomous plans.
@@ -25,6 +26,7 @@ export class LLMPlanner implements Planner {
   private graph?: IKnowledgeGraph;
   private linker?: KnowledgeLinker;
   private safetyGuard: ISafetyGuard;
+  private stream?: AgentStream;
 
   constructor(
     provider: LLMProvider, 
@@ -32,7 +34,8 @@ export class LLMPlanner implements Planner {
     fallbackPlanner?: Planner,
     monitor?: IPerformanceMonitor,
     graph?: IKnowledgeGraph,
-    safetyGuard?: ISafetyGuard
+    safetyGuard?: ISafetyGuard,
+    stream?: AgentStream
   ) {
     this.provider = provider;
     this.toolRegistry = toolRegistry;
@@ -41,6 +44,7 @@ export class LLMPlanner implements Planner {
     this.fallbackPlanner = fallbackPlanner;
     this.monitor = monitor;
     this.graph = graph;
+    this.stream = stream;
     if (graph) {
       this.linker = new KnowledgeLinker(graph);
     }
@@ -51,10 +55,12 @@ export class LLMPlanner implements Planner {
    * Generates a structured plan using the LLM.
    */
   public async generatePlan(goal: string, state: AgentState): Promise<Plan> {
+    this.stream?.thought(`Generating autonomous plan for goal: ${goal}`, 'plan');
     const toolsDescription = this.toolRegistry.describeTools();
     const prompt = this.buildPrompt(goal, state, toolsDescription);
 
     try {
+      this.stream?.thought('Consulting LLM provider for structured task decomposition.', 'reasoning');
       // 1. Generate output from LLM
       const response = await this.provider.generateStructuredOutput<string>(
         prompt,
@@ -62,14 +68,16 @@ export class LLMPlanner implements Planner {
       );
 
       // 2. Parse the response
-      // If the provider already returned an object, we use it, otherwise parse string
       const structuredPlan = typeof response === 'string' 
         ? this.parser.parsePlan<StructuredPlan>(response)
         : response as unknown as StructuredPlan;
 
+      this.stream?.thought(`Generated plan reasoning: ${structuredPlan.reasoning}`, 'observation');
+
       // 3. Validate the plan
       const validation = this.validator.validate(structuredPlan);
       if (!validation.valid) {
+        this.stream?.thought('Plan validation failed. Re-evaluating strategy.', 'reflection');
         console.warn('[LLMPlanner] Plan validation failed:', validation.errors);
         this.monitor?.trackPlanner(0, structuredPlan.tasks?.length || 0);
         throw new Error(`Invalid plan generated: ${validation.errors.join(', ')}`);

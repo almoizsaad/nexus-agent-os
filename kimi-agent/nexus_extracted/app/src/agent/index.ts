@@ -6,7 +6,7 @@ export * from './protocol/actions';
 export * from './types/agent';
 
 // Planning
-export * from './planner/PlannerEngine';
+export * from './planner/LLMPlanner';
 export * from './planner/schemas';
 export * from './providers/LLMProvider';
 export * from './providers/MockLLMProvider';

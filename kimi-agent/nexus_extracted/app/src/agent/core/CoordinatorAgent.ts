@@ -60,6 +60,7 @@ export class CoordinatorAgent extends AgentRuntime {
   }
 
   public async startCooperativePlan(plan: CooperativePlan): Promise<void> {
+    this._stream.thought(`Starting cooperative coordination for plan: ${plan.id}`, 'plan', { planId: plan.id });
     this.activePlans.set(plan.id, plan);
     this.consensus.proposePlan(plan.id);
     
@@ -84,11 +85,13 @@ export class CoordinatorAgent extends AgentRuntime {
     if (!plan) return;
 
     if (success) {
+      this._stream.thought(`Task ${taskId} completed by agent ${message.sender}`, 'observation', { planId, taskId });
       this.coordinator.handleTaskCompletion(plan, taskId, result);
       
       // Check if plan is complete or if new tasks are ready
       const readyTasks = this.coordinator.getReadyTasks(plan);
       if (readyTasks.length > 0) {
+        this._stream.thought(`Decomposition revealed ${readyTasks.length} new tasks ready for delegation.`, 'reasoning', { planId });
         for (const task of readyTasks) {
           await this.coordinator.delegateTask(task, plan.id);
         }
@@ -96,6 +99,7 @@ export class CoordinatorAgent extends AgentRuntime {
         await this.finalizePlan(plan);
       }
     } else {
+      this._stream.thought(`Task ${taskId} failed: ${error}`, 'error', { planId, taskId });
       await this.handleTaskFailure(plan, taskId, error);
     }
   }

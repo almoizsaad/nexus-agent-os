@@ -1,4 +1,4 @@
-import type { Planner, AgentState, Plan } from '../types/agent';
+import type { Planner, Plan } from '../types/agent';
 import type { StructuredTask } from './schemas';
 
 /**
@@ -9,7 +9,7 @@ export class TaskPlanner implements Planner {
   /**
    * Generates a Plan based on a user goal and current agent state.
    */
-  public async generatePlan(goal: string, _state: AgentState): Promise<Plan> {
+  public async generatePlan(goal: string): Promise<Plan> {
     const tasks: StructuredTask[] = this.decomposeGoal(goal);
     
     return {

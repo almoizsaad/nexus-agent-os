@@ -1,5 +1,6 @@
 import type { EventBus } from '../core/EventBus';
 import { AgentEventType } from '../types/agent';
+import type { Thought, ThoughtType } from '../types/thought';
 
 /**
  * AgentStream provides a high-level API for emitting progress events 
@@ -10,6 +11,26 @@ export class AgentStream {
 
   constructor(eventBus: EventBus) {
     this.eventBus = eventBus;
+  }
+
+  public thought(content: string, type: ThoughtType = 'reasoning', metadata?: Record<string, unknown>): void {
+    const thought: Thought = {
+      id: crypto.randomUUID(),
+      timestamp: Date.now(),
+      content,
+      type,
+      agentId: 'system', // Default, should be overridden by caller if possible
+      ...metadata
+    };
+
+    this.eventBus.publish('agent:thoughts', {
+      type: AgentEventType.THOUGHT_GENERATED,
+      payload: { thought },
+      timestamp: Date.now()
+    } as any);
+
+    // Also emit as a status update for UI visibility
+    this.emitStatus('thinking', content, undefined, { thoughtId: thought.id, type });
   }
 
   public thinking(message: string = 'Agent is thinking...'): void {

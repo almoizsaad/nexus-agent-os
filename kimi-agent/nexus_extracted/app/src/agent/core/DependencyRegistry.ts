@@ -15,17 +15,19 @@ import { AgentManager } from './AgentManager';
 import { MockWeatherTool } from '../tools/mocks/MockWeatherTool';
 import type { AgentIdentity } from '../types/agent';
 import { AgentChannel } from './AgentChannel';
+import { AgentStream } from '../events/AgentStream';
 
 export class DependencyRegistry {
   public static registerCoreServices(container: ServiceContainer): void {
     // Singletons - only if not already registered
     if (!container.has(EventBus)) container.registerSingleton(EventBus, new EventBus());
+    if (!container.has(AgentStream)) container.registerSingleton(AgentStream, (c) => new AgentStream(c.resolve(EventBus)));
     if (!container.has(ToolRegistry)) container.registerSingleton(ToolRegistry, new ToolRegistry());
     if (!container.has(PerformanceMonitor)) container.registerSingleton(PerformanceMonitor, new PerformanceMonitor());
     if (!container.has(ImprovementEngine)) container.registerSingleton(ImprovementEngine, new ImprovementEngine());
     if (!container.has(OptimizationSuggestions)) container.registerSingleton(OptimizationSuggestions, new OptimizationSuggestions());
     if (!container.has(KnowledgeGraph)) container.registerSingleton(KnowledgeGraph, new KnowledgeGraph());
-    if (!container.has(AgentRegistry)) container.registerSingleton(AgentRegistry, (c) => new AgentRegistry(c.resolve(EventBus)));
+    if (!container.has(AgentRegistry)) container.registerSingleton(AgentRegistry, () => new AgentRegistry());
     
     // Provider/Implementation mapping
     if (!container.has('LLMProvider')) container.registerSingleton('LLMProvider', new MockLLMProvider());
@@ -36,8 +38,9 @@ export class DependencyRegistry {
         const toolRegistry = c.resolve(ToolRegistry);
         const monitor = c.resolve(PerformanceMonitor);
         const graph = c.resolve(KnowledgeGraph);
+        const stream = c.resolve(AgentStream);
         const fallback = new TaskPlanner();
-        return new LLMPlanner(provider, toolRegistry, fallback, monitor, graph);
+        return new LLMPlanner(provider, toolRegistry, fallback, monitor, graph, undefined, stream);
       });
     }
 

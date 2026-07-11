@@ -1,4 +1,4 @@
-import { ServiceContainer, globalContainer } from '../core/ServiceContainer';
+import { ServiceContainer } from '../core/ServiceContainer';
 import { DependencyRegistry } from '../core/DependencyRegistry';
 import { EventBus } from '../core/EventBus';
 import { ToolRegistry } from '../tools/ToolRegistry';

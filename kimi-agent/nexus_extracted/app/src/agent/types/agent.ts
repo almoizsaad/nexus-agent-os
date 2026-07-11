@@ -1,3 +1,5 @@
+import type { Thought } from './thought';
+
 export const AgentEventType = {
   USER_MESSAGE: 'USER_MESSAGE',
   WORKSPACE_ACTION: 'WORKSPACE_ACTION',
@@ -6,6 +8,7 @@ export const AgentEventType = {
   ERROR: 'ERROR',
   AGENT_LIFECYCLE: 'AGENT_LIFECYCLE',
   REFLECTION: 'REFLECTION',
+  THOUGHT_GENERATED: 'THOUGHT_GENERATED',
 } as const;
 
 export type AgentEventType = typeof AgentEventType[keyof typeof AgentEventType];
@@ -236,6 +239,13 @@ export interface AgentReflectionEvent extends AgentEvent {
   };
 }
 
+export interface ThoughtGeneratedEvent extends AgentEvent {
+  type: typeof AgentEventType.THOUGHT_GENERATED;
+  payload: {
+    thought: Thought;
+  };
+}
+
 export type AgentProtocolEvent = 
   | UserMessageEvent 
   | WorkspaceActionEvent 
@@ -243,7 +253,8 @@ export type AgentProtocolEvent =
   | AgentUpdateEvent
   | ErrorEvent
   | AgentLifecycleEvent
-  | AgentReflectionEvent;
+  | AgentReflectionEvent
+  | ThoughtGeneratedEvent;
 
 // --- Extension Points ---
 

@@ -1,19 +1,23 @@
 import type { ISelfReflectionEngine, ReflectionResult, ExecutionAnalysis } from '../types/reflection';
 import type { IKnowledgeGraph } from '../types/knowledge';
 import { KnowledgeLinker } from '../knowledge/KnowledgeLinker';
-
+import { AgentStream } from '../events/AgentStream';
 export class ReflectionEngine implements ISelfReflectionEngine {
   private graph?: IKnowledgeGraph;
   private linker?: KnowledgeLinker;
+  private stream?: AgentStream;
 
-  constructor(graph?: IKnowledgeGraph) {
+  constructor(graph?: IKnowledgeGraph, stream?: AgentStream) {
     this.graph = graph;
+    this.stream = stream;
     if (graph) {
       this.linker = new KnowledgeLinker(graph);
     }
   }
 
   public async reflect(analysis: ExecutionAnalysis): Promise<ReflectionResult> {
+    this.stream?.thought(`Starting reflection for workflow: ${analysis.workflowId}`, 'reflection', { workflowId: analysis.workflowId });
+
     const success = analysis.failedTasks === 0;
     const confidenceScore = this.calculateConfidence(analysis);
     
@@ -22,14 +26,24 @@ export class ReflectionEngine implements ISelfReflectionEngine {
     const improvements: string[] = [];
 
     if (success) {
+      this.stream?.thought('Analyzing successful workflow patterns.', 'observation', { workflowId: analysis.workflowId });
       lessonsLearned.push('Workflow completed successfully without terminal failures.');
+      
       if (analysis.retries > 0) {
         lessonsLearned.push(`Recovered from ${analysis.retries} transient failures.`);
         improvements.push('Investigate transient failures to improve stability.');
       }
     } else {
+      this.stream?.thought(`Analyzing ${analysis.failedTasks} task failures.`, 'error', { workflowId: analysis.workflowId });
       mistakes.push(`Workflow failed with ${analysis.failedTasks} permanent task failures.`);
-      analysis.errors.forEach(err => mistakes.push(`Error: ${err}`));
+      
+      for (const err of analysis.errors) {
+        let insight = `Task failed with error: ${err}`;
+        if (err.includes('timeout')) insight = 'Task failed due to timeout. Consider increasing resource limits.';
+        if (err.includes('rate limit')) insight = 'Task hit rate limits. Consider adding backoff strategy.';
+        mistakes.push(insight);
+      }
+      
       improvements.push('Analyze permanent failures and update task handlers or tool configurations.');
     }
 
