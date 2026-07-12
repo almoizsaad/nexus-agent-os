@@ -1,7 +1,62 @@
+import { z } from 'zod';
+
 /**
- * Interface representing a tool that can be executed by the Agent OS.
+ * Metadata for a tool, providing versioning and categorization.
  */
-export interface Tool<TInput = unknown, TOutput = unknown> {
+export interface ToolMetadata {
+  version: string;
+  author?: string;
+  tags?: string[];
+  category?: 'filesystem' | 'network' | 'utility' | 'browser' | 'search' | 'git' | 'http' | 'other';
+}
+
+/**
+ * Permission requirements for tool execution.
+ */
+export interface ToolPermissions {
+  requiredPermissions: string[];
+  requiresApproval?: boolean;
+}
+
+/**
+ * Options for tool execution, including timeouts and retries.
+ */
+export interface ToolExecutionOptions {
+  timeout?: number;
+  retry?: {
+    attempts: number;
+    delay: number;
+    backoff?: boolean;
+  };
+  streaming?: boolean;
+  onStream?: (chunk: any) => void;
+}
+
+/**
+ * Health status of a tool.
+ */
+export interface ToolHealth {
+  status: 'healthy' | 'degraded' | 'failing';
+  lastChecked: Date;
+  errorCount: number;
+}
+
+/**
+ * Standard output format for all tool executions.
+ */
+export interface ToolOutput<TOutput = unknown> {
+  success: boolean;
+  data?: TOutput;
+  error?: string;
+  cost?: number; // Estimated cost
+  latency: number; // Execution time in ms
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Unified Tool interface for the Nexus Agent OS.
+ */
+export interface Tool<TInput = any, TOutput = any> {
   /**
    * The unique name of the tool.
    */
@@ -13,9 +68,40 @@ export interface Tool<TInput = unknown, TOutput = unknown> {
   readonly description: string;
 
   /**
-   * Executes the tool with the provided input.
-   * @param input The input parameters for the tool.
-   * @returns A promise that resolves to the tool's output.
+   * Metadata for the tool.
    */
-  execute(input: TInput): Promise<TOutput>;
+  readonly metadata: ToolMetadata;
+
+  /**
+   * Permission requirements for the tool.
+   */
+  readonly permissions: ToolPermissions;
+
+  /**
+   * Default execution options for the tool.
+   */
+  readonly options: ToolExecutionOptions;
+
+  /**
+   * Zod schema for input validation.
+   */
+  readonly inputSchema: z.ZodType<TInput>;
+
+  /**
+   * Zod schema for output validation.
+   */
+  readonly outputSchema: z.ZodType<TOutput>;
+
+  /**
+   * Executes the tool with the provided input.
+   * This is the internal implementation; consumers should use ToolRegistry.
+   * @param input The validated input parameters.
+   * @param options Overrides for default execution options.
+   */
+  execute(input: TInput, options?: ToolExecutionOptions): Promise<TOutput>;
+
+  /**
+   * Checks the health of the tool (e.g., verifying external dependencies).
+   */
+  checkHealth(): Promise<ToolHealth>;
 }

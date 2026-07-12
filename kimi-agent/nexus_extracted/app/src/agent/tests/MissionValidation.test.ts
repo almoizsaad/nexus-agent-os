@@ -17,6 +17,7 @@ import { EventBus } from '../core/EventBus';
 import { AgentRegistry } from '../core/AgentRegistry';
 import { TaskExecutor } from '../executor/TaskExecutor';
 import { ServiceContainer } from '../core/ServiceContainer';
+import { createTestTool } from './testUtils';
 
 describe('Mission Validation - End-to-End', () => {
   let agent: ReturnType<typeof createAgent>;
@@ -91,8 +92,8 @@ describe('Mission Validation - End-to-End', () => {
     brain = new ExecutiveBrain(agent.eventBus, coordinator);
 
     // Register tools safely
-    const registerSafe = (tool: Tool) => {
-      try { agent.toolRegistry.register(tool); } catch { /* ignore */ }
+    const registerSafe = (tool: any) => {
+      try { agent.toolRegistry.register(createTestTool(tool)); } catch { /* ignore */ }
     };
 
     registerSafe({ 
@@ -202,11 +203,11 @@ it('should execute a Research & Knowledge mission', async () => {
     // Force a tool to fail
     const toolRegistry = (coordinator.executor as TaskExecutor).registry;
     if (toolRegistry) {
-      toolRegistry.register({
+      toolRegistry.register(createTestTool({
         name: 'failing_tool',
         description: 'This tool always fails',
         execute: async () => { throw new Error('Tool exploded'); }
-      });
+      }));
     }
 
     provider.setMockResponse({

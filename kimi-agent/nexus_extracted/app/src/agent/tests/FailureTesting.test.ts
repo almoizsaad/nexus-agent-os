@@ -16,6 +16,7 @@ import { AgentRegistry } from '../core/AgentRegistry';
 import { ToolRegistry } from '../tools/ToolRegistry';
 import { UnifiedEventBus } from '../core/UnifiedEventBus';
 import { ServiceContainer } from '../core/ServiceContainer';
+import { createTestTool } from './testUtils';
 
 describe('Phase 8.3 — Failure Testing', () => {
   let agent: ReturnType<typeof createAgent>;
@@ -154,14 +155,14 @@ describe('Phase 8.3 — Failure Testing', () => {
 
   it('Failure: Slow Tool (Timeout and Recovery)', async () => {
     const toolRegistry = agent.container.resolve(ToolRegistry);
-    toolRegistry.register({
+    toolRegistry.register(createTestTool({
       name: 'slow_tool',
       description: 'Takes too long',
       execute: async () => {
         await new Promise(resolve => setTimeout(resolve, 2000));
         return { done: true };
       }
-    });
+    }));
 
     provider.setMockResponse({
       id: 'fail-slow',

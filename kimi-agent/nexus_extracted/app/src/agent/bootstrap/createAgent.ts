@@ -2,6 +2,7 @@ import { globalContainer, ServiceContainer } from '../core/ServiceContainer';
 import { DependencyRegistry } from '../core/DependencyRegistry';
 import { EventBus } from '../core/EventBus';
 import { ToolRegistry } from '../tools/ToolRegistry';
+import { registerDefaultTools } from '../tools/registerTools';
 import { AgentFactory } from '../core/AgentFactory';
 import { AgentManager } from '../core/AgentManager';
 import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
@@ -21,6 +22,10 @@ export function createAgent(container: ServiceContainer = new ServiceContainer()
   // Resolve main components
   const eventBus = container.resolve(EventBus);
   const toolRegistry = container.resolve(ToolRegistry);
+  
+  // Register default production tools
+  registerDefaultTools(toolRegistry);
+
   const monitor = container.resolve(PerformanceMonitor);
   const improvementEngine = container.resolve(ImprovementEngine);
   const suggestions = container.resolve(OptimizationSuggestions);

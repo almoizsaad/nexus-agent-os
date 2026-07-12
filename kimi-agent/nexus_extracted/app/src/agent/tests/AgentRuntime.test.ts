@@ -5,6 +5,7 @@ import { TaskPlanner } from '../planner/TaskPlanner';
 import { TaskExecutor } from '../executor/TaskExecutor';
 import { ToolRegistry } from '../tools/ToolRegistry';
 import { AgentActionType } from '../types/agent';
+import { createTestTool } from './testUtils';
 
 describe('AgentRuntime', () => {
   let eventBus: EventBus;
@@ -19,10 +20,10 @@ describe('AgentRuntime', () => {
     registry = new ToolRegistry();
     
     // Register expected tools
-    registry.register({ name: 'search_flights', description: 'flights', execute: async () => ({ success: true }) });
-    registry.register({ name: 'find_hotels', description: 'hotels', execute: async () => ({ success: true }) });
-    registry.register({ name: 'get_current_weather', description: 'weather', execute: async () => ({ success: true }) });
-    registry.register({ name: 'exchange_rate_lookup', description: 'fx', execute: async () => ({ success: true }) });
+    registry.register(createTestTool({ name: 'search_flights', description: 'flights', execute: async () => ({ success: true }) }));
+    registry.register(createTestTool({ name: 'find_hotels', description: 'hotels', execute: async () => ({ success: true }) }));
+    registry.register(createTestTool({ name: 'get_current_weather', description: 'weather', execute: async () => ({ success: true }) }));
+    registry.register(createTestTool({ name: 'exchange_rate_lookup', description: 'fx', execute: async () => ({ success: true }) }));
 
     executor = new TaskExecutor(registry);
     runtime = new AgentRuntime(eventBus, planner, executor);

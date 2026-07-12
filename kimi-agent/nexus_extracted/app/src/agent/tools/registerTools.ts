@@ -1,0 +1,45 @@
+import { ToolRegistry } from './ToolRegistry';
+import { ClockTool } from './local/ClockTool';
+import { UUIDTool } from './local/UUIDTool';
+import { FilesystemTool } from './local/FilesystemTool';
+import { TerminalTool } from './local/TerminalTool';
+import { GitTool } from './local/GitTool';
+import { CalculatorTool } from './local/CalculatorTool';
+import { BrowserTool } from './local/BrowserTool';
+import { SearchTool } from './local/SearchTool';
+import { HTTPTool } from './local/HTTPTool';
+import { JSONTool } from './local/JSONTool';
+import { MarkdownTool } from './local/MarkdownTool';
+import { CSVTool } from './local/CSVTool';
+import { PDFTool } from './local/PDFTool';
+import { ImageMetadataTool } from './local/ImageMetadataTool';
+
+/**
+ * Registers all production-grade local tools into the registry.
+ */
+export function registerDefaultTools(registry: ToolRegistry): void {
+  const tools = [
+    new ClockTool(),
+    new UUIDTool(),
+    new FilesystemTool(),
+    new TerminalTool(),
+    new GitTool(),
+    new CalculatorTool(),
+    new BrowserTool(),
+    new SearchTool(),
+    new HTTPTool(),
+    new JSONTool(),
+    new MarkdownTool(),
+    new CSVTool(),
+    new PDFTool(),
+    new ImageMetadataTool(),
+  ];
+
+  tools.forEach(tool => {
+    try {
+      registry.register(tool);
+    } catch (error) {
+      console.warn(`[ToolRegistry] Failed to register tool "${tool.name}":`, error);
+    }
+  });
+}

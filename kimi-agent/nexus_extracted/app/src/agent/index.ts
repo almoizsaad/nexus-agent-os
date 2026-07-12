@@ -22,7 +22,6 @@ export * from './workflow/TaskGraph';
 // Tools
 export * from './tools/Tool';
 export * from './tools/ToolRegistry';
-export * from './tools/protocols/ToolSchema';
 
 // Bootstrap
 export * from './bootstrap/createAgent';

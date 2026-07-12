@@ -15,14 +15,8 @@ import { AgentRegistry } from '../core/AgentRegistry';
 import { ToolRegistry } from '../tools/ToolRegistry';
 import { UnifiedEventBus } from '../core/UnifiedEventBus';
 import { ServiceContainer } from '../core/ServiceContainer';
-import type { Tool } from '../tools/Tool';
 import type { StructuredTask } from '../planner/schemas';
-
-class MockWeatherTool implements Tool {
-  name = 'get_current_weather';
-  description = 'Get current weather';
-  execute = async () => ({ temp: '22C', condition: 'Sunny' });
-}
+import { createTestTool } from './testUtils';
 
 describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
   let agent: ReturnType<typeof createAgent>;
