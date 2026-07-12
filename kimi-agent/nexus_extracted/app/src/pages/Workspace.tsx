@@ -1,5 +1,5 @@
-import { MissionWorkspace } from '@/components/mission/MissionWorkspace';
+import { CollaborativeWorkspace } from '@/components/workspace/CollaborativeWorkspace';
 
 export default function Workspace() {
-  return <MissionWorkspace />;
+  return <CollaborativeWorkspace />;
 }

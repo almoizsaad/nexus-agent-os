@@ -38,6 +38,16 @@ export class WorkspaceAdapter {
         case AgentActionType.RENDER_COMPONENT:
           workspace.addComponent(action.payload as unknown as WorkspaceComponent);
           break;
+
+        case AgentActionType.UPDATE_COMPONENT:
+          const { id, updates } = action.payload as { id: string; updates: Partial<WorkspaceComponent> };
+          workspace.updateComponent(id, updates);
+          break;
+
+        case AgentActionType.UPDATE_ENTITY:
+          // This could be mapped to a specific entity in the workspace or knowledge graph
+          console.log('[WorkspaceAdapter] Agent updating entity:', action.payload);
+          break;
       }
     });
     this.unsubscribers.push(unsubActions);

@@ -68,6 +68,7 @@ export class ResearchAgent extends AgentRuntime {
       // Automatic fact recording for high-confidence discoveries
       const findings = memories.filter(m => (m.metadata?.importance as number || 0) > 0.7);
       for (const finding of findings) {
+        // Record in Knowledge Graph
         await this.researchManager.recordFact({
           claim: typeof finding.content === 'string' ? finding.content : JSON.stringify(finding.content),
           source: (finding.metadata?.source as string) || 'Research Mission',
@@ -76,6 +77,14 @@ export class ResearchAgent extends AgentRuntime {
           confidence: (finding.metadata?.importance as number) || 0.9,
           provider: this._identity?.name || 'Research Agent'
         });
+
+        // LIVE WORKSPACE EDIT: Render discovery card
+        this.renderComponent('analysis', {
+          title: `Discovery: ${finding.tags?.[0] || 'Fact'}`,
+          content: finding.content,
+          confidence: (finding.metadata?.importance as number) || 0.9,
+          timestamp: new Date(finding.timestamp).toLocaleTimeString()
+        }, { source: (finding.metadata?.source as string) || 'Research Agent' });
       }
     }
     

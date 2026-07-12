@@ -290,6 +290,28 @@ export class AgentRuntime {
     this._eventBus.publish('agent:actions', action);
   }
 
+  /**
+   * Renders a component directly into the shared workspace.
+   */
+  public renderComponent(type: string, props: Record<string, unknown>, metadata?: Record<string, unknown>): string {
+    const id = (props.id as string) || crypto.randomUUID();
+    this.dispatchAction({
+      type: AgentActionType.RENDER_COMPONENT,
+      payload: { id, type, props, status: 'ready', metadata }
+    });
+    return id;
+  }
+
+  /**
+   * Updates an existing component in the shared workspace live.
+   */
+  public updateComponent(id: string, updates: Record<string, unknown>): void {
+    this.dispatchAction({
+      type: AgentActionType.UPDATE_COMPONENT,
+      payload: { id, updates }
+    });
+  }
+
   public destroy(): void {
     Logger.info(`[AgentRuntime] Destroying agent: ${this._identity?.id || 'unknown'}`);
     this._unsubscribers.forEach(unsub => unsub());
