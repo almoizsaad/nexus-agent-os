@@ -8,6 +8,7 @@ import type { IPerformanceMonitor, IImprovementEngine } from '../types/improveme
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
 import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
 import { AgentRegistry } from './AgentRegistry';
+import { ResearchAgent } from '../research/ResearchAgent';
 
 export class AgentFactory {
   private container: IServiceContainer;
@@ -34,6 +35,28 @@ export class AgentFactory {
       suggestions,
       identity,
       channel,
+      knowledgeGraph
+    );
+  }
+
+  public createResearchAgent(identity?: AgentIdentity, channel?: AgentChannel): ResearchAgent {
+    const eventBus = this.container.resolve(EventBus);
+    const planner = this.container.resolve<Planner>('Planner');
+    const executor = this.container.resolve<Executor>('Executor');
+    const monitor = this.container.resolve<IPerformanceMonitor>('PerformanceMonitor');
+    const improvementEngine = this.container.resolve<IImprovementEngine>('ImprovementEngine');
+    const suggestions = this.container.resolve(OptimizationSuggestions);
+    const knowledgeGraph = this.container.resolve(KnowledgeGraph);
+
+    return new ResearchAgent(
+      eventBus,
+      planner,
+      executor,
+      monitor,
+      improvementEngine,
+      suggestions,
+      identity || { id: crypto.randomUUID(), name: 'Research Specialist', role: 'worker', capabilities: ['research', 'search', 'analysis'] },
+      channel!,
       knowledgeGraph
     );
   }

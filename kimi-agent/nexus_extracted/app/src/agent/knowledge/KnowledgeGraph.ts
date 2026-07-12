@@ -7,7 +7,7 @@ import type {
 } from '../types/knowledge';
 
 export class KnowledgeGraph implements IKnowledgeGraph {
-  private nodes: Map<string, GraphNode> = new Map();
+  public nodes: Map<string, GraphNode> = new Map();
   private edges: Map<string, GraphEdge> = new Map();
   private adjacencyList: Map<string, string[]> = new Map(); // nodeId -> edgeIds
 
