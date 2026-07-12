@@ -13,11 +13,14 @@ import { MarkdownTool } from './local/MarkdownTool';
 import { CSVTool } from './local/CSVTool';
 import { PDFTool } from './local/PDFTool';
 import { ImageMetadataTool } from './local/ImageMetadataTool';
+import { KnowledgeTool } from './local/KnowledgeTool';
+import { ResearchSynthesisTool } from './local/ResearchSynthesisTool';
+import type { IKnowledgeDatabase } from '../types/knowledge';
 
 /**
  * Registers all production-grade local tools into the registry.
  */
-export function registerDefaultTools(registry: ToolRegistry): void {
+export function registerDefaultTools(registry: ToolRegistry, knowledgeDb?: IKnowledgeDatabase): void {
   const tools = [
     new ClockTool(),
     new UUIDTool(),
@@ -33,7 +36,12 @@ export function registerDefaultTools(registry: ToolRegistry): void {
     new CSVTool(),
     new PDFTool(),
     new ImageMetadataTool(),
+    new ResearchSynthesisTool(),
   ];
+
+  if (knowledgeDb) {
+    tools.push(new KnowledgeTool(knowledgeDb));
+  }
 
   tools.forEach(tool => {
     try {

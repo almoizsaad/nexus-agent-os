@@ -1,11 +1,12 @@
 import { globalContainer, ServiceContainer } from '../core/ServiceContainer';
 import { DependencyRegistry } from '../core/DependencyRegistry';
-import { EventBus } from '../core/EventBus';
+import { EventBus } from './EventBus';
 import { ToolRegistry } from '../tools/ToolRegistry';
 import { registerDefaultTools } from '../tools/registerTools';
 import { AgentFactory } from '../core/AgentFactory';
 import { AgentManager } from '../core/AgentManager';
 import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
+import { KnowledgeDatabase } from '../knowledge/KnowledgeDatabase';
 import { PerformanceMonitor } from '../improvement/PerformanceMonitor';
 import { ImprovementEngine } from '../improvement/ImprovementEngine';
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
@@ -22,9 +23,10 @@ export function createAgent(container: ServiceContainer = new ServiceContainer()
   // Resolve main components
   const eventBus = container.resolve(EventBus);
   const toolRegistry = container.resolve(ToolRegistry);
-  
+  const knowledgeDb = container.resolve(KnowledgeDatabase);
+
   // Register default production tools
-  registerDefaultTools(toolRegistry);
+  registerDefaultTools(toolRegistry, knowledgeDb);
 
   const monitor = container.resolve(PerformanceMonitor);
   const improvementEngine = container.resolve(ImprovementEngine);
@@ -35,6 +37,7 @@ export function createAgent(container: ServiceContainer = new ServiceContainer()
 
   // Get or create default runtime instance
   const runtime = container.resolve(AgentRuntime);
+
 
   return {
     runtime,

@@ -5,6 +5,9 @@ import { PerformanceMonitor } from '../improvement/PerformanceMonitor';
 import { ImprovementEngine } from '../improvement/ImprovementEngine';
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
 import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
+import { KnowledgeDatabase } from '../knowledge/KnowledgeDatabase';
+import { EmbeddingStore } from '../knowledge/EmbeddingStore';
+import { VectorSearch } from '../knowledge/VectorSearch';
 import { MoonshotLLMProvider } from '../providers/MoonshotLLMProvider';
 import { LLMPlanner } from '../planner/LLMPlanner';
 import { TaskPlanner } from '../planner/TaskPlanner';
@@ -40,6 +43,19 @@ export class DependencyRegistry {
     if (!container.has(ImprovementEngine)) container.registerSingleton(ImprovementEngine, new ImprovementEngine());
     if (!container.has(OptimizationSuggestions)) container.registerSingleton(OptimizationSuggestions, new OptimizationSuggestions());
     if (!container.has(KnowledgeGraph)) container.registerSingleton(KnowledgeGraph, new KnowledgeGraph());
+    
+    // Knowledge Database & Vector Search
+    if (!container.has(EmbeddingStore)) container.registerSingleton(EmbeddingStore, new EmbeddingStore());
+    if (!container.has(VectorSearch)) container.registerSingleton(VectorSearch, (c) => new VectorSearch(c.resolve(EmbeddingStore)));
+    if (!container.has(KnowledgeDatabase)) {
+      container.registerSingleton(KnowledgeDatabase, (c) => {
+        return new KnowledgeDatabase(
+          c.resolve(VectorSearch),
+          c.resolve('LLMProvider')
+        );
+      });
+    }
+
     if (!container.has(AgentRegistry)) container.registerSingleton(AgentRegistry, () => new AgentRegistry());
     
     // Safety

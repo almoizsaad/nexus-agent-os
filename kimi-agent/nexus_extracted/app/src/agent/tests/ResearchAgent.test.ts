@@ -1,56 +1,113 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { ResearchAgent } from '../research/ResearchAgent';
+import { EventBus } from '../core/EventBus';
+import { ToolRegistry } from '../tools/ToolRegistry';
+import { registerDefaultTools } from '../tools/registerTools';
+import { TaskExecutor } from '../executor/TaskExecutor';
+import { LLMPlanner } from '../planner/LLMPlanner';
+import { MockLLMProvider } from '../providers/MockLLMProvider';
+import { PerformanceMonitor } from '../improvement/PerformanceMonitor';
+import { ImprovementEngine } from '../improvement/ImprovementEngine';
+import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
 import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
-import { ResearchManager } from '../research/ResearchManager';
+import { KnowledgeDatabase } from '../knowledge/KnowledgeDatabase';
+import { EmbeddingStore } from '../knowledge/EmbeddingStore';
+import { VectorSearch } from '../knowledge/VectorSearch';
+import { AgentChannel } from '../core/AgentChannel';
 
-describe('Research Agent Capabilities', () => {
-  let graph: KnowledgeGraph;
-  let research: ResearchManager;
+describe('ResearchAgent Integration', () => {
+  let agent: ResearchAgent;
+  let eventBus: EventBus;
+  let toolRegistry: ToolRegistry;
+  let knowledgeGraph: KnowledgeGraph;
 
   beforeEach(() => {
-    graph = new KnowledgeGraph();
-    research = new ResearchManager(graph);
+    eventBus = new EventBus();
+    toolRegistry = new ToolRegistry();
+    const embeddingStore = new EmbeddingStore();
+    const vectorSearch = new VectorSearch(embeddingStore);
+    const llmProvider = new MockLLMProvider();
+    const knowledgeDb = new KnowledgeDatabase(vectorSearch, llmProvider);
+    
+    registerDefaultTools(toolRegistry, knowledgeDb);
+
+    const monitor = new PerformanceMonitor();
+    const improvementEngine = new ImprovementEngine();
+    const suggestions = new OptimizationSuggestions();
+    knowledgeGraph = new KnowledgeGraph();
+
+    const planner = new LLMPlanner(llmProvider, toolRegistry);
+    const executor = new TaskExecutor(toolRegistry, monitor);
+    const channel = new AgentChannel(eventBus, { id: 'test-agent', name: 'Test', role: 'worker', capabilities: [] });
+
+    agent = new ResearchAgent(
+      eventBus,
+      planner,
+      executor,
+      monitor,
+      improvementEngine,
+      suggestions,
+      undefined as any, // Let it use default identity
+      channel,
+      knowledgeGraph
+    );
   });
 
-  it('should record research facts with full provenance', async () => {
-    const fact = {
-      claim: 'Nexus Agent OS is a multi-agent framework.',
-      source: 'Internal Documentation',
-      url: 'https://nexus.os/docs',
-      timestamp: Date.now(),
-      confidence: 0.95,
-      provider: 'local_docs'
-    };
-
-    const node = await research.recordFact(fact);
-    expect(node.properties.claim).toBe(fact.claim);
-    expect(node.properties.source).toBe(fact.source);
-    expect(node.properties.provider).toBe(fact.provider);
-    expect(node.properties.confidence).toBe(fact.confidence);
+  it('should initialize with correct capabilities', () => {
+    expect(agent.identity?.capabilities).toContain('search');
+    expect(agent.identity?.capabilities).toContain('read');
+    expect(agent.identity?.capabilities).toContain('compare');
+    expect(agent.identity?.capabilities).toContain('summarize');
+    expect(agent.identity?.capabilities).toContain('cite');
+    expect(agent.identity?.capabilities).toContain('store');
   });
 
-  it('should verify facts and find support in knowledge graph', async () => {
-    // Discovery 1
-    await research.recordFact({
-      claim: 'Vite is a build tool.',
-      source: 'Vite Guide',
-      url: 'https://vitejs.dev',
-      timestamp: Date.now(),
-      confidence: 0.9,
-      provider: 'web'
+  it('should process a research goal and record facts', async () => {
+    // Mock planner to return a simple plan
+    const generatePlanSpy = vi.spyOn(agent.planner!, 'generatePlan').mockResolvedValue({
+      id: 'plan-123',
+      goal: 'Research quantum computing',
+      tasks: [
+        {
+          id: 'task-1',
+          description: 'Search for quantum computing basics',
+          tool: 'search',
+          input: { query: 'quantum computing basics' },
+          dependencies: [],
+          status: 'pending',
+          metadata: {}
+        }
+      ],
+      reasoning: 'Starting with a broad search.',
+      createdAt: Date.now()
     });
 
-    // Discovery 2 (Related)
-    const node2 = await research.recordFact({
-      claim: 'Vite is a fast build tool for modern web apps.',
-      source: 'Blog Post',
-      url: 'https://blog.dev/vite',
-      timestamp: Date.now(),
-      confidence: 0.85,
-      provider: 'web'
+    // Mock executor to return a result
+    const executeSpy = vi.spyOn(agent.executor!, 'executeTask').mockResolvedValue({
+      success: true,
+      data: { results: [{ title: 'Quantum Computing 101', snippet: 'Quantum computing is a type of computing...', url: 'https://example.com' }] },
+      latency: 100
     });
 
-    const result = await research.verifyFact(node2.id);
-    expect(result.status).toBe('verified');
-    expect(result.supportingFactIds.length).toBeGreaterThan(0);
+    // We need to mock memory.recallMemories to simulate finding facts for reflection
+    vi.spyOn(agent.memory, 'recallMemories').mockResolvedValue([
+      {
+        id: 'mem-1',
+        type: 'semantic',
+        content: 'Quantum bits (qubits) can exist in multiple states simultaneously.',
+        timestamp: Date.now(),
+        tags: ['fact'],
+        metadata: { importance: 0.9 }
+      }
+    ]);
+
+    await agent.processGoal('quantum computing');
+
+    expect(generatePlanSpy).toHaveBeenCalled();
+    expect(executeSpy).toHaveBeenCalled();
+    
+    // Check if a fact was recorded in the graph
+    const nodes = Array.from(knowledgeGraph.nodes.values());
+    expect(nodes.some(n => n.type === 'entity')).toBe(true);
   });
 });

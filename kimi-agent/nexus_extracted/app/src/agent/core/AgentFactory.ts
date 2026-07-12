@@ -55,7 +55,7 @@ export class AgentFactory {
       monitor,
       improvementEngine,
       suggestions,
-      identity || { id: crypto.randomUUID(), name: 'Research Specialist', role: 'worker', capabilities: ['research', 'search', 'analysis'] },
+      identity!, // ResearchAgent constructor handles undefined
       channel!,
       knowledgeGraph
     );
