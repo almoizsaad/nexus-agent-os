@@ -6,14 +6,16 @@ import { CoordinatorAgent } from '../core/CoordinatorAgent';
 import { MockLLMProvider } from '../providers/MockLLMProvider';
 import { AgentEventType } from '../types/agent';
 import type { AgentRole } from '../types/agent';
+import type { StructuredTask } from '../planner/schemas';
 import { AgentInbox } from '../core/AgentInbox';
+import type { Tool } from '../tools/Tool';
 import { AgentOutbox } from '../core/AgentOutbox';
 import { MessageRouter } from '../core/MessageRouter';
 import { AgentMessageBus } from '../core/AgentMessageBus';
 import { AgentChannel } from '../core/AgentChannel';
 import { EventBus } from '../core/EventBus';
 import { AgentRegistry } from '../core/AgentRegistry';
-import { ToolRegistry } from '../tools/ToolRegistry';
+import { TaskExecutor } from '../executor/TaskExecutor';
 import { ServiceContainer } from '../core/ServiceContainer';
 
 describe('Mission Validation - End-to-End', () => {
@@ -41,7 +43,7 @@ describe('Mission Validation - End-to-End', () => {
     const channel = new AgentChannel(identity.id, inbox, outbox);
     
     // Wire up coordinator inbox
-    messageBus.subscribe(identity.id, (msg) => (inbox as any).push(msg));
+    messageBus.subscribe(identity.id, (msg) => inbox.push(msg));
     
     coordinator = factory.createCoordinator(identity, channel);
     
@@ -52,7 +54,7 @@ describe('Mission Validation - End-to-End', () => {
     const workerChannel = new AgentChannel(workerIdentity.id, workerInbox, workerOutbox);
     
     // Wire up worker inbox
-    messageBus.subscribe(workerIdentity.id, (msg) => (workerInbox as any).push(msg));
+    messageBus.subscribe(workerIdentity.id, (msg) => workerInbox.push(msg));
     
     const worker = factory.createAgent(workerIdentity, workerChannel);
     
@@ -72,7 +74,7 @@ describe('Mission Validation - End-to-End', () => {
           metadata: payload.metadata,
           dependencies: [],
           status: 'pending'
-        } as any, {});
+        } as StructuredTask, {});
         
         await workerChannel.sendDirect('coordinator', result?.success ? 'TASK_COMPLETED' : 'TASK_FAILED', {
           taskId: payload.taskId,
@@ -89,8 +91,8 @@ describe('Mission Validation - End-to-End', () => {
     brain = new ExecutiveBrain(agent.eventBus, coordinator);
 
     // Register tools safely
-    const registerSafe = (tool: { name: string; description: string; execute: (args: any) => Promise<unknown> }) => {
-      try { agent.toolRegistry.register(tool as any); } catch { /* ignore */ }
+    const registerSafe = (tool: Tool) => {
+      try { agent.toolRegistry.register(tool); } catch { /* ignore */ }
     };
 
     registerSafe({ 
@@ -135,10 +137,10 @@ describe('Mission Validation - End-to-End', () => {
     // Wait for mission completion
     // We can monitor events
     let completed = false;
-    agent.eventBus.subscribe('agent:events', (event: any) => {
-      console.log(`[TestEvent] Type: ${event.type}, Status: ${event.payload?.status}, MissionId: ${event.payload?.missionId}`);
+    agent.eventBus.subscribe('agent:events', (event) => {
+      const payload = event.payload as Record<string, unknown>;
+      console.log(`[TestEvent] Type: ${event.type}, Status: ${payload?.status}, MissionId: ${payload?.missionId}`);
       if (event.type === AgentEventType.AGENT_UPDATE) {
-        const payload = event.payload as Record<string, unknown>;
         if (payload.missionId === missionId && payload.status === 'PLAN_COMPLETED') {
           completed = true;
         }
@@ -167,7 +169,7 @@ it('should execute a Research & Knowledge mission', async () => {
     goal: 'Research AI Agents',
     reasoning: 'Need to research the topic and then summarize findings.',
     tasks: [
-      { id: 'T1', description: 'Research topic', tool: 'research_topic', metadata: { topic: 'AI Agents' }, dependencies: [] } as any
+      { id: 'T1', description: 'Research topic', tool: 'research_topic', metadata: { topic: 'AI Agents' }, dependencies: [] }
     ]
   });
 
@@ -179,7 +181,7 @@ it('should execute a Research & Knowledge mission', async () => {
 
     let completed = false;
     agent.eventBus.subscribe('agent:events', (event) => {
-      if (event.type === AgentEventType.AGENT_UPDATE && (event.payload as Record<string, any>).missionId === missionId && (event.payload as Record<string, any>).status === 'PLAN_COMPLETED') {
+      if (event.type === AgentEventType.AGENT_UPDATE && (event.payload as Record<string, unknown>).missionId === missionId && (event.payload as Record<string, unknown>).status === 'PLAN_COMPLETED') {
         completed = true;
       }
     });
@@ -198,7 +200,7 @@ it('should execute a Research & Knowledge mission', async () => {
 
   it('should handle mission failure and recovery via SelfCorrection', async () => {
     // Force a tool to fail
-    const toolRegistry = (coordinator.executor as any)?.toolRegistry as ToolRegistry;
+    const toolRegistry = (coordinator.executor as TaskExecutor).registry;
     if (toolRegistry) {
       toolRegistry.register({
         name: 'failing_tool',
@@ -212,7 +214,7 @@ it('should execute a Research & Knowledge mission', async () => {
       goal: 'Test Failure',
       reasoning: 'Intentional failure test.',
       tasks: [
-        { id: 'F1', description: 'Failing task', tool: 'failing_tool', dependencies: [] } as any
+        { id: 'F1', description: 'Failing task', tool: 'failing_tool', dependencies: [] }
       ]
     });
 
@@ -226,7 +228,7 @@ it('should execute a Research & Knowledge mission', async () => {
     let failed = false;
     agent.eventBus.subscribe('agent:events', (event) => {
       if (event.type === AgentEventType.AGENT_UPDATE) {
-        const payload = event.payload as Record<string, any>;
+        const payload = event.payload as Record<string, unknown>;
         if (payload.missionId === missionId && payload.status === 'PLAN_FAILED') failed = true;
       }
     });

@@ -15,7 +15,8 @@ import { AgentRegistry } from '../core/AgentRegistry';
 import { ToolRegistry } from '../tools/ToolRegistry';
 import { UnifiedEventBus } from '../core/UnifiedEventBus';
 import { ServiceContainer } from '../core/ServiceContainer';
-import { Tool } from '../tools/Tool';
+import type { Tool } from '../tools/Tool';
+import type { StructuredTask } from '../planner/schemas';
 
 class MockWeatherTool implements Tool {
   name = 'get_current_weather';
@@ -57,7 +58,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     const outbox = new AgentOutbox(router);
     const channel = new AgentChannel(identity.id, inbox, outbox);
     
-    messageBus.subscribe(identity.id, (msg) => (inbox as any).push(msg));
+    messageBus.subscribe(identity.id, (msg) => inbox.push(msg));
     coordinator = factory.createCoordinator(identity, channel);
     
     const workerIdentity = { id: 'worker', name: 'Worker', role: 'worker' as AgentRole, capabilities: ['execution', 'coding', 'research'] };
@@ -65,7 +66,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     const workerOutbox = new AgentOutbox(router);
     const workerChannel = new AgentChannel(workerIdentity.id, workerInbox, workerOutbox);
     
-    messageBus.subscribe(workerIdentity.id, (msg) => (workerInbox as any).push(msg));
+    messageBus.subscribe(workerIdentity.id, (msg) => workerInbox.push(msg));
     const worker = factory.createAgent(workerIdentity, workerChannel);
     
     registry.register(workerIdentity, worker);
@@ -81,7 +82,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
           metadata: payload.metadata,
           dependencies: [],
           status: 'pending'
-        } as any, {});
+        } as StructuredTask, {});
         
         await workerChannel.sendDirect('coordinator', result?.success ? 'TASK_COMPLETED' : 'TASK_FAILED', {
           taskId: payload.taskId,
@@ -95,9 +96,9 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     provider = agent.container.resolve('LLMProvider') as MockLLMProvider;
     brain = new ExecutiveBrain(agent.eventBus, coordinator);
 
-    const registerSafe = (tool: { name: string; description: string; execute: (args: any) => Promise<unknown> }) => {
-      try { toolRegistry.register(tool as any); } catch {
-        try { toolRegistry.unregister(tool.name); toolRegistry.register(tool as any); } catch { /* ignore */ }
+    const registerSafe = (tool: Tool) => {
+      try { toolRegistry.register(tool); } catch {
+        try { toolRegistry.unregister(tool.name); toolRegistry.register(tool); } catch { /* ignore */ }
       }
     };
 
@@ -144,7 +145,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     return new Promise<{ completed: boolean, failed: boolean, duration: number, missionId: string }>((resolve) => {
       const startWait = Date.now();
       
-      const unsubscribe = agent.eventBus.subscribe('agent:events', (event: any) => {
+      const unsubscribe = agent.eventBus.subscribe('agent:events', (event) => {
         const payload = (event.payload || event) as Record<string, unknown>;
         const mId = (payload.missionId || payload.planId) as string;
         
@@ -190,7 +191,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
       id: 'res-1',
       goal: 'Research AI Agents',
       tasks: [
-        { id: 'T1', description: 'Research topic', tool: 'research_topic', metadata: { topic: 'AI Agents' }, dependencies: [] } as any
+        { id: 'T1', description: 'Research topic', tool: 'research_topic', metadata: { topic: 'AI Agents' }, dependencies: [] }
       ]
     });
 
@@ -213,8 +214,8 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
       id: 'code-1',
       goal: 'Implement Auth',
       tasks: [
-        { id: 'T1', description: 'Write code', tool: 'write_code', metadata: { feature: 'Auth' }, dependencies: [] } as any,
-        { id: 'T2', description: 'Run tests', tool: 'run_tests', dependencies: ['T1'] } as any
+        { id: 'T1', description: 'Write code', tool: 'write_code', metadata: { feature: 'Auth' }, dependencies: [] },
+        { id: 'T2', description: 'Run tests', tool: 'run_tests', dependencies: ['T1'] }
       ]
     });
 
@@ -248,7 +249,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
       id: 'fail-1',
       goal: 'Test Recovery',
       tasks: [
-        { id: 'F1', description: 'Flaky task', tool: toolName, dependencies: [] } as any
+        { id: 'F1', description: 'Flaky task', tool: toolName, dependencies: [] }
       ]
     });
 

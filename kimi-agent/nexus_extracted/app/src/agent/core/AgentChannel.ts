@@ -84,6 +84,10 @@ export class AgentChannel {
     this.inbox.onMessage(handler);
   }
 
+  public receive(message: AgentCommunicationMessage): void {
+    this.inbox.push(message);
+  }
+
   private async sendMessage(receiver: string | string[], type: string, payload: unknown, priority: MessagePriority): Promise<void> {
     const message: AgentCommunicationMessage = {
       id: crypto.randomUUID(),

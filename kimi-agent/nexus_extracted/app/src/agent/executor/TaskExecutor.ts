@@ -21,6 +21,10 @@ export class TaskExecutor implements Executor {
     this.monitor = monitor;
   }
 
+  public get registry(): ToolRegistry {
+    return this.toolRegistry;
+  }
+
   /**
    * Executes a specific task.
    * @param task The task to be executed.

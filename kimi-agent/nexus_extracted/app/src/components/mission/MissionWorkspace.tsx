@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Plus, Target, LayoutDashboard, History, Settings } from 'lucide-react';
 import ParticleCanvas from '../generative-ui/ParticleCanvas';
-import type { Mission } from '@/agent/types/mission';
 import { Card } from '../ui/card';
 
 export const MissionWorkspace: React.FC = () => {

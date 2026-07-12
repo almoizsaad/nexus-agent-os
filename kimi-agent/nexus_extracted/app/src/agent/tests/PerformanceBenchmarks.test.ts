@@ -2,6 +2,15 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { createAgent } from '../bootstrap/createAgent';
 import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
 import { MemoryManager } from '../memory/MemoryManager';
+import type { Planner } from '../types/agent';
+
+interface PerformanceWithMemory extends Performance {
+  memory?: {
+    usedJSHeapSize: number;
+    totalJSHeapSize: number;
+    jsHeapSizeLimit: number;
+  };
+}
 
 describe('Phase 8.4 — Performance Benchmarks', () => {
   let agent: ReturnType<typeof createAgent>;
@@ -21,7 +30,7 @@ describe('Phase 8.4 — Performance Benchmarks', () => {
 
   it('Benchmark: Planner Latency (Mock)', async () => {
     const start = performance.now();
-    await (agent.planner as any).generatePlan('Plan a simple trip', agent.runtime.getState());
+    await (agent.planner as Planner).generatePlan('Plan a simple trip', agent.runtime.getState());
     const duration = performance.now() - start;
     
     console.log(`[Benchmark] Planner Latency: ${duration.toFixed(2)}ms`);
@@ -51,14 +60,15 @@ describe('Phase 8.4 — Performance Benchmarks', () => {
 
   it('Benchmark: Memory Footprint (Episodic)', async () => {
     const memoryManager = agent.container.resolve(MemoryManager);
-    const initialMemory = (performance as any).memory?.usedJSHeapSize || 0;
+    const perf = performance as PerformanceWithMemory;
+    const initialMemory = perf.memory?.usedJSHeapSize || 0;
     
     // Store 500 events (the new limit)
     for (let i = 0; i < 500; i++) {
       await memoryManager.store('session', { event: i }, ['test'], 0.5);
     }
     
-    const finalMemory = (performance as any).memory?.usedJSHeapSize || 0;
+    const finalMemory = perf.memory?.usedJSHeapSize || 0;
     const diff = (finalMemory - initialMemory) / 1024 / 1024;
     
     console.log(`[Benchmark] Memory Delta (500 events): ${diff.toFixed(2)}MB`);

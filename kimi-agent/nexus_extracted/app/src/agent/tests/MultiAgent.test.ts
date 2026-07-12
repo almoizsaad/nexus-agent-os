@@ -1,7 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { createAgent } from '../bootstrap/createAgent';
+import type { AgentDefinition } from '../core/AgentRegistry';
 
-describe('Multi-Agent Core', () => {
+describe('Multi-Agent Orchestration', () => {
   it('should spawn multiple agents with different identities', () => {
     const { manager } = createAgent();
     
@@ -31,7 +32,7 @@ describe('Multi-Agent Core', () => {
     const workers = manager.findAgentsByRole('worker');
     expect(workers).toHaveLength(2);
     
-    const coders = manager.listAgents().filter((a: any) => a.identity.capabilities.includes('coding'));
+    const coders = manager.listAgents().filter((a: AgentDefinition) => a.identity.capabilities.includes('coding'));
     expect(coders).toHaveLength(1);
     expect(coders[0].identity.name).toBe('Worker 1');
   });

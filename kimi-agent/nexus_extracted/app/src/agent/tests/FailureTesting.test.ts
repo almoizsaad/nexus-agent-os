@@ -5,6 +5,7 @@ import { ExecutiveBrain } from '../core/ExecutiveBrain';
 import { CoordinatorAgent } from '../core/CoordinatorAgent';
 import { MockLLMProvider } from '../providers/MockLLMProvider';
 import type { AgentRole } from '../types/agent';
+import type { StructuredTask } from '../planner/schemas';
 import { AgentInbox } from '../core/AgentInbox';
 import { AgentOutbox } from '../core/AgentOutbox';
 import { MessageRouter } from '../core/MessageRouter';
@@ -41,12 +42,12 @@ describe('Phase 8.3 — Failure Testing', () => {
     
     const identity = { id: 'coordinator', name: 'Coordinator', role: 'coordinator' as AgentRole, capabilities: ['coordination'] };
     const channel = new AgentChannel(identity.id, new AgentInbox(), new AgentOutbox(router));
-    messageBus.subscribe(identity.id, (msg) => (channel as any).inbox.push(msg));
+    messageBus.subscribe(identity.id, (msg) => channel.receive(msg));
     coordinator = factory.createCoordinator(identity, channel);
     
     const workerIdentity = { id: 'worker', name: 'Worker', role: 'worker' as AgentRole, capabilities: ['execution'] };
     const workerChannel = new AgentChannel(workerIdentity.id, new AgentInbox(), new AgentOutbox(router));
-    messageBus.subscribe(workerIdentity.id, (msg) => (workerChannel as any).inbox.push(msg));
+    messageBus.subscribe(workerIdentity.id, (msg) => workerChannel.receive(msg));
     const worker = factory.createAgent(workerIdentity, workerChannel);
     
     registry.register(workerIdentity, worker);
@@ -62,7 +63,7 @@ describe('Phase 8.3 — Failure Testing', () => {
           metadata: payload.metadata,
           dependencies: [],
           status: 'pending'
-        } as any, {});
+        } as StructuredTask, {});
         
         await workerChannel.sendDirect('coordinator', result?.success ? 'TASK_COMPLETED' : 'TASK_FAILED', {
           taskId: payload.taskId,
@@ -94,7 +95,7 @@ describe('Phase 8.3 — Failure Testing', () => {
     provider.setMockResponse({
       id: 'fail-tool',
       goal: 'Use non-existent tool',
-      tasks: [{ id: 'T1', description: 'Ghost task', tool: 'ghost_tool', dependencies: [] } as any]
+      tasks: [{ id: 'T1', description: 'Ghost task', tool: 'ghost_tool', dependencies: [] }]
     });
 
     const missionId = await brain.createMission('Ghost Mission', {
@@ -120,12 +121,12 @@ describe('Phase 8.3 — Failure Testing', () => {
   it('Failure: Invalid Plan (Circular Dependency Detection)', async () => {
     provider.setMockResponse({
       id: 'fail-cycle',
-      goal: 'Cyclic goal',
+      goal: 'Circular dependency test',
       tasks: [
-        { id: 'T1', description: 'Task 1', tool: 'search_flights', dependencies: ['T2'] } as any,
-        { id: 'T2', description: 'Task 2', tool: 'find_hotels', dependencies: ['T1'] } as any
+        { id: 'T1', description: 'Task 1', tool: 'search_flights', dependencies: ['T2'] },
+        { id: 'T2', description: 'Task 2', tool: 'find_hotels', dependencies: ['T1'] }
       ]
-    });
+      });
 
     const missionId = await brain.createMission('Cycle Mission', {
       description: 'A plan with a circular dependency.',
@@ -165,7 +166,7 @@ describe('Phase 8.3 — Failure Testing', () => {
     provider.setMockResponse({
       id: 'fail-slow',
       goal: 'Slow goal',
-      tasks: [{ id: 'S1', description: 'Slow task', tool: 'slow_tool', dependencies: [] } as any]
+      tasks: [{ id: 'S1', description: 'Slow task', tool: 'slow_tool', dependencies: [] }]
     });
 
     const missionId = await brain.createMission('Slow Mission', {
@@ -196,7 +197,7 @@ describe('Phase 8.3 — Failure Testing', () => {
     provider.setMockResponse({
       id: 'res-loss',
       goal: 'Resilient goal',
-      tasks: [{ id: 'L1', description: 'Resilient task', tool: 'search_flights', dependencies: [] } as any]
+      tasks: [{ id: 'L1', description: 'Resilient task', tool: 'search_flights', dependencies: [] }]
     });
 
     const missionId = await brain.createMission('Lossy Mission', {
