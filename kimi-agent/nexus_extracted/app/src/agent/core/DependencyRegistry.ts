@@ -5,14 +5,13 @@ import { PerformanceMonitor } from '../improvement/PerformanceMonitor';
 import { ImprovementEngine } from '../improvement/ImprovementEngine';
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
 import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
-import { MockLLMProvider } from '../providers/MockLLMProvider';
+import { MoonshotLLMProvider } from '../providers/MoonshotLLMProvider';
 import { LLMPlanner } from '../planner/LLMPlanner';
 import { TaskPlanner } from '../planner/TaskPlanner';
 import { TaskExecutor } from '../executor/TaskExecutor';
 import { AgentRegistry } from './AgentRegistry';
 import { AgentFactory } from './AgentFactory';
 import { AgentManager } from './AgentManager';
-import { MockWeatherTool } from '../tools/mocks/MockWeatherTool';
 import type { AgentIdentity, Executor } from '../types/agent';
 import { AgentChannel } from './AgentChannel';
 import { AgentStream } from '../events/AgentStream';
@@ -47,11 +46,11 @@ export class DependencyRegistry {
     if (!container.has('Safety')) container.registerSingleton('Safety', new SafetyGuard());
 
     // Provider/Implementation mapping
-    if (!container.has('LLMProvider')) container.registerSingleton('LLMProvider', new MockLLMProvider());
+    if (!container.has('LLMProvider')) container.registerSingleton('LLMProvider', () => new MoonshotLLMProvider());
     
     if (!container.has('Planner')) {
       container.registerSingleton('Planner', (c) => {
-        const provider = c.resolve<MockLLMProvider>('LLMProvider');
+        const provider = c.resolve<MoonshotLLMProvider>('LLMProvider');
         const toolRegistry = c.resolve(ToolRegistry);
         const monitor = c.resolve(PerformanceMonitor);
         const graph = c.resolve(KnowledgeGraph);
@@ -149,14 +148,5 @@ export class DependencyRegistry {
 
     // Self registration
     if (!container.has(DependencyRegistry)) container.registerSingleton(DependencyRegistry, new DependencyRegistry());
-
-    // Initialize default tools (idempotent)
-    const toolRegistry = container.resolve(ToolRegistry);
-    const weatherTool = new MockWeatherTool();
-    try {
-      toolRegistry.register(weatherTool);
-    } catch {
-      // Ignore if already registered
-    }
   }
 }

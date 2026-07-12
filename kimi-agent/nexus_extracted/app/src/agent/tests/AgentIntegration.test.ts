@@ -1,14 +1,19 @@
 import { describe, it, expect, vi } from 'vitest';
 import { createAgent } from '../bootstrap/createAgent';
 import { AgentEventType, AgentActionType } from '../types/agent';
+import { ServiceContainer } from '../core/ServiceContainer';
+import { MockLLMProvider } from '../providers/MockLLMProvider';
 
 describe('Agent OS Integration', () => {
   it('should complete a full loop: User Message -> Plan -> Execute -> Actions', async () => {
-    const { runtime, eventBus, toolRegistry } = createAgent();
+    const container = new ServiceContainer();
+    container.registerSingleton('LLMProvider', new MockLLMProvider());
+    const { runtime, eventBus, toolRegistry } = createAgent(container);
     
     // Register missing tools for the "Plan a trip" goal
     toolRegistry.register({ name: 'search_flights', description: 'flights', execute: async () => ({ success: true }) });
     toolRegistry.register({ name: 'find_hotels', description: 'hotels', execute: async () => ({ success: true }) });
+    toolRegistry.register({ name: 'get_current_weather', description: 'weather', execute: async () => ({ success: true }) });
     
     const actionListener = vi.fn();
     

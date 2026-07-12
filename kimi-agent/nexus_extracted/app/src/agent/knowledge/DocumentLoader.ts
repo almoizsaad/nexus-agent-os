@@ -23,20 +23,8 @@ export class DocumentLoader {
       };
     }
 
-    // In a real implementation, we would fetch/read from source
-    // For now, we'll assume content is passed or it's a mock read
-    return {
-      content: `Content from ${source}`,
-      metadata: {
-        source,
-        sourceType: type,
-        format,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-        tags: [],
-        importance: 0.5
-      }
-    };
+    // TODO: Implement actual source fetching (HTTP, FileSystem, etc.)
+    throw new Error(`Source fetching not implemented for: ${source}`);
   }
 
   private processContent(content: string, format: DocumentFormat): string {

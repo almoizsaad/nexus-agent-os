@@ -121,30 +121,6 @@ export default function HeroSection() {
           </a>
         </motion.div>
 
-        {/* Stats row */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.9 }}
-          className="mt-16 pt-8 flex items-center justify-center gap-8 sm:gap-16"
-          style={{ borderTop: '1px solid #E7E5E4' }}
-        >
-          {[
-            { value: '94%', label: 'Intent Accuracy' },
-            { value: '<2s', label: 'Response Time' },
-            { value: '12+', label: 'UI Patterns' },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div
-                className="text-2xl sm:text-3xl font-semibold"
-                style={{ fontFamily: 'Playfair Display, serif', color: '#1C1917' }}
-              >
-                {stat.value}
-              </div>
-              <div className="nexus-label mt-1">{stat.label}</div>
-            </div>
-          ))}
-        </motion.div>
       </div>
 
       {/* Scroll indicator */}

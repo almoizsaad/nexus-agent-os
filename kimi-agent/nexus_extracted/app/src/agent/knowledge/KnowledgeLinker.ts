@@ -24,9 +24,7 @@ export class KnowledgeLinker {
     const node = await this.graph.getNode(nodeId);
     if (!node) return;
 
-    // In a real implementation, this would use LLM to find semantic relations
-    // For now, we'll provide a placeholder for automated linking logic
-    console.debug(`[KnowledgeLinker] Inferring relations for node: ${node.label} (${node.id})`);
+    // TODO: Use LLM to find semantic relations
   }
 
   public async linkDocumentToConcepts(docNodeId: string, conceptNodeIds: string[]): Promise<void> {

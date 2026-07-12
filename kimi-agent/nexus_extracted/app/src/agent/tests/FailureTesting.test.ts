@@ -25,6 +25,9 @@ describe('Phase 8.3 — Failure Testing', () => {
 
   beforeEach(() => {
     const container = new ServiceContainer();
+    provider = new MockLLMProvider();
+    container.registerSingleton('LLMProvider', provider);
+
     const localUnifiedBus = new UnifiedEventBus();
     eventBus = new EventBus(localUnifiedBus);
     container.registerSingleton(EventBus, eventBus);

@@ -14,6 +14,7 @@ import { AgentChannel } from '../core/AgentChannel';
 import { EventBus } from '../core/EventBus';
 import { AgentRegistry } from '../core/AgentRegistry';
 import { ToolRegistry } from '../tools/ToolRegistry';
+import { ServiceContainer } from '../core/ServiceContainer';
 
 describe('Mission Validation - End-to-End', () => {
   let agent: ReturnType<typeof createAgent>;
@@ -22,7 +23,11 @@ describe('Mission Validation - End-to-End', () => {
   let provider: MockLLMProvider;
 
   beforeEach(() => {
-    agent = createAgent();
+    const container = new ServiceContainer();
+    provider = new MockLLMProvider();
+    container.registerSingleton('LLMProvider', provider);
+    
+    agent = createAgent(container);
     const factory = agent.container.resolve(AgentFactory);
     const registry = agent.container.resolve(AgentRegistry);
     const eventBus = agent.container.resolve(EventBus);

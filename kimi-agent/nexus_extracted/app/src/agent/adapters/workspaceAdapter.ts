@@ -66,15 +66,3 @@ export class WorkspaceAdapter {
     this.unsubscribers = [];
   }
 }
-
-/**
- * Legacy support for direct setup
- * @deprecated Use WorkspaceAdapter via ServiceContainer
- */
-export function setupWorkspaceAdapter(eventBus?: EventBus) {
-  if (!eventBus) {
-    // We'll let the bootstrap handle it now, but for safety:
-    return;
-  }
-  return new WorkspaceAdapter(eventBus);
-}

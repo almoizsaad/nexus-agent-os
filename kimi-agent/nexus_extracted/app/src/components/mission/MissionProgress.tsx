@@ -56,7 +56,7 @@ export const MissionProgress: React.FC<MissionProgressProps> = ({ mission }) => 
                     
                     {task.status === 'running' && (
                       <div className="space-y-1">
-                        <Progress value={45} className="h-0.5" />
+                        <Progress value={0} className="h-0.5" />
                         <div className="text-[8px] font-mono text-primary/70 animate-pulse">
                           AGENT_EXECUTING_TASK_ID_{task.id.substring(0, 8)}
                         </div>

@@ -194,7 +194,7 @@ export default function Home() {
                 to="/workspace"
                 className="nexus-btn nexus-btn-primary"
               >
-                Try the Demo
+                Enter Workspace
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </motion.div>
@@ -204,97 +204,17 @@ export default function Home() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative"
+              className="relative flex items-center justify-center min-h-[400px]"
             >
-              {/* Mock UI */}
-              <div
-                className="relative rounded-2xl overflow-hidden nexus-card"
-                style={{ border: '1px solid #E7E5E4' }}
-              >
-                {/* Mock Header */}
-                <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: '1px solid #E7E5E4', background: '#FAF9F6' }}>
-                  <div className="flex gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'rgba(153, 27, 27, 0.5)' }} />
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'rgba(180, 83, 9, 0.5)' }} />
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'rgba(21, 128, 61, 0.5)' }} />
-                  </div>
-                  <div className="flex-1 text-center">
-                    <span className="nexus-label" style={{ fontSize: 10 }}>Nexus Workspace</span>
-                  </div>
-                </div>
-
-                {/* Mock Content */}
-                <div className="p-4 space-y-3" style={{ background: '#FFFFFF' }}>
-                  {/* Intent bar */}
-                  <div
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg"
-                    style={{ background: 'rgba(190, 18, 60, 0.06)', border: '1px solid rgba(190, 18, 60, 0.15)' }}
-                  >
-                    <Sparkles className="w-3.5 h-3.5" style={{ color: '#BE123C' }} />
-                    <span className="text-xs" style={{ color: '#78716C' }}>Business trip to Paris next week</span>
-                    <span className="ml-auto text-[10px] font-medium" style={{ color: '#15803D' }}>94%</span>
-                  </div>
-
-                  {/* Mock Grid */}
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="p-3 rounded-lg" style={{ background: '#FAF9F6', border: '1px solid #E7E5E4' }}>
-                      <div className="nexus-label mb-1" style={{ fontSize: 10 }}>Trip Overview</div>
-                      <div className="text-xs font-medium" style={{ color: '#292524' }}>Paris, France</div>
-                      <div className="text-[10px]" style={{ color: '#A8A29E' }}>Mar 15-22, 2026</div>
-                    </div>
-                    <div className="p-3 rounded-lg" style={{ background: '#FAF9F6', border: '1px solid #E7E5E4' }}>
-                      <div className="nexus-label mb-1" style={{ fontSize: 10 }}>Budget</div>
-                      <div className="text-xs font-medium" style={{ color: '#292524' }}>$5,200</div>
-                      <div className="nexus-ink-progress mt-1">
-                        <div className="nexus-ink-progress-bar" style={{ width: '75%' }} />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Mock Flights */}
-                  <div className="space-y-2">
-                    {['Air France', 'Emirates'].map((airline, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center gap-3 p-2.5 rounded-lg"
-                        style={{ background: '#FAF9F6', border: '1px solid #E7E5E4' }}
-                      >
-                        <div className="w-7 h-7 rounded flex items-center justify-center" style={{ background: 'rgba(190, 18, 60, 0.08)' }}>
-                          <Zap className="w-3.5 h-3.5" style={{ color: '#BE123C' }} />
-                        </div>
-                        <div className="flex-1">
-                          <div className="text-[10px] font-medium" style={{ color: '#292524' }}>{airline}</div>
-                          <div className="text-[9px] flex items-center gap-1" style={{ color: '#A8A29E' }}>
-                            8h 30m · Direct
-                          </div>
-                        </div>
-                        <div className="text-xs font-medium" style={{ color: '#B45309' }}>${1200 + i * 180}</div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Predictive chip */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-medium" style={{ color: '#0F766E' }}>Predicted:</span>
-                    <span
-                      className="nexus-stamp nexus-stamp-teal"
-                      style={{ fontSize: 9, padding: '0.125rem 0.5rem' }}
-                    >
-                      + Book meeting room
-                    </span>
-                  </div>
-                </div>
+              <div className="text-center space-y-4">
+                 <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
+                    <Sparkles className="w-10 h-10 text-primary animate-pulse" />
+                 </div>
+                 <div className="nexus-label">Autonomous Interface Engine</div>
+                 <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                    The UI adapts in real-time to your specific goals and context.
+                 </p>
               </div>
-
-              {/* Decorative elements */}
-              <div
-                className="absolute -top-6 -right-6 w-24 h-24 rounded-full pointer-events-none"
-                style={{ background: 'rgba(190, 18, 60, 0.06)', filter: 'blur(20px)' }}
-              />
-              <div
-                className="absolute -bottom-6 -left-6 w-32 h-32 rounded-full pointer-events-none"
-                style={{ background: 'rgba(15, 118, 110, 0.06)', filter: 'blur(20px)' }}
-              />
             </motion.div>
           </div>
         </div>

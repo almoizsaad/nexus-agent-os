@@ -15,6 +15,13 @@ import { AgentRegistry } from '../core/AgentRegistry';
 import { ToolRegistry } from '../tools/ToolRegistry';
 import { UnifiedEventBus } from '../core/UnifiedEventBus';
 import { ServiceContainer } from '../core/ServiceContainer';
+import { Tool } from '../tools/Tool';
+
+class MockWeatherTool implements Tool {
+  name = 'get_current_weather';
+  description = 'Get current weather';
+  execute = async () => ({ temp: '22C', condition: 'Sunny' });
+}
 
 describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
   let agent: ReturnType<typeof createAgent>;
@@ -25,11 +32,19 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
   beforeEach(() => {
     // Isolated environment for each test
     const container = new ServiceContainer();
+    provider = new MockLLMProvider();
+    container.registerSingleton('LLMProvider', provider);
+
     const localUnifiedBus = new UnifiedEventBus();
     const localEventBus = new EventBus(localUnifiedBus);
     container.registerSingleton(EventBus, localEventBus);
     
     agent = createAgent(container);
+    
+    // Register local mock tools
+    const toolRegistry = agent.container.resolve(ToolRegistry);
+    toolRegistry.register(new MockWeatherTool());
+
     const factory = agent.container.resolve(AgentFactory);
     const registry = agent.container.resolve(AgentRegistry);
     const eventBus = agent.container.resolve(EventBus);
@@ -80,7 +95,6 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     provider = agent.container.resolve('LLMProvider') as MockLLMProvider;
     brain = new ExecutiveBrain(agent.eventBus, coordinator);
 
-    const toolRegistry = agent.container.resolve(ToolRegistry);
     const registerSafe = (tool: { name: string; description: string; execute: (args: any) => Promise<unknown> }) => {
       try { toolRegistry.register(tool as any); } catch {
         try { toolRegistry.unregister(tool.name); toolRegistry.register(tool as any); } catch { /* ignore */ }

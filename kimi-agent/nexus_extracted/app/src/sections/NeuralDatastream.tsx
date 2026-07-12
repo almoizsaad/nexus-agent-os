@@ -9,22 +9,22 @@ import {
 gsap.registerPlugin(ScrollTrigger);
 
 const MODELS = [
-  { name: 'Moonshot v1', status: 'active', latency: '142ms' },
-  { name: 'Claude 3.5', status: 'active', latency: '198ms' },
-  { name: 'GPT-4o', status: 'standby', latency: 'off' },
-  { name: 'Llama 3', status: 'active', latency: '89ms' },
+  { name: 'Moonshot v1', status: 'standby', latency: '...' },
+  { name: 'Claude 3.5', status: 'standby', latency: '...' },
+  { name: 'GPT-4o', status: 'standby', latency: '...' },
+  { name: 'Llama 3', status: 'standby', latency: '...' },
 ];
 
 const METRICS = [
-  { label: 'Tokens/sec', value: 2847, max: 5000, icon: Zap },
-  { label: 'Active Threads', value: 42, max: 64, icon: Cpu },
-  { label: 'Memory Used', value: 78, max: 100, icon: Database },
-  { label: 'Uptime', value: 99.9, max: 100, icon: Clock },
+  { label: 'Tokens/sec', value: 0, max: 5000, icon: Zap },
+  { label: 'Active Threads', value: 0, max: 64, icon: Cpu },
+  { label: 'Memory Used', value: 0, max: 100, icon: Database },
+  { label: 'Uptime', value: 0, max: 100, icon: Clock },
 ];
 
 const SENTIMENT_LABELS = ['Critical', 'Low', 'Normal', 'Good', 'Excellent'];
 const SENTIMENT_COLORS = ['#991B1B', '#B45309', '#15803D', '#0F766E', '#BE123C'];
-const SENTIMENT_VALUES = [5, 15, 45, 25, 10];
+const SENTIMENT_VALUES = [0, 0, 0, 0, 0];
 
 export default function NeuralDatastream() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -250,9 +250,9 @@ export default function NeuralDatastream() {
               </div>
               <div className="space-y-2" style={{ minWidth: 180 }}>
                 {[
-                  { icon: Globe, label: 'API Latency', value: '24ms', color: '#15803D' },
-                  { icon: Server, label: 'Nodes', value: '12/12', color: '#BE123C' },
-                  { icon: Shield, label: 'Security', value: 'OK', color: '#B45309' },
+                  { icon: Globe, label: 'API Latency', value: '...', color: '#15803D' },
+                  { icon: Server, label: 'Nodes', value: '0/0', color: '#BE123C' },
+                  { icon: Shield, label: 'Security', value: 'INIT', color: '#B45309' },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
