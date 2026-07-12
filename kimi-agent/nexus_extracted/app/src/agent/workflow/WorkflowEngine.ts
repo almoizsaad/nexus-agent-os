@@ -48,6 +48,7 @@ export class WorkflowEngine {
             result = await this.executor.executeTask(task, {});
             success = (result as { success?: boolean }).success !== false; // Assume success unless explicitly false
           } catch (error) {
+
             console.error(`[WorkflowEngine] Error executing task ${task.id}:`, error);
             result = { success: false, error: String(error) };
             success = false;

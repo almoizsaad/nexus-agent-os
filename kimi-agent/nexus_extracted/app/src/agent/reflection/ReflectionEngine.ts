@@ -67,13 +67,13 @@ export class ReflectionEngine implements ISelfReflectionEngine {
     };
 
     if (this.graph && this.linker) {
-      await this.recordReflectionInGraph(result);
+      await this.recordReflectionInGraph(result, analysis.events);
     }
 
     return result;
   }
 
-  private async recordReflectionInGraph(reflection: ReflectionResult): Promise<void> {
+  private async recordReflectionInGraph(reflection: ReflectionResult, events: any[]): Promise<void> {
     if (!this.graph || !this.linker) return;
 
     // Create reflection node
@@ -87,6 +87,25 @@ export class ReflectionEngine implements ISelfReflectionEngine {
         timestamp: reflection.timestamp
       }
     });
+
+    // Phase 9: Knowledge Discovery - Extract "discoveries" from tool results
+    for (const event of events) {
+      if (event.type === 'TOOL_RESULT' && event.result?.success) {
+        const discoveryLabel = event.description ? `Discovery: ${event.description}` : `Discovery: ${event.taskId}`;
+        const discoveryNode = await this.graph.createNode({
+          type: 'document',
+          label: discoveryLabel.substring(0, 100),
+          properties: {
+            taskId: event.taskId,
+            toolName: event.toolName,
+            description: event.description,
+            result: event.result.data,
+            timestamp: event.timestamp
+          }
+        });
+        await this.linker.linkNodes(reflectionNode.id, discoveryNode.id, 'supports', 0.9);
+      }
+    }
 
     // Create mistake nodes and link them
     for (const mistake of reflection.mistakes) {

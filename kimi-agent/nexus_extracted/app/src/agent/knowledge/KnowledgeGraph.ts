@@ -170,11 +170,18 @@ export class KnowledgeGraph implements IKnowledgeGraph {
   }
 
   public async searchNodes(query: string, type?: NodeType): Promise<GraphNode[]> {
-    const lowerQuery = query.toLowerCase();
+    const keywords = query.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 3);
+    
     return Array.from(this.nodes.values()).filter(node => {
       const typeMatch = !type || node.type === type;
-      const labelMatch = node.label.toLowerCase().includes(lowerQuery);
-      return typeMatch && labelMatch;
+      
+      const searchContent = (node.label + ' ' + JSON.stringify(node.properties)).toLowerCase();
+      
+      // Match if at least 2 keywords are found (or 1 if query is short)
+      const matchCount = keywords.filter(kw => searchContent.includes(keywords.length > 0 ? kw : query.toLowerCase())).length;
+      const isMatch = keywords.length > 0 ? (matchCount >= Math.min(2, keywords.length)) : searchContent.includes(query.toLowerCase());
+      
+      return typeMatch && isMatch;
     });
   }
 

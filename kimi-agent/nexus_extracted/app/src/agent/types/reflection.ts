@@ -2,9 +2,11 @@ export interface ExecutionEvent {
   type?: string;
   workflowId?: string;
   taskId?: string;
+  toolName?: string;
+  description?: string;
   status?: string;
   timestamp: number;
-  result?: unknown;
+  result?: any;
 }
 
 export interface ReflectionResult {
@@ -26,6 +28,7 @@ export interface ExecutionAnalysis {
   retries: number;
   duration: number;
   errors: string[];
+  events: ExecutionEvent[];
 }
 
 export interface IExecutionAnalyzer {

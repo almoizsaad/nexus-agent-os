@@ -26,7 +26,8 @@ export class ExecutionAnalyzer implements IExecutionAnalyzer {
       failedTasks: new Set(failed.map(e => e.taskId)).size,
       retries,
       duration,
-      errors
+      errors,
+      events
     };
   }
 }

@@ -56,8 +56,20 @@ export class LLMPlanner implements Planner {
    */
   public async generatePlan(goal: string, state: AgentState): Promise<Plan> {
     this.stream?.thought(`Generating autonomous plan for goal: ${goal}`, 'plan');
+
+    // Phase 9: Continuous Learning - Query Knowledge Graph for context
+    let knowledgeContext = '';
+    if (this.graph) {
+      this.stream?.thought('Querying Knowledge Graph for relevant past experiences and facts...', 'reasoning');
+      const relatedNodes = await this.graph.searchNodes(goal);
+      if (relatedNodes.length > 0) {
+        knowledgeContext = relatedNodes.map(n => `- ${n.label}: ${JSON.stringify(n.properties)}`).join('\n');
+        this.stream?.thought(`Found ${relatedNodes.length} relevant knowledge entries.`, 'observation');
+      }
+    }
+
     const toolsDescription = this.toolRegistry.describeTools();
-    const prompt = this.buildPrompt(goal, state, toolsDescription);
+    const prompt = this.buildPrompt(goal, state, toolsDescription, knowledgeContext);
 
     try {
       this.stream?.thought('Consulting LLM provider for structured task decomposition.', 'reasoning');
@@ -149,13 +161,15 @@ export class LLMPlanner implements Planner {
     }
   }
 
-  private buildPrompt(goal: string, state: AgentState, toolsDescription: string): string {
+  private buildPrompt(goal: string, state: AgentState, toolsDescription: string, knowledgeContext: string = ''): string {
     return `
       You are an autonomous Agent OS Planner. 
       Your mission is to decompose the user's goal into a logical sequence of tasks.
       
       GOAL: "${goal}"
       
+      ${knowledgeContext ? `RELEVANT KNOWLEDGE FROM GRAPH:\n${knowledgeContext}\n` : ''}
+
       AVAILABLE TOOLS:
       ${toolsDescription}
 

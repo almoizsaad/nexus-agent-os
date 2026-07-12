@@ -226,6 +226,23 @@ export class AgentRuntime {
           this._stream.executingTool(task?.description || taskId);
         }
 
+        // Phase 9: Continuous Learning - Record tool results as events for reflection
+        if (status === 'completed' || status === 'failed') {
+          const task = this._state.currentPlan!.tasks.find(t => t.id === taskId);
+          this._eventBus.publish('agent:events', {
+            type: AgentEventType.TOOL_RESULT,
+            payload: {
+              workflowId: this._state.currentPlan!.id,
+              taskId,
+              toolName: (task as any)?.tool || 'unknown',
+              description: task?.description || '',
+              result,
+              success: status === 'completed'
+            },
+            timestamp: Date.now()
+          });
+        }
+
         // Sync plan state
         const taskIndex = this._state.currentPlan!.tasks.findIndex(t => t.id === taskId);
         if (taskIndex !== -1) {
@@ -332,6 +349,8 @@ export class AgentRuntime {
           type: e.type,
           workflowId: (e.payload.workflowId as string) || (e.payload.metadata as Record<string, unknown>)?.workflowId as string,
           taskId: e.payload.taskId as string,
+          toolName: e.payload.toolName as string,
+          description: e.payload.description as string,
           status: e.payload.status as string,
           timestamp: e.timestamp,
           result: e.payload.result
