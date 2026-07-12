@@ -31,7 +31,7 @@ describe('Multi-Agent Core', () => {
     const workers = manager.findAgentsByRole('worker');
     expect(workers).toHaveLength(2);
     
-    const coders = manager.listAgents().filter(a => a.identity.capabilities.includes('coding'));
+    const coders = manager.listAgents().filter((a: any) => a.identity.capabilities.includes('coding'));
     expect(coders).toHaveLength(1);
     expect(coders[0].identity.name).toBe('Worker 1');
   });

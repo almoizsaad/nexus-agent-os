@@ -13,11 +13,22 @@ import { AgentRegistry } from './AgentRegistry';
 import { AgentFactory } from './AgentFactory';
 import { AgentManager } from './AgentManager';
 import { MockWeatherTool } from '../tools/mocks/MockWeatherTool';
-import type { AgentIdentity } from '../types/agent';
+import type { AgentIdentity, Executor } from '../types/agent';
 import { AgentChannel } from './AgentChannel';
 import { AgentStream } from '../events/AgentStream';
-
 import { MemoryManager } from '../memory/MemoryManager';
+
+// Phase 8 additions
+import { ExecutiveBrain } from './ExecutiveBrain';
+import { CoordinatorAgent } from './CoordinatorAgent';
+import { AgentRuntime } from './AgentRuntime';
+import { WorkflowEngine } from '../workflow/WorkflowEngine';
+import { ReflectionEngine } from '../reflection/ReflectionEngine';
+import { SafetyGuard } from './SafetyLayer';
+import { ThoughtManager } from '../reflection/ThoughtManager';
+import { ComponentRegistry } from '../../registry/ComponentRegistry';
+import { WorkspaceAdapter } from '../adapters/workspaceAdapter';
+import { PersistentMemory } from '../memory/PersistentMemory';
 
 export class DependencyRegistry {
   public static registerCoreServices(container: ServiceContainer): void {
@@ -32,6 +43,9 @@ export class DependencyRegistry {
     if (!container.has(KnowledgeGraph)) container.registerSingleton(KnowledgeGraph, new KnowledgeGraph());
     if (!container.has(AgentRegistry)) container.registerSingleton(AgentRegistry, () => new AgentRegistry());
     
+    // Safety
+    if (!container.has('Safety')) container.registerSingleton('Safety', new SafetyGuard());
+
     // Provider/Implementation mapping
     if (!container.has('LLMProvider')) container.registerSingleton('LLMProvider', new MockLLMProvider());
     
@@ -55,12 +69,43 @@ export class DependencyRegistry {
       });
     }
 
+    // Workflow & Reflection
+    if (!container.has('Workflow')) {
+      container.registerSingleton('Workflow', (c) => {
+        const executor = c.resolve<Executor>('Executor');
+        const monitor = c.resolve(PerformanceMonitor);
+        return new WorkflowEngine(executor, monitor);
+      });
+    }
+
+    if (!container.has('Reflection')) {
+      container.registerSingleton('Reflection', (c) => {
+        const graph = c.resolve(KnowledgeGraph);
+        const stream = c.resolve(AgentStream);
+        return new ReflectionEngine(graph, stream);
+      });
+    }
+
     // Alias interfaces to implementations
     if (!container.has('PerformanceMonitor')) container.registerSingleton('PerformanceMonitor', (c) => c.resolve(PerformanceMonitor));
     if (!container.has('ImprovementEngine')) container.registerSingleton('ImprovementEngine', (c) => c.resolve(ImprovementEngine));
+    if (!container.has('Memory')) container.registerSingleton('Memory', (c) => c.resolve(MemoryManager));
 
     // Factories
     if (!container.has(AgentFactory)) container.registerSingleton(AgentFactory, (c) => new AgentFactory(c));
+
+    // Thought Management
+    if (!container.has(ThoughtManager)) {
+      container.registerSingleton(ThoughtManager, (c) => {
+        const eventBus = c.resolve(EventBus);
+        const persistentMemory = new PersistentMemory();
+        return new ThoughtManager(eventBus, persistentMemory);
+      });
+    }
+
+    // Registry & Adapters
+    if (!container.has(ComponentRegistry)) container.registerSingleton(ComponentRegistry, new ComponentRegistry());
+    if (!container.has(WorkspaceAdapter)) container.registerSingleton(WorkspaceAdapter, (c) => new WorkspaceAdapter(c.resolve(EventBus)));
 
     // Manager
     if (!container.has(AgentManager)) {
@@ -72,6 +117,38 @@ export class DependencyRegistry {
         });
       });
     }
+
+    // Coordinator & Executive Brain
+    if (!container.has(CoordinatorAgent)) {
+      container.registerSingleton(CoordinatorAgent, (c) => {
+        return new CoordinatorAgent(
+          c.resolve(EventBus),
+          c.resolve(AgentRegistry),
+          c.resolve('Planner'),
+          c.resolve('Executor'),
+          c.resolve(PerformanceMonitor),
+          c.resolve(ImprovementEngine),
+          c.resolve(OptimizationSuggestions)
+        );
+      });
+    }
+
+    if (!container.has(ExecutiveBrain)) {
+      container.registerSingleton(ExecutiveBrain, (c) => {
+        return new ExecutiveBrain(c.resolve(EventBus), c.resolve(CoordinatorAgent));
+      });
+    }
+
+    // Main AgentRuntime singleton
+    if (!container.has(AgentRuntime)) {
+      container.registerSingleton(AgentRuntime, (c) => {
+        const factory = c.resolve(AgentFactory);
+        return factory.createAgent();
+      });
+    }
+
+    // Self registration
+    if (!container.has(DependencyRegistry)) container.registerSingleton(DependencyRegistry, new DependencyRegistry());
 
     // Initialize default tools (idempotent)
     const toolRegistry = container.resolve(ToolRegistry);

@@ -13,7 +13,7 @@ export function useAgent() {
 
   useEffect(() => {
     // Subscribe to status and plan updates via agent:actions
-    const unsubscribeActions = agent.eventBus.subscribe<AgentProtocolAction>('agent:actions', (action) => {
+    const unsubscribeActions = agent.eventBus.subscribe<AgentProtocolAction>('agent:actions', (action: AgentProtocolAction) => {
       if (action.type === AgentActionType.AGENT_UPDATE) {
         setStatus(action.payload.status as AgentStatus);
         setMetrics(agent.runtime.getMetrics());

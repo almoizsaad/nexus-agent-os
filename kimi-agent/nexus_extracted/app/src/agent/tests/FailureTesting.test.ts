@@ -4,7 +4,7 @@ import { AgentFactory } from '../core/AgentFactory';
 import { ExecutiveBrain } from '../core/ExecutiveBrain';
 import { CoordinatorAgent } from '../core/CoordinatorAgent';
 import { MockLLMProvider } from '../providers/MockLLMProvider';
-import { AgentRole } from '../types/agent';
+import type { AgentRole } from '../types/agent';
 import { AgentInbox } from '../core/AgentInbox';
 import { AgentOutbox } from '../core/AgentOutbox';
 import { MessageRouter } from '../core/MessageRouter';
@@ -38,12 +38,12 @@ describe('Phase 8.3 — Failure Testing', () => {
     
     const identity = { id: 'coordinator', name: 'Coordinator', role: 'coordinator' as AgentRole, capabilities: ['coordination'] };
     const channel = new AgentChannel(identity.id, new AgentInbox(), new AgentOutbox(router));
-    messageBus.subscribe(identity.id, (msg) => channel.inbox.push(msg));
+    messageBus.subscribe(identity.id, (msg) => (channel as any).inbox.push(msg));
     coordinator = factory.createCoordinator(identity, channel);
     
     const workerIdentity = { id: 'worker', name: 'Worker', role: 'worker' as AgentRole, capabilities: ['execution'] };
     const workerChannel = new AgentChannel(workerIdentity.id, new AgentInbox(), new AgentOutbox(router));
-    messageBus.subscribe(workerIdentity.id, (msg) => workerChannel.inbox.push(msg));
+    messageBus.subscribe(workerIdentity.id, (msg) => (workerChannel as any).inbox.push(msg));
     const worker = factory.createAgent(workerIdentity, workerChannel);
     
     registry.register(workerIdentity, worker);
@@ -59,7 +59,7 @@ describe('Phase 8.3 — Failure Testing', () => {
           metadata: payload.metadata,
           dependencies: [],
           status: 'pending'
-        });
+        } as any, {});
         
         await workerChannel.sendDirect('coordinator', result?.success ? 'TASK_COMPLETED' : 'TASK_FAILED', {
           taskId: payload.taskId,
@@ -91,17 +91,27 @@ describe('Phase 8.3 — Failure Testing', () => {
     provider.setMockResponse({
       id: 'fail-tool',
       goal: 'Use non-existent tool',
-      tasks: [{ id: 'T1', description: 'Ghost task', tool: 'ghost_tool', dependencies: [] }]
+      tasks: [{ id: 'T1', description: 'Ghost task', tool: 'ghost_tool', dependencies: [] } as any]
     });
 
     const missionId = await brain.createMission('Ghost Mission', {
       description: 'Use a tool that does not exist.',
-      successCriteria: []
+      successCriteria: [],
+      priority: 'medium'
     });
 
     const status = await waitForStatus(missionId, ['PLAN_FAILED', 'failed']);
     expect(status).toBe('PLAN_FAILED');
-    expect(brain.getGoalManager().getMission(missionId)?.status).toBe('failed');
+    
+    // Wait a bit for ExecutiveBrain to process the failure and update status
+    let mission = brain.getGoalManager().getMission(missionId);
+    let attempts = 0;
+    while (mission?.status !== 'failed' && attempts < 10) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      mission = brain.getGoalManager().getMission(missionId);
+      attempts++;
+    }
+    expect(mission?.status).toBe('failed');
   });
 
   it('Failure: Invalid Plan (Circular Dependency Detection)', async () => {
@@ -109,14 +119,15 @@ describe('Phase 8.3 — Failure Testing', () => {
       id: 'fail-cycle',
       goal: 'Cyclic goal',
       tasks: [
-        { id: 'T1', description: 'Task 1', tool: 'search_flights', dependencies: ['T2'] },
-        { id: 'T2', description: 'Task 2', tool: 'find_hotels', dependencies: ['T1'] }
+        { id: 'T1', description: 'Task 1', tool: 'search_flights', dependencies: ['T2'] } as any,
+        { id: 'T2', description: 'Task 2', tool: 'find_hotels', dependencies: ['T1'] } as any
       ]
     });
 
     const missionId = await brain.createMission('Cycle Mission', {
       description: 'A plan with a circular dependency.',
-      successCriteria: []
+      successCriteria: [],
+      priority: 'medium'
     });
 
     // PlanValidator should detect this and fail planning or start
@@ -129,7 +140,8 @@ describe('Phase 8.3 — Failure Testing', () => {
 
     const missionId = await brain.createMission('Outage Test', {
       description: 'Should fail gracefully when LLM is down.',
-      successCriteria: []
+      successCriteria: [],
+      priority: 'medium'
     });
 
     const status = await waitForStatus(missionId, ['PLAN_FAILED', 'failed']);
@@ -150,12 +162,13 @@ describe('Phase 8.3 — Failure Testing', () => {
     provider.setMockResponse({
       id: 'fail-slow',
       goal: 'Slow goal',
-      tasks: [{ id: 'S1', description: 'Slow task', tool: 'slow_tool', dependencies: [] }]
+      tasks: [{ id: 'S1', description: 'Slow task', tool: 'slow_tool', dependencies: [] } as any]
     });
 
     const missionId = await brain.createMission('Slow Mission', {
       description: 'A tool that exceeds expected latency.',
-      successCriteria: []
+      successCriteria: [],
+      priority: 'medium'
     });
 
     // In a real system, TaskExecutor or WorkflowEngine might have a timeout
@@ -180,12 +193,13 @@ describe('Phase 8.3 — Failure Testing', () => {
     provider.setMockResponse({
       id: 'res-loss',
       goal: 'Resilient goal',
-      tasks: [{ id: 'L1', description: 'Resilient task', tool: 'search_flights', dependencies: [] }]
+      tasks: [{ id: 'L1', description: 'Resilient task', tool: 'search_flights', dependencies: [] } as any]
     });
 
     const missionId = await brain.createMission('Lossy Mission', {
       description: 'Mission with simulated network issues.',
-      successCriteria: []
+      successCriteria: [],
+      priority: 'medium'
     });
 
     // Recovery depends on SelfCorrection or retry logic in Coordinator

@@ -4,7 +4,7 @@ import { AgentFactory } from '../core/AgentFactory';
 import { ExecutiveBrain } from '../core/ExecutiveBrain';
 import { CoordinatorAgent } from '../core/CoordinatorAgent';
 import { MockLLMProvider } from '../providers/MockLLMProvider';
-import { AgentRole } from '../types/agent';
+import type { AgentRole } from '../types/agent';
 import { AgentInbox } from '../core/AgentInbox';
 import { AgentOutbox } from '../core/AgentOutbox';
 import { MessageRouter } from '../core/MessageRouter';
@@ -42,7 +42,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     const outbox = new AgentOutbox(router);
     const channel = new AgentChannel(identity.id, inbox, outbox);
     
-    messageBus.subscribe(identity.id, (msg) => inbox.push(msg));
+    messageBus.subscribe(identity.id, (msg) => (inbox as any).push(msg));
     coordinator = factory.createCoordinator(identity, channel);
     
     const workerIdentity = { id: 'worker', name: 'Worker', role: 'worker' as AgentRole, capabilities: ['execution', 'coding', 'research'] };
@@ -50,7 +50,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     const workerOutbox = new AgentOutbox(router);
     const workerChannel = new AgentChannel(workerIdentity.id, workerInbox, workerOutbox);
     
-    messageBus.subscribe(workerIdentity.id, (msg) => workerInbox.push(msg));
+    messageBus.subscribe(workerIdentity.id, (msg) => (workerInbox as any).push(msg));
     const worker = factory.createAgent(workerIdentity, workerChannel);
     
     registry.register(workerIdentity, worker);
@@ -66,7 +66,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
           metadata: payload.metadata,
           dependencies: [],
           status: 'pending'
-        });
+        } as any, {});
         
         await workerChannel.sendDirect('coordinator', result?.success ? 'TASK_COMPLETED' : 'TASK_FAILED', {
           taskId: payload.taskId,
@@ -81,7 +81,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     brain = new ExecutiveBrain(agent.eventBus, coordinator);
 
     const toolRegistry = agent.container.resolve(ToolRegistry);
-    const registerSafe = (tool: { name: string; description: string; execute: (args: unknown) => Promise<unknown> }) => {
+    const registerSafe = (tool: { name: string; description: string; execute: (args: any) => Promise<unknown> }) => {
       try { toolRegistry.register(tool as any); } catch {
         try { toolRegistry.unregister(tool.name); toolRegistry.register(tool as any); } catch { /* ignore */ }
       }
@@ -130,7 +130,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     return new Promise<{ completed: boolean, failed: boolean, duration: number, missionId: string }>((resolve) => {
       const startWait = Date.now();
       
-      const unsubscribe = agent.eventBus.subscribe('agent:events', (event: { payload?: Record<string, unknown> }) => {
+      const unsubscribe = agent.eventBus.subscribe('agent:events', (event: any) => {
         const payload = (event.payload || event) as Record<string, unknown>;
         const mId = (payload.missionId || payload.planId) as string;
         
@@ -163,7 +163,8 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     const missionPromise = waitForMissionCompletion('any');
     await brain.createMission('Trip to Paris', {
       description: 'Plan a full trip to Paris including flights and hotels.',
-      successCriteria: ['Flight found', 'Hotel found']
+      successCriteria: ['Flight found', 'Hotel found'],
+      priority: 'medium'
     });
 
     const result = await missionPromise;
@@ -175,14 +176,15 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
       id: 'res-1',
       goal: 'Research AI Agents',
       tasks: [
-        { id: 'T1', description: 'Research topic', tool: 'research_topic', metadata: { topic: 'AI Agents' }, dependencies: [] }
+        { id: 'T1', description: 'Research topic', tool: 'research_topic', metadata: { topic: 'AI Agents' }, dependencies: [] } as any
       ]
     });
 
     const missionPromise = waitForMissionCompletion('any');
     await brain.createMission('AI Research', {
       description: 'Research AI Agents and save to knowledge graph.',
-      successCriteria: ['Topic researched']
+      successCriteria: ['Topic researched'],
+      priority: 'medium'
     });
 
     const result = await missionPromise;
@@ -197,15 +199,16 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
       id: 'code-1',
       goal: 'Implement Auth',
       tasks: [
-        { id: 'T1', description: 'Write code', tool: 'write_code', metadata: { feature: 'Auth' }, dependencies: [] },
-        { id: 'T2', description: 'Run tests', tool: 'run_tests', dependencies: ['T1'] }
+        { id: 'T1', description: 'Write code', tool: 'write_code', metadata: { feature: 'Auth' }, dependencies: [] } as any,
+        { id: 'T2', description: 'Run tests', tool: 'run_tests', dependencies: ['T1'] } as any
       ]
     });
 
     const missionPromise = waitForMissionCompletion('any');
     await brain.createMission('Coding Mission', {
       description: 'Implement Auth and verify with tests.',
-      successCriteria: ['Code written', 'Tests passed']
+      successCriteria: ['Code written', 'Tests passed'],
+      priority: 'medium'
     });
 
     const result = await missionPromise;
@@ -231,14 +234,15 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
       id: 'fail-1',
       goal: 'Test Recovery',
       tasks: [
-        { id: 'F1', description: 'Flaky task', tool: toolName, dependencies: [] }
+        { id: 'F1', description: 'Flaky task', tool: toolName, dependencies: [] } as any
       ]
     });
 
     const missionPromise = waitForMissionCompletion('any', 20000);
     await brain.createMission('Recovery Test', {
       description: 'This mission should fail and then attempt recovery.',
-      successCriteria: ['Recovered']
+      successCriteria: ['Recovered'],
+      priority: 'medium'
     });
 
     const result = await missionPromise;

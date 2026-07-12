@@ -13,7 +13,7 @@ export function setupZustandAdapter() {
   const intentStore = useIntentStore.getState();
   const logStore = useLogStore.getState();
 
-  agent.eventBus.subscribe<AgentProtocolAction>('agent:actions', (action) => {
+  agent.eventBus.subscribe<AgentProtocolAction>('agent:actions', (action: AgentProtocolAction) => {
     switch (action.type) {
       case AgentActionType.AGENT_UPDATE:
         // Update loading state in intentStore

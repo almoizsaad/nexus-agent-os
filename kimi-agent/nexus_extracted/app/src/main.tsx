@@ -5,13 +5,13 @@ import './index.css';
 import App from './App.tsx';
 import ErrorBoundary from './components/ErrorBoundary';
 import { setupZustandAdapter } from './agent';
-import { initializeRegistry } from './registry/defaultRegistry';
-import { setupWorkspaceAdapter } from './agent/adapters/workspaceAdapter';
+import { bootstrapRuntime } from './agent/bootstrap/runtimeBootstrap';
 
-// Initialize Agent OS adapters and registries
-initializeRegistry();
+// 1. Initialize complete Agent OS Runtime (Single Bootstrap)
+bootstrapRuntime();
+
+// 2. Setup Application Adapters
 setupZustandAdapter();
-setupWorkspaceAdapter();
 
 const queryClient = new QueryClient({
   defaultOptions: {

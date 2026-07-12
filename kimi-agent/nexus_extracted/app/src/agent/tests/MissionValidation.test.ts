@@ -4,7 +4,8 @@ import { AgentFactory } from '../core/AgentFactory';
 import { ExecutiveBrain } from '../core/ExecutiveBrain';
 import { CoordinatorAgent } from '../core/CoordinatorAgent';
 import { MockLLMProvider } from '../providers/MockLLMProvider';
-import { AgentEventType, AgentRole } from '../types/agent';
+import { AgentEventType } from '../types/agent';
+import type { AgentRole } from '../types/agent';
 import { AgentInbox } from '../core/AgentInbox';
 import { AgentOutbox } from '../core/AgentOutbox';
 import { MessageRouter } from '../core/MessageRouter';
@@ -12,6 +13,7 @@ import { AgentMessageBus } from '../core/AgentMessageBus';
 import { AgentChannel } from '../core/AgentChannel';
 import { EventBus } from '../core/EventBus';
 import { AgentRegistry } from '../core/AgentRegistry';
+import { ToolRegistry } from '../tools/ToolRegistry';
 
 describe('Mission Validation - End-to-End', () => {
   let agent: ReturnType<typeof createAgent>;
@@ -34,7 +36,7 @@ describe('Mission Validation - End-to-End', () => {
     const channel = new AgentChannel(identity.id, inbox, outbox);
     
     // Wire up coordinator inbox
-    messageBus.subscribe(identity.id, (msg) => inbox.push(msg));
+    messageBus.subscribe(identity.id, (msg) => (inbox as any).push(msg));
     
     coordinator = factory.createCoordinator(identity, channel);
     
@@ -45,7 +47,7 @@ describe('Mission Validation - End-to-End', () => {
     const workerChannel = new AgentChannel(workerIdentity.id, workerInbox, workerOutbox);
     
     // Wire up worker inbox
-    messageBus.subscribe(workerIdentity.id, (msg) => workerInbox.push(msg));
+    messageBus.subscribe(workerIdentity.id, (msg) => (workerInbox as any).push(msg));
     
     const worker = factory.createAgent(workerIdentity, workerChannel);
     
@@ -65,7 +67,7 @@ describe('Mission Validation - End-to-End', () => {
           metadata: payload.metadata,
           dependencies: [],
           status: 'pending'
-        });
+        } as any, {});
         
         await workerChannel.sendDirect('coordinator', result?.success ? 'TASK_COMPLETED' : 'TASK_FAILED', {
           taskId: payload.taskId,
@@ -82,7 +84,7 @@ describe('Mission Validation - End-to-End', () => {
     brain = new ExecutiveBrain(agent.eventBus, coordinator);
 
     // Register tools safely
-    const registerSafe = (tool: { name: string; description: string; execute: (args: unknown) => Promise<unknown> }) => {
+    const registerSafe = (tool: { name: string; description: string; execute: (args: any) => Promise<unknown> }) => {
       try { agent.toolRegistry.register(tool as any); } catch { /* ignore */ }
     };
 
@@ -104,7 +106,15 @@ describe('Mission Validation - End-to-End', () => {
     registerSafe({ 
       name: 'research_topic', 
       description: 'Research topic', 
-      execute: async (input: { topic: string }) => ({ summary: `Summary of ${input.topic}` }) 
+      execute: async (input: { topic: string }) => {
+        const summary = `Summary of ${input.topic}`;
+        await coordinator.knowledgeGraph.createNode({
+          type: 'entity',
+          label: input.topic,
+          properties: { summary }
+        });
+        return { summary };
+      }
     });
   });
 
@@ -113,13 +123,14 @@ describe('Mission Validation - End-to-End', () => {
     
     const missionId = await brain.createMission('Trip to Paris', {
       description: 'Plan a full trip to Paris including flights and hotels.',
-      successCriteria: ['Flight found', 'Hotel found']
+      successCriteria: ['Flight found', 'Hotel found'],
+      priority: 'medium'
     });
 
     // Wait for mission completion
     // We can monitor events
     let completed = false;
-    agent.eventBus.subscribe('agent:events', (event: { type: string; payload?: Record<string, unknown> }) => {
+    agent.eventBus.subscribe('agent:events', (event: any) => {
       console.log(`[TestEvent] Type: ${event.type}, Status: ${event.payload?.status}, MissionId: ${event.payload?.missionId}`);
       if (event.type === AgentEventType.AGENT_UPDATE) {
         const payload = event.payload as Record<string, unknown>;
@@ -151,13 +162,14 @@ it('should execute a Research & Knowledge mission', async () => {
     goal: 'Research AI Agents',
     reasoning: 'Need to research the topic and then summarize findings.',
     tasks: [
-      { id: 'T1', description: 'Research topic', tool: 'research_topic', metadata: { topic: 'AI Agents' }, dependencies: [] }
+      { id: 'T1', description: 'Research topic', tool: 'research_topic', metadata: { topic: 'AI Agents' }, dependencies: [] } as any
     ]
   });
 
   const missionId = await brain.createMission('AI Research', {
       description: 'Research AI Agents and save to knowledge graph.',
-      successCriteria: ['Topic researched']
+      successCriteria: ['Topic researched'],
+      priority: 'medium'
     });
 
     let completed = false;
@@ -181,24 +193,28 @@ it('should execute a Research & Knowledge mission', async () => {
 
   it('should handle mission failure and recovery via SelfCorrection', async () => {
     // Force a tool to fail
-    coordinator.executor?.['toolRegistry'].register({
-      name: 'failing_tool',
-      description: 'This tool always fails',
-      execute: async () => { throw new Error('Tool exploded'); }
-    });
+    const toolRegistry = (coordinator.executor as any)?.toolRegistry as ToolRegistry;
+    if (toolRegistry) {
+      toolRegistry.register({
+        name: 'failing_tool',
+        description: 'This tool always fails',
+        execute: async () => { throw new Error('Tool exploded'); }
+      });
+    }
 
     provider.setMockResponse({
       id: 'fail-plan',
       goal: 'Test Failure',
       reasoning: 'Intentional failure test.',
       tasks: [
-        { id: 'F1', description: 'Failing task', tool: 'failing_tool', dependencies: [] }
+        { id: 'F1', description: 'Failing task', tool: 'failing_tool', dependencies: [] } as any
       ]
     });
 
     const missionId = await brain.createMission('Failure Test', {
       description: 'This mission should fail and then attempt recovery.',
-      successCriteria: ['Recovered']
+      successCriteria: ['Recovered'],
+      priority: 'medium'
     });
 
     // Wait for events

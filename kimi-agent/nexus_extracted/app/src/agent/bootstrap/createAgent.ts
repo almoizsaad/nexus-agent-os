@@ -1,4 +1,4 @@
-import { ServiceContainer } from '../core/ServiceContainer';
+import { globalContainer, ServiceContainer } from '../core/ServiceContainer';
 import { DependencyRegistry } from '../core/DependencyRegistry';
 import { EventBus } from '../core/EventBus';
 import { ToolRegistry } from '../tools/ToolRegistry';
@@ -8,9 +8,11 @@ import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
 import { PerformanceMonitor } from '../improvement/PerformanceMonitor';
 import { ImprovementEngine } from '../improvement/ImprovementEngine';
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
+import { AgentRuntime } from '../core/AgentRuntime';
 
 /**
  * Bootstraps and returns a fully configured Agent OS instance using DI.
+ * Defaults to a new container for isolation (important for tests).
  */
 export function createAgent(container: ServiceContainer = new ServiceContainer()) {
   // Register all core services
@@ -23,11 +25,11 @@ export function createAgent(container: ServiceContainer = new ServiceContainer()
   const improvementEngine = container.resolve(ImprovementEngine);
   const suggestions = container.resolve(OptimizationSuggestions);
   const knowledgeGraph = container.resolve(KnowledgeGraph);
-  const factory = container.resolve(AgentFactory);
+  container.resolve(AgentFactory);
   const manager = container.resolve(AgentManager);
 
-  // Create default runtime instance
-  const runtime = factory.createAgent();
+  // Get or create default runtime instance
+  const runtime = container.resolve(AgentRuntime);
 
   return {
     runtime,
@@ -45,5 +47,5 @@ export function createAgent(container: ServiceContainer = new ServiceContainer()
   };
 }
 
-// Global agent instance
-export const agent = createAgent();
+// Global agent instance (legacy support, now points to global container's runtime)
+export const agent = createAgent(globalContainer);

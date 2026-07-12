@@ -28,4 +28,5 @@ export * from './tools/mocks/MockWeatherTool';
 
 // Bootstrap
 export * from './bootstrap/createAgent';
+export * from './bootstrap/runtimeBootstrap';
 export * from './adapters/zustandAdapter';
