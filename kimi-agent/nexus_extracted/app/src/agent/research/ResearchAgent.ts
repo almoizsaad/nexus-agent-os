@@ -70,9 +70,10 @@ export class ResearchAgent extends AgentRuntime {
       for (const finding of findings) {
         await this.researchManager.recordFact({
           claim: typeof finding.content === 'string' ? finding.content : JSON.stringify(finding.content),
-          source: 'Research Mission',
-          timestamp: Date.now(),
-          confidence: 0.9,
+          source: (finding.metadata?.source as string) || 'Research Mission',
+          url: (finding.metadata?.url as string) || 'internal://research-session',
+          timestamp: finding.timestamp || Date.now(),
+          confidence: (finding.metadata?.importance as number) || 0.9,
           provider: this._identity?.name || 'Research Agent'
         });
       }
