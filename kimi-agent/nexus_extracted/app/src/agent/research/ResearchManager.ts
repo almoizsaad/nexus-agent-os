@@ -61,6 +61,17 @@ export class ResearchManager {
     const node = await this.graph.getNode(factId);
     if (!node) throw new Error(`Fact node ${factId} not found`);
 
+    if (!node.properties.claim) {
+      return {
+        factId,
+        status: 'uncertain',
+        confidence: 0,
+        reasoning: 'Node does not contain a claim to verify.',
+        supportingFactIds: [],
+        contradictingFactIds: []
+      };
+    }
+
     const claim = (node.properties.claim as string).toLowerCase();
     
     // Search for related facts
@@ -68,11 +79,11 @@ export class ResearchManager {
     
     const supporting: string[] = [];
     const contradicting: string[] = [];
-    let overallConfidence = node.properties.confidence as number;
+    let overallConfidence = (node.properties.confidence as number) || 0;
 
     for (const related of relatedNodes) {
       if (related.id === factId) continue;
-      if (related.type !== 'entity') continue;
+      if (related.type !== 'entity' || !related.properties.claim) continue;
 
       const relatedClaim = (related.properties.claim as string).toLowerCase();
       
