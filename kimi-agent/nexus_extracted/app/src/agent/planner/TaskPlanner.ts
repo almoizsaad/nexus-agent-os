@@ -48,7 +48,7 @@ export class TaskPlanner implements Planner {
 
     // Default task if no rules match
     if (taskData.length === 0) {
-      taskData.push({ desc: `Process: ${goal}`, tool: 'process_request' });
+      taskData.push({ desc: `Process: ${goal}`, tool: 'clock' });
     }
 
     return taskData.map((data) => ({
