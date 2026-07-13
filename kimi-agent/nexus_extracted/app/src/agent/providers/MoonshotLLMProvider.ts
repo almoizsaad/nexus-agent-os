@@ -6,8 +6,8 @@ export class MoonshotLLMProvider implements LLMProvider {
   private model: string;
 
   constructor(
-    apiKey: string = import.meta.env.VITE_API_KEY || '',
-    apiBase: string = import.meta.env.VITE_API_BASE_URL || 'https://api.moonshot.cn/v1',
+    apiKey: string = (typeof import.meta.env !== 'undefined' ? import.meta.env.VITE_API_KEY : process.env.VITE_API_KEY) || '',
+    apiBase: string = (typeof import.meta.env !== 'undefined' ? import.meta.env.VITE_API_BASE_URL : process.env.VITE_API_BASE_URL) || 'https://api.moonshot.cn/v1',
     model: string = 'moonshot-v1-8k'
   ) {
     this.apiKey = apiKey;

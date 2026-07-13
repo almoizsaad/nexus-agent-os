@@ -21,9 +21,10 @@ export class AgentManager {
 
   constructor(
     eventBus: EventBus,
-    runtimeFactory: (identity: AgentIdentity, channel: AgentChannel) => AgentRuntime
+    runtimeFactory: (identity: AgentIdentity, channel: AgentChannel) => AgentRuntime,
+    registry?: AgentRegistry
   ) {
-    this.registry = new AgentRegistry();
+    this.registry = registry || new AgentRegistry();
     this.messageBus = new AgentMessageBus(eventBus);
     this.messageRouter = new MessageRouter(this.registry, this.messageBus);
     

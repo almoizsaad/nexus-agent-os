@@ -39,10 +39,11 @@ export class WorkspaceAdapter {
           workspace.addComponent(action.payload as unknown as WorkspaceComponent);
           break;
 
-        case AgentActionType.UPDATE_COMPONENT:
+        case AgentActionType.UPDATE_COMPONENT: {
           const { id, updates } = action.payload as { id: string; updates: Partial<WorkspaceComponent> };
           workspace.updateComponent(id, updates);
           break;
+        }
 
         case AgentActionType.UPDATE_ENTITY:
           // This could be mapped to a specific entity in the workspace or knowledge graph

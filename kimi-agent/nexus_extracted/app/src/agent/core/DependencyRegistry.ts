@@ -127,24 +127,19 @@ export class DependencyRegistry {
       container.registerSingleton(AgentManager, (c) => {
         const eventBus = c.resolve(EventBus);
         const factory = c.resolve(AgentFactory);
+        const registry = c.resolve(AgentRegistry);
         return new AgentManager(eventBus, (identity: AgentIdentity, channel: AgentChannel) => {
           return factory.createAgent(identity, channel);
-        });
+        }, registry);
       });
     }
 
     // Coordinator & Executive Brain
     if (!container.has(CoordinatorAgent)) {
       container.registerSingleton(CoordinatorAgent, (c) => {
-        return new CoordinatorAgent(
-          c.resolve(EventBus),
-          c.resolve(AgentRegistry),
-          c.resolve('Planner'),
-          c.resolve('Executor'),
-          c.resolve(PerformanceMonitor),
-          c.resolve(ImprovementEngine),
-          c.resolve(OptimizationSuggestions)
-        );
+        const manager = c.resolve(AgentManager);
+        const coordinator = manager.spawnAgent('System Coordinator', 'coordinator', ['orchestration', 'coordination']);
+        return coordinator as CoordinatorAgent;
       });
     }
 

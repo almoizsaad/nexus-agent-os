@@ -1,7 +1,7 @@
 import type { SystemMessage } from '@/lib/types/intent';
 
-const API_KEY = import.meta.env.VITE_API_KEY;
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://api.moonshot.cn/v1';
+const API_KEY = typeof import.meta.env !== 'undefined' ? import.meta.env.VITE_API_KEY : process.env.VITE_API_KEY;
+const API_BASE = (typeof import.meta.env !== 'undefined' ? import.meta.env.VITE_API_BASE_URL : process.env.VITE_API_BASE_URL) || 'https://api.moonshot.cn/v1';
 
 if (!API_KEY) {
   console.warn('VITE_API_KEY not configured. AI features will use fallback mode.');

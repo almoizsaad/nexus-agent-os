@@ -25,9 +25,9 @@ export class MockLLMProvider implements LLMProvider {
         goal: 'Plan a trip',
         reasoning: 'The user wants to plan a trip, which requires flight, hotel, and weather information.',
         tasks: [
-          { id: '1', description: 'search_flights', tool: 'search_flights', dependencies: [] },
-          { id: '2', description: 'find_hotels', tool: 'find_hotels', dependencies: ['1'] },
-          { id: '3', description: 'check_weather', tool: 'get_current_weather', dependencies: [] }
+          { id: '1', description: 'check current time', tool: 'clock', dependencies: [] },
+          { id: '2', description: 'list workspace files', tool: 'filesystem', metadata: { operation: 'list_directory', path: '.' }, dependencies: ['1'] },
+          { id: '3', description: 'check health', tool: 'clock', dependencies: [] }
         ]
       } as unknown as T;
     }

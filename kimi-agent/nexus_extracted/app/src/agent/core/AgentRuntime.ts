@@ -118,6 +118,8 @@ export class AgentRuntime {
       this.handleAction(action);
     });
     this._unsubscribers.push(unsubActions);
+
+    this.setupMessageHandlers();
   }
 
   private getInitialState(): AgentState {
@@ -137,6 +139,66 @@ export class AgentRuntime {
         message: 'Agent state has been reset.',
       },
     });
+  }
+
+  protected setupMessageHandlers(): void {
+    if (!this._channel) return;
+
+    this._channel.onMessage(async (message) => {
+      if (message.type === 'TASK_ASSIGNMENT') {
+        await this.handleTaskAssignment(message);
+      }
+    });
+  }
+
+  private async handleTaskAssignment(message: any): Promise<void> {
+    const { taskId, planId, tool, metadata } = message.payload;
+    
+    Logger.info(`[AgentRuntime] Received task assignment: ${taskId} for plan ${planId}`);
+    
+    if (!this._executor) {
+      Logger.error(`[AgentRuntime] No executor available to handle task ${taskId}`);
+      await this._channel?.reply(message, {
+        taskId,
+        planId,
+        error: 'No executor available'
+      });
+      return;
+    }
+
+    this._state.status = 'executing';
+    
+    try {
+      const result = await this._executor.executeTask({
+        id: taskId,
+        description: message.payload.description,
+        status: 'pending',
+        tool,
+        metadata: metadata || {}
+      }, {});
+
+      if (result.success) {
+        await this._channel?.sendDirect(message.sender, 'TASK_COMPLETED', {
+          taskId,
+          planId,
+          result: result.data
+        });
+      } else {
+        await this._channel?.sendDirect(message.sender, 'TASK_FAILED', {
+          taskId,
+          planId,
+          error: result.error
+        });
+      }
+    } catch (error) {
+      await this._channel?.sendDirect(message.sender, 'TASK_FAILED', {
+        taskId,
+        planId,
+        error: String(error)
+      });
+    } finally {
+      this._state.status = 'idle';
+    }
   }
 
   public pause(): void {
