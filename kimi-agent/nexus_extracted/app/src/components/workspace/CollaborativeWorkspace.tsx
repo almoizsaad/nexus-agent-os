@@ -36,16 +36,20 @@ export const CollaborativeWorkspace: React.FC = () => {
           </div>
           <div>
             <h1 className="text-lg font-black tracking-tighter leading-none">NEXUS OS</h1>
-            <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Collaborative Workspace v2.0</p>
+            <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Kernel v2.4.0-STABLE</p>
           </div>
         </div>
 
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/5">
-            <Users className="w-3 h-3 text-primary" />
-            <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Collaborating: User + Research Specialist</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Uptime: 1,420:12:05</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/5">
+            <Users className="w-3 h-3 text-primary" />
+            <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Collaborators: 2 Active Agents</span>
+          </div>
+          <div className="flex items-center gap-2 border-l border-white/10 pl-4">
             <Button size="icon" variant="ghost" className="rounded-xl w-10 h-10 border border-white/5">
               <Layout className="w-4 h-4 text-muted-foreground" />
             </Button>
@@ -68,8 +72,8 @@ export const CollaborativeWorkspace: React.FC = () => {
           <div className="absolute -inset-1 bg-gradient-to-r from-primary/50 to-purple-500/50 rounded-[2rem] blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200" />
           <div className="relative">
             <Input 
-              placeholder="Direct your Agent Specialist... (e.g. 'Build a comparison of recent AI chip advancements')"
-              className="h-16 pl-14 pr-32 bg-background border-white/10 rounded-2xl text-lg focus-visible:ring-primary/50 shadow-2xl transition-all"
+              placeholder="Input system command or mission objective..."
+              className="h-16 pl-14 pr-32 bg-background border-white/10 rounded-2xl text-lg font-mono focus-visible:ring-primary/50 shadow-2xl transition-all"
               value={command}
               onChange={(e) => setCommand(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSendCommand()}
@@ -80,12 +84,12 @@ export const CollaborativeWorkspace: React.FC = () => {
               onClick={handleSendCommand}
             >
               <Send className="w-4 h-4 mr-2" />
-              Engage
+              EXECUTE
             </Button>
           </div>
         </div>
         <p className="mt-4 text-center text-[10px] font-mono text-muted-foreground uppercase tracking-[0.2em] opacity-50">
-          Agent Specialist is ready for live workspace manipulation
+          Awaiting Neural Input for Mission Synthesis
         </p>
       </footer>
     </div>

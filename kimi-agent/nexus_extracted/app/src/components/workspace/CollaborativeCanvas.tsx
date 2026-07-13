@@ -35,7 +35,7 @@ export const CollaborativeCanvas: React.FC = () => {
                    <entry.component {...comp.props} />
                  ) : (
                    <div className="flex flex-col items-center justify-center h-24 text-muted-foreground space-y-2">
-                     <span className="text-[10px] font-mono uppercase">Unknown Module</span>
+                     <span className="text-[10px] font-mono uppercase">Inert Process</span>
                      <span className="text-[8px] opacity-50">{comp.type}</span>
                    </div>
                  )}

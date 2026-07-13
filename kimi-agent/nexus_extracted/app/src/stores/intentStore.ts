@@ -24,7 +24,7 @@ export interface IntentState {
 export const useIntentStore = create<IntentState>((set) => ({
   currentIntent: null,
   confidence: 0,
-  layout: 'chat',
+  layout: 'control_plane',
   components: [],
   isLoading: false,
   error: null,
@@ -41,7 +41,7 @@ export const useIntentStore = create<IntentState>((set) => ({
   reset: () => set({
     currentIntent: null,
     confidence: 0,
-    layout: 'chat',
+    layout: 'control_plane',
     components: [],
     error: null,
     reasoning: null,

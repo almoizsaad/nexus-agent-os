@@ -1,6 +1,6 @@
-export type IntentType = 'booking' | 'research' | 'analysis' | 'creation' | 'comparison' | 'planning' | 'chat';
+export type IntentType = 'booking' | 'research' | 'analysis' | 'creation' | 'comparison' | 'planning' | 'direct_execution';
 
-export type LayoutType = 'dashboard' | 'form' | 'timeline' | 'comparison' | 'chat' | 'gallery' | 'map';
+export type LayoutType = 'control_plane' | 'form' | 'timeline' | 'comparison' | 'terminal' | 'gallery' | 'map';
 
 export interface UserContext {
   userId?: string;
@@ -50,7 +50,7 @@ export interface PredictiveSuggestion {
   icon?: string;
 }
 
-export interface ChatMessage {
+export interface SystemMessage {
   id: string;
   role: 'user' | 'assistant' | 'system';
   content: string;

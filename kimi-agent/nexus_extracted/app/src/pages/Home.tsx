@@ -12,38 +12,38 @@ gsap.registerPlugin(ScrollTrigger);
 const FEATURES = [
   {
     icon: Brain,
-    title: 'Intent Analysis',
+    title: 'Intent Kernel',
     description: 'Natural language is parsed into structured intent with confidence scoring and context extraction.',
     color: '#BE123C',
   },
   {
     icon: Sparkles,
-    title: 'Generative UI',
-    description: 'Dynamic layouts are generated in real-time — dashboards, timelines, comparisons, and forms.',
+    title: 'Generative Shell',
+    description: 'Dynamic layouts are generated in real-time — terminals, timelines, and comparisons.',
     color: '#0F766E',
   },
   {
     icon: Zap,
-    title: 'Predictive UX',
-    description: 'The system anticipates your next move, showing suggestions before you even ask.',
+    title: 'Predictive Scheduler',
+    description: 'The system anticipates your next move, scheduling suggestions before you even ask.',
     color: '#B45309',
   },
   {
     icon: Globe,
-    title: 'Multimodal Input',
-    description: 'Text, voice, file uploads — interact however feels natural. The AI adapts to you.',
+    title: 'Omni-Bus Input',
+    description: 'Text, voice, file uploads — interact however feels natural. The OS adapts to you.',
     color: '#15803D',
   },
   {
     icon: Shield,
-    title: 'Transparent AI',
+    title: 'Secure Reasoner',
     description: 'Every decision shows its reasoning. Confidence scores and source attribution build trust.',
     color: '#44403C',
   },
   {
     icon: Hexagon,
-    title: 'Smart Travel Planner',
-    description: 'Our showcase use case — plan trips with auto-generated itineraries, flights, hotels, and budgets.',
+    title: 'Mission Matrix',
+    description: 'Our showcase mission — complex goal decomposition into executable sub-tasks.',
     color: '#78716C',
   },
 ];
@@ -95,7 +95,7 @@ export default function Home() {
               className="nexus-stamp nexus-stamp-teal mb-4 inline-flex"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              Core Capabilities
+              Neural Protocols
             </span>
             <h2
               style={{
@@ -106,10 +106,10 @@ export default function Home() {
                 marginBottom: '16px',
               }}
             >
-              Beyond the Chatbot
+              Unified Intelligence Layer
             </h2>
             <p className="max-w-xl mx-auto" style={{ color: '#78716C', fontSize: '18px', lineHeight: 1.7 }}>
-              Nexus is not a chatbot. It's an Intent-Driven Generative UI system that creates the interface you need, when you need it.
+              Nexus OS is a generative operating environment where intent is synthesized into live system processes.
             </p>
           </motion.div>
 
@@ -160,7 +160,7 @@ export default function Home() {
                 className="nexus-stamp nexus-stamp-teal mb-4 inline-flex"
               >
                 <Globe className="w-3.5 h-3.5" />
-                Featured Use Case
+                Live Mission Simulation
               </span>
               <h2
                 style={{
@@ -171,10 +171,10 @@ export default function Home() {
                   marginBottom: '16px',
                 }}
               >
-                Smart Travel Planner
+                Geospatial Mission Synthesis
               </h2>
               <p className="mb-6" style={{ color: '#78716C', fontSize: '16px', lineHeight: 1.7 }}>
-                Say "I need to organize a business trip to Paris next week" and watch as Nexus generates a complete trip interface — flights, hotels, itinerary timeline, budget breakdown, and weather forecast — all in real-time.
+                Execute a geospatial mission like "Organize business trip to Paris" and watch as Nexus OS synthesizes an entire mission environment — flight data streams, hotel sub-systems, and resource allocations — in real-time.
               </p>
               <ul className="space-y-3 mb-8">
                 {[
@@ -244,17 +244,17 @@ export default function Home() {
               marginBottom: '16px',
             }}
           >
-            Ready to Experience the Future?
+            Initialize Kernel
           </h2>
           <p className="mb-8" style={{ color: '#78716C', fontSize: '18px', lineHeight: 1.7 }}>
-            Enter the Nexus workspace and discover how AI can generate the perfect interface for your every need.
+            Enter the Nexus OS environment and experience a unified layer of intelligence where agents and users collaborate in real-time.
           </p>
           <Link
             to="/workspace"
             className="nexus-btn nexus-btn-primary"
             style={{ padding: '0.875rem 2rem', fontSize: '16px' }}
           >
-            Enter Nexus Workspace
+            Enter Control Plane
             <ArrowRight className="w-5 h-5" />
           </Link>
         </motion.div>
@@ -273,7 +273,7 @@ export default function Home() {
             <span className="text-sm font-semibold" style={{ color: '#292524', fontFamily: 'Playfair Display, serif' }}>
               NEXUS
             </span>
-            <span className="text-[10px]" style={{ color: '#A8A29E' }}>Adaptive AI Workspace</span>
+            <span className="text-[10px]" style={{ color: '#A8A29E' }}>Intelligence Operating Environment</span>
           </div>
           <div className="text-xs" style={{ color: '#A8A29E' }}>
             DOO Builders League 2026 — Beyond the Chatbot Challenge

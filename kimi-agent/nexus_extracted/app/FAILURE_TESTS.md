@@ -191,7 +191,7 @@ try {
 
 ### Streaming Error Handling
 ```typescript
-for await (const chunk of streamChatCompletion(messages)) {
+for await (const chunk of streamSystemResponse(messages)) {
   streamedContent += chunk;
   // Update UI incrementally
 }

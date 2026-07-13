@@ -10,15 +10,15 @@ Nexus is an Intent-Driven Generative UI system that transforms natural language 
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                           USER INTERFACE                                 │
 │  ┌─────────────┐  ┌──────────────┐  ┌──────────────┐  ┌─────────────┐ │
-│  │   Navbar    │  │   Sidebar    │  │ Main Canvas  │  │ Chat Panel  │ │
-│  │  (Nav/Routing│  │(Modules/Log) │  │(Dynamic UI)  │  │ (AI Chat)   │ │
+│  │   Navbar    │  │   Sidebar    │  │ Main Canvas  │  │ Command Bar │ │
+│  │  (System Bar│  │(Sub-Systems) │  │(Generative)  │  │ (Kernel In) │ │
 │  └──────┬──────┘  └──────┬───────┘  └──────┬───────┘  └──────┬──────┘ │
 └─────────┼────────────────┼─────────────────┼─────────────────┼────────┘
           │                │                 │                 │
           └────────────────┴────────┬────────┴─────────────────┘
                                     │
                           ┌─────────┴─────────┐
-                          │   React Frontend   │
+                          │     Nexus OS       │
                           │  (React 19 + Vite) │
                           └─────────┬─────────┘
                                     │
@@ -78,16 +78,16 @@ The Executive Brain layer is responsible for high-level goal management and mult
 
 ```
 1. User Input
-   └─→ Text message entered in chat panel
+   └─→ System command entered in command bar
 
 2. Intent Analysis
    └─→ Local keyword matching (fallback)
-   └─→ Moonshot AI API call (primary) with system prompt
+   └─→ Nexus OS Intent Kernel (primary)
    └─→ Response: { intent, confidence, reasoning }
 
 3. Confidence Calculation
    └─→ intentMatch * 0.4 + contextScore * 0.2 + apiQuality * 0.3 + ambiguity * -0.1
-   └─→ Adjusted by input length and specificity
+   └─→ Adjusted by command complexity and specificity
    └─→ Result: 10-100 dynamic score
 
 4. Context Extraction
@@ -124,15 +124,15 @@ The Executive Brain layer is responsible for high-level goal management and mult
 App
 ├── HashRouter
 │   ├── Routes
-│   │   ├── / → Home (landing page)
+│   │   ├── / → Home (initialization)
 │   │   └── /workspace → Workspace
-│   │       ├── Navbar
-│   │       ├── Sidebar
-│   │       │   ├── Module Navigation (6 modules)
-│   │       │   └── System Log (with filters)
-│   │       ├── Main Canvas
-│   │       │   └── DynamicLayout
-│   │       │       ├── ComponentRenderer
+│   │       ├── Navbar (System Bar)
+│   │       ├── Sidebar (Sub-Systems)
+│   │       │   ├── Module Navigation (5 sub-systems)
+│   │       │   └── System Log (Kernel Log)
+│   │       ├── Main Canvas (Control Plane)
+│   │       │   └── DynamicLayout (Generative Shell)
+│   │       │       ├── ComponentRenderer (Process Viewer)
 │   │       │       │   ├── FlightCard
 │   │       │       │   ├── HotelCard
 │   │       │       │   ├── TimelineView
@@ -143,14 +143,14 @@ App
 │   │       │       │   ├── FormComponent
 │   │       │       │   ├── ListComponent
 │   │       │       │   └── AnalysisCard
-│   │       │       └── PredictiveChips
-│   │       └── ChatPanel (inline)
+│   │       │       └── PredictiveChips (Scheduled Intents)
+│   │       └── CommandBar (Kernel Input)
 │   └── Toaster
 ```
 
 ## API Specification
 
-### Intent Analysis
+### Intent Analysis (Kernel)
 
 **Request:**
 ```http
@@ -163,7 +163,7 @@ Content-Type: application/json
   "messages": [
     {
       "role": "system",
-      "content": "You are an intent analyzer. Analyze user input and respond ONLY with a JSON object..."
+      "content": "You are the Nexus OS Intent Kernel. Analyze the user command..."
     },
     {
       "role": "user",
@@ -179,11 +179,11 @@ Content-Type: application/json
 {
   "intent": "planning",
   "confidence": 94,
-  "reasoning": "Detected travel planning intent with date context"
+  "reasoning": "Detected travel planning intent via mission synthesis"
 }
 ```
 
-### Chat Completion (Streaming)
+### System Synthesis (Streaming)
 
 **Request:**
 ```http
@@ -210,9 +210,9 @@ data: [DONE]
 ### IntentResult
 ```typescript
 interface IntentResult {
-  intent: 'booking' | 'research' | 'analysis' | 'creation' | 'comparison' | 'planning' | 'chat';
+  intent: 'booking' | 'research' | 'analysis' | 'creation' | 'comparison' | 'planning' | 'direct_execution';
   confidence: number;        // 10-100, dynamically calculated
-  layout: 'dashboard' | 'form' | 'timeline' | 'comparison' | 'chat' | 'gallery' | 'map';
+  layout: 'control_plane' | 'form' | 'timeline' | 'comparison' | 'terminal' | 'gallery' | 'map';
   components: ComponentConfig[];
   context: UserContext;
   reasoning: string;

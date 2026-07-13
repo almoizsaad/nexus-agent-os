@@ -1,30 +1,30 @@
-# Nexus — Adaptive AI Workspace
+# Nexus OS — Intelligence Operating Environment
 
 **Beyond the Chatbot Challenge — DOO Builders League 2026**
 
-Nexus is an Intent-Driven Generative UI system that creates the perfect interface for your needs in real-time. Instead of navigating through menus and forms, you simply describe what you need, and Nexus generates a custom interface tailored to your intent.
+Nexus OS is a generative operating environment where natural language intent is synthesized into live system processes. It replaces traditional conversational interfaces with a unified control plane.
 
 ## Live Demo
 
-**[Enter Nexus Workspace](https://vnjxkqdyo6wlm.kimi.page)**
+**[Enter Nexus OS Control Plane](https://vnjxkqdyo6wlm.kimi.page)**
 
-## What Makes Nexus Different
+## What Makes Nexus OS Different
 
-| Traditional AI Chatbots | Nexus |
+| Traditional AI Chatbots | Nexus OS |
 |---|---|
-| Text-only responses | Dynamic generated interfaces |
+| Text-only responses | Dynamic generated shells |
 | Static UI | Intent-adaptive layouts |
-| Generic replies | Context-aware predictions |
-| Hidden reasoning | Transparent confidence scores |
+| Generic replies | Context-aware mission synthesis |
+| Hidden reasoning | Transparent kernel logs |
 
 ## Features
 
-- **Intent Analysis** — Natural language parsed into structured intent with confidence scoring
-- **Generative UI** — Dynamic layouts: dashboards, timelines, comparisons, forms
-- **Predictive UX** — Anticipates your next move with context-aware suggestions
-- **Real AI Integration** — Powered by Moonshot AI with streaming responses
-- **Transparent AI** — Every decision shows its reasoning
-- **Smart Travel Planner** — Showcase use case with flights, hotels, itineraries, budgets
+- **Intent Kernel** — Natural language parsed into executable intent with confidence scoring
+- **Generative Shell** — Dynamic layouts: control planes, timelines, comparisons, forms
+- **Predictive Scheduler** — Anticipates system needs with context-aware suggestions
+- **Neural Agent Integration** — Powered by Moonshot AI with streaming responses
+- **Secure Reasoner** — Every kernel decision shows its logic
+- **Geospatial Mission Synthesis** — Showcase mission with flights, hotels, itineraries, budgets
 
 ## Architecture
 
@@ -73,7 +73,7 @@ VITE_API_BASE_URL=https://api.moonshot.cn/v1
 src/
 ├── components/
 │   ├── layout/          # Navbar, Sidebar
-│   ├── generative-ui/   # DynamicLayout, ChatPanel, PredictiveChips
+│   ├── generative-ui/   # DynamicLayout, PredictiveChips
 │   └── ui/              # shadcn/ui components
 ├── lib/
 │   ├── agents/          # Intent analyzer (AI API)

@@ -18,7 +18,7 @@ interface MetricsDashboardProps {
   recommendations: OptimizationRecommendation[];
 }
 
-export default function MetricsDashboard({ metrics, recommendations }: MetricsDashboardProps) {
+export default function SystemMetrics({ metrics, recommendations }: MetricsDashboardProps) {
   const [expanded, setExpanded] = useState(false);
 
   if (!metrics) return null;

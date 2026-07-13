@@ -4,7 +4,7 @@ import { MissionCard } from './MissionCard';
 import { MissionPanel } from './MissionPanel';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Plus, Target, LayoutDashboard, History, Settings } from 'lucide-react';
+import { Plus, Target, Activity, Cpu, History, Settings } from 'lucide-react';
 import ParticleCanvas from '../generative-ui/ParticleCanvas';
 import { Card } from '../ui/card';
 
@@ -50,7 +50,7 @@ export const MissionWorkspace: React.FC = () => {
         <ScrollArea className="flex-1">
           <div className="p-4 space-y-4">
             <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-              <LayoutDashboard className="w-3 h-3" />
+              <Activity className="w-3 h-3" />
               Active Operations
             </div>
             
@@ -105,9 +105,9 @@ export const MissionWorkspace: React.FC = () => {
                 <p className="text-[10px] text-muted-foreground uppercase font-mono">Review past successes and failures</p>
               </Card>
               <Card className="p-6 bg-white/5 border-white/5 hover:bg-white/10 transition-colors cursor-pointer group">
-                <LayoutDashboard className="w-8 h-8 text-purple-500 mb-4 group-hover:scale-110 transition-transform" />
-                <h3 className="font-bold mb-1">Fleet Status</h3>
-                <p className="text-[10px] text-muted-foreground uppercase font-mono">Monitor all active agent units</p>
+                <Cpu className="w-8 h-8 text-purple-500 mb-4 group-hover:scale-110 transition-transform" />
+                <h3 className="font-bold mb-1">System Status</h3>
+                <p className="text-[10px] text-muted-foreground uppercase font-mono">Monitor all active kernel processes</p>
               </Card>
             </div>
           </div>

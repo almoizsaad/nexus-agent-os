@@ -51,7 +51,7 @@ export default function Navbar() {
             style={{ color: '#BE123C', background: 'rgba(190, 18, 60, 0.06)', border: '1.5px dashed rgba(190, 18, 60, 0.3)', transform: 'rotate(-1deg)' }}
           >
             <Zap className="w-3 h-3" />
-            AI Workspace
+            Intelligence OS
           </span>
         </Link>
 
@@ -59,6 +59,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-1">
           {navItems.map((item) => {
             const isActive = location.pathname === item.to;
+            const label = item.label === 'Workspace' ? 'Control Plane' : item.label;
             if (item.external) {
               return (
                 <a
@@ -72,7 +73,7 @@ export default function Navbar() {
                   onMouseLeave={handleNavLeave}
                 >
                   <item.icon className="w-3.5 h-3.5" />
-                  {item.label}
+                  {label}
                   <ExternalLink className="w-3 h-3 opacity-50" />
                 </a>
               );
@@ -90,7 +91,7 @@ export default function Navbar() {
                 onMouseLeave={handleNavLeave}
               >
                 <item.icon className="w-3.5 h-3.5" />
-                {item.label}
+                {label}
               </Link>
             );
           })}
@@ -152,6 +153,7 @@ export default function Navbar() {
           style={{ background: 'rgba(253, 252, 248, 0.98)', borderColor: '#E7E5E4' }}
         >
           {navItems.map((item) => {
+            const label = item.label === 'Workspace' ? 'Control Plane' : item.label;
             if (item.external) {
               return (
                 <a
@@ -166,7 +168,7 @@ export default function Navbar() {
                   onClick={() => setMobileOpen(false)}
                 >
                   <item.icon className="w-4 h-4" />
-                  {item.label}
+                  {label}
                   <ExternalLink className="w-3 h-3 ml-auto opacity-50" />
                 </a>
               );
@@ -182,7 +184,7 @@ export default function Navbar() {
                 onClick={() => setMobileOpen(false)}
               >
                 <item.icon className="w-4 h-4" />
-                {item.label}
+                {label}
               </Link>
             );
           })}

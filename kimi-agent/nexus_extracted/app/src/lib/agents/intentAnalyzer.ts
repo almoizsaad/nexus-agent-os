@@ -1,4 +1,4 @@
-import type { ChatMessage } from '@/lib/types/intent';
+import type { SystemMessage } from '@/lib/types/intent';
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://api.moonshot.cn/v1';
@@ -7,7 +7,7 @@ if (!API_KEY) {
   console.warn('VITE_API_KEY not configured. AI features will use fallback mode.');
 }
 
-export async function* streamChatCompletion(messages: ChatMessage[]): AsyncGenerator<string> {
+export async function* streamSystemResponse(messages: SystemMessage[]): AsyncGenerator<string> {
   if (!API_KEY) {
     yield '[API key not configured — switching to offline mode]';
     return;
@@ -63,7 +63,7 @@ export async function* streamChatCompletion(messages: ChatMessage[]): AsyncGener
       }
     }
   } catch (error) {
-    console.error('Chat stream error:', error);
+    console.error('System stream error:', error);
     yield '\n\n[Connection issue — switching to offline mode]';
   }
 }
@@ -75,7 +75,7 @@ export async function analyzeIntentWithAI(input: string): Promise<{
 }> {
   if (!API_KEY) {
     return {
-      intent: 'chat',
+      intent: 'direct_execution',
       confidence: 50,
       reasoning: 'API key not configured — using fallback mode',
     };
@@ -92,9 +92,9 @@ export async function analyzeIntentWithAI(input: string): Promise<{
         model: 'moonshot-v1-8k',
         messages: [{
           role: 'system',
-          content: `You are an intent analyzer. Analyze user input and respond ONLY with a JSON object in this format:
-{"intent": "planning|booking|research|analysis|creation|comparison|chat", "confidence": 0-100, "reasoning": "brief explanation"}
-No other text.`,
+          content: `You are the Nexus OS Intent Kernel. Analyze the user command and extract structured intent.
+Available intents: planning, booking, research, analysis, creation, comparison, direct_execution.
+Respond ONLY with a JSON object: {"intent": "intent_type", "confidence": 0-100, "reasoning": "brief explanation"}`,
         }, {
           role: 'user',
           content: input,
@@ -112,9 +112,9 @@ No other text.`,
     if (content) {
       const parsed = JSON.parse(content);
       return {
-        intent: parsed.intent || 'chat',
+        intent: parsed.intent || 'direct_execution',
         confidence: parsed.confidence || 70,
-        reasoning: parsed.reasoning || 'Intent detected via pattern matching',
+        reasoning: parsed.reasoning || 'Intent detected via neural synthesis',
       };
     }
   } catch (error) {
@@ -122,8 +122,8 @@ No other text.`,
   }
 
   return {
-    intent: 'chat',
+    intent: 'direct_execution',
     confidence: 50,
-    reasoning: 'Falling back to default chat mode due to analysis error',
+    reasoning: 'Falling back to direct execution mode due to kernel exception',
   };
 }

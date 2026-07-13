@@ -1,30 +1,30 @@
 import { create } from 'zustand';
-import type { ChatMessage } from '@/lib/types/intent';
+import type { SystemMessage } from '@/lib/types/intent';
 
-interface SessionRecord {
+interface MissionRecord {
   id: string;
   intent: string;
   timestamp: number;
-  messages: ChatMessage[];
+  messages: SystemMessage[];
 }
 
 interface UserState {
   preferences: Record<string, unknown>;
-  sessionHistory: SessionRecord[];
-  currentSession: ChatMessage[];
-  addToHistory: (record: SessionRecord) => void;
+  missionHistory: MissionRecord[];
+  currentSession: SystemMessage[];
+  addToHistory: (record: MissionRecord) => void;
   updatePreference: (key: string, value: unknown) => void;
-  addMessage: (message: ChatMessage) => void;
+  addMessage: (message: SystemMessage) => void;
   clearSession: () => void;
 }
 
 export const useUserStore = create<UserState>((set) => ({
   preferences: {},
-  sessionHistory: [],
+  missionHistory: [],
   currentSession: [],
   addToHistory: (record) =>
     set((state) => ({
-      sessionHistory: [...state.sessionHistory.slice(-49), record],
+      missionHistory: [...state.missionHistory.slice(-49), record],
     })),
   updatePreference: (key, value) =>
     set((state) => ({

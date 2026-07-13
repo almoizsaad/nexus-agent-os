@@ -16,12 +16,11 @@ interface SidebarProps {
 }
 
 const MODULES = [
-  { id: 'analysis', label: 'Analysis', icon: BarChart3, color: '#BE123C', desc: 'Data analysis & reports' },
-  { id: 'code', label: 'Code', icon: Code2, color: '#0F766E', desc: 'Development & scripts' },
-  { id: 'creative', label: 'Creative', icon: Palette, color: '#B45309', desc: 'Design & content' },
-  { id: 'travel', label: 'Travel', icon: Globe, color: '#15803D', desc: 'Trip planning & booking' },
-  { id: 'chat', label: 'Chat', icon: MessageSquare, color: '#78716C', desc: 'General conversation' },
-  { id: 'data', label: 'Data', icon: Database, color: '#44403C', desc: 'Data management' },
+  { id: 'analysis', label: 'Analysis', icon: BarChart3, color: '#BE123C', desc: 'Neural data processing' },
+  { id: 'code', label: 'Code', icon: Code2, color: '#0F766E', desc: 'Binary synthesis & scripts' },
+  { id: 'creative', label: 'Creative', icon: Palette, color: '#B45309', desc: 'Generative ideation' },
+  { id: 'travel', label: 'Travel', icon: Globe, color: '#15803D', desc: 'Geospatial mission logic' },
+  { id: 'data', label: 'Data', icon: Database, color: '#44403C', desc: 'Vector memory management' },
 ];
 
 const LOG_FILTERS: { label: string; value: LogLevel | 'all'; color: string }[] = [
@@ -86,7 +85,7 @@ export default function Sidebar({
           className={`nexus-label mb-2 ${collapsed ? 'text-center px-0' : 'px-4'}`}
           style={{ fontSize: 10 }}
         >
-          {collapsed ? 'Mod' : 'Core Modules'}
+          {collapsed ? 'Sys' : 'Sub-Systems'}
         </div>
         {MODULES.map((mod) => {
           const Icon = mod.icon;
