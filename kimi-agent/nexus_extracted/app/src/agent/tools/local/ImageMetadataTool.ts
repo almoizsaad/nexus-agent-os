@@ -35,7 +35,7 @@ export class ImageMetadataTool implements Tool<{ path: string }, { width: number
     size: z.number()
   });
 
-  public async execute(input: { path: string }): Promise<{ width: number; height: number; type: string; size: number }> {
+  public async execute(_input: { path: string }): Promise<{ width: number; height: number; type: string; size: number }> {
     // Placeholder implementation for Node.js
     // In production, use 'sharp' or 'image-size'
     return {

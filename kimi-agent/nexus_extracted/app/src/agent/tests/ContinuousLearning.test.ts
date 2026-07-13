@@ -6,7 +6,6 @@ import { TaskExecutor } from '../executor/TaskExecutor';
 import { LLMPlanner } from '../planner/LLMPlanner';
 import { MockLLMProvider } from '../providers/MockLLMProvider';
 import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
-import { ReflectionEngine } from '../reflection/ReflectionEngine';
 
 describe('Continuous Learning Loop', () => {
   let runtime: AgentRuntime;
@@ -75,7 +74,7 @@ describe('Continuous Learning Loop', () => {
     const nodes = Array.from(knowledgeGraph.nodes.values());
     const discoveryNode = nodes.find(n => n.label.includes('Discovery: Read the Nexus manual'));
     expect(discoveryNode).toBeDefined();
-    expect(discoveryNode?.properties.result.content).toBe('The secret is high-speed coordination.');
+    expect((discoveryNode?.properties.result as any).content).toBe('The secret is high-speed coordination.');
 
     // 2. Second Mission: Ask about the secret again
     const secondGoal = 'What is the secret of Nexus OS?';
@@ -125,6 +124,6 @@ describe('Continuous Learning Loop', () => {
     // Since we can't easily check the private buildPrompt call, we verify searchNodes returned something
     const searchResults = await searchNodesSpy.mock.results[0].value;
     expect(searchResults.length).toBeGreaterThan(0);
-    expect(searchResults[0].properties.result.content).toContain('high-speed coordination');
+    expect((searchResults[0].properties.result as any).content).toContain('high-speed coordination');
   });
 });

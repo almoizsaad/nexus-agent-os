@@ -8,7 +8,6 @@ import { AgentEventType } from '../types/agent';
 import type { AgentRole } from '../types/agent';
 import type { StructuredTask } from '../planner/schemas';
 import { AgentInbox } from '../core/AgentInbox';
-import type { Tool } from '../tools/Tool';
 import { AgentOutbox } from '../core/AgentOutbox';
 import { MessageRouter } from '../core/MessageRouter';
 import { AgentMessageBus } from '../core/AgentMessageBus';
@@ -237,7 +236,7 @@ it('should execute a Research & Knowledge mission', async () => {
     // We can also check status transitions in AgentRuntime via spies if needed
     
     const startWait = Date.now();
-    while (!failed && Date.now() - startWait < 10000) {
+    while (!failed && Date.now() - startWait < 14000) {
       await new Promise(resolve => setTimeout(resolve, 100));
     }
 

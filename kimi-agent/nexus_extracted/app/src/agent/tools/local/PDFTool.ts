@@ -31,10 +31,10 @@ export class PDFTool implements Tool<{ path: string }, { pageCount: number; meta
   
   public readonly outputSchema = z.object({
     pageCount: z.number(),
-    metadata: z.record(z.any())
+    metadata: z.record(z.string(), z.any())
   });
 
-  public async execute(input: { path: string }): Promise<{ pageCount: number; metadata: Record<string, any> }> {
+  public async execute(_input: { path: string }): Promise<{ pageCount: number; metadata: Record<string, any> }> {
     // This is a placeholder implementation.
     // In a real production environment, you would use 'pdf-parse' or similar.
     // For now, we'll simulate basic inspection.

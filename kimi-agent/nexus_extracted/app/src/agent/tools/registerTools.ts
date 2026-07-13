@@ -16,12 +16,13 @@ import { ImageMetadataTool } from './local/ImageMetadataTool';
 import { KnowledgeTool } from './local/KnowledgeTool';
 import { ResearchSynthesisTool } from './local/ResearchSynthesisTool';
 import type { IKnowledgeDatabase } from '../types/knowledge';
+import type { Tool } from './Tool';
 
 /**
  * Registers all production-grade local tools into the registry.
  */
 export function registerDefaultTools(registry: ToolRegistry, knowledgeDb?: IKnowledgeDatabase): void {
-  const tools = [
+  const tools: Tool<any, any>[] = [
     new ClockTool(),
     new UUIDTool(),
     new FilesystemTool(),

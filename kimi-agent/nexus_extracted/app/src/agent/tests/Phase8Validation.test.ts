@@ -15,8 +15,9 @@ import { AgentRegistry } from '../core/AgentRegistry';
 import { ToolRegistry } from '../tools/ToolRegistry';
 import { UnifiedEventBus } from '../core/UnifiedEventBus';
 import { ServiceContainer } from '../core/ServiceContainer';
-import type { StructuredTask } from '../planner/schemas';
+import type { Task } from '../types/agent';
 import { createTestTool } from './testUtils';
+import type { Tool } from '../tools/Tool';
 
 describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
   let agent: ReturnType<typeof createAgent>;
@@ -38,7 +39,11 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     
     // Register local mock tools
     const toolRegistry = agent.container.resolve(ToolRegistry);
-    toolRegistry.register(new MockWeatherTool());
+    toolRegistry.register(createTestTool({ 
+      name: 'get_current_weather', 
+      description: 'Get weather', 
+      execute: async () => ({ status: 'sunny' }) 
+    }));
 
     const factory = agent.container.resolve(AgentFactory);
     const registry = agent.container.resolve(AgentRegistry);
@@ -76,7 +81,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
           metadata: payload.metadata,
           dependencies: [],
           status: 'pending'
-        } as StructuredTask, {});
+        } as Task, {});
         
         await workerChannel.sendDirect('coordinator', result?.success ? 'TASK_COMPLETED' : 'TASK_FAILED', {
           taskId: payload.taskId,
@@ -96,17 +101,17 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
       }
     };
 
-    registerSafe({ 
+    registerSafe(createTestTool({ 
       name: 'search_flights', 
       description: 'Search flights', 
       execute: async () => ({ flights: [{ id: 'F1', price: 500 }] }) 
-    });
-    registerSafe({ 
+    }));
+    registerSafe(createTestTool({ 
       name: 'find_hotels', 
       description: 'Find hotels', 
       execute: async () => ({ hotels: [{ id: 'H1', price: 200 }] }) 
-    });
-    registerSafe({ 
+    }));
+    registerSafe(createTestTool({ 
       name: 'research_topic', 
       description: 'Research topic', 
       execute: async (input: { topic: string }) => {
@@ -118,17 +123,17 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
         });
         return { summary };
       }
-    });
-    registerSafe({ 
+    }));
+    registerSafe(createTestTool({ 
       name: 'write_code', 
       description: 'Write code', 
       execute: async (input: { feature: string }) => ({ code: `// Code for ${input.feature}` }) 
-    });
-    registerSafe({ 
+    }));
+    registerSafe(createTestTool({ 
       name: 'run_tests', 
       description: 'Run tests', 
       execute: async () => ({ passed: true }) 
-    });
+    }));
   });
 
   const waitForMissionCompletion = async (targetId?: string, timeout = 15000) => {
@@ -229,7 +234,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     const toolName = 'flaky_tool';
     
     const toolRegistry = agent.container.resolve(ToolRegistry);
-    toolRegistry.register({
+    toolRegistry.register(createTestTool({
       name: toolName,
       description: 'Fails first time, succeeds second time',
       execute: async () => { 
@@ -237,7 +242,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
         if (callCount === 1) throw new Error('First attempt failed');
         return { data: 'Success after retry' };
       }
-    });
+    }));
 
     provider.setMockResponse({
       id: 'fail-1',

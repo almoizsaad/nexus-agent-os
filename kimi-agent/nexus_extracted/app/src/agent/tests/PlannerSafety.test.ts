@@ -3,6 +3,7 @@ import { LLMPlanner } from '../planner/LLMPlanner';
 import { MockLLMProvider } from '../providers/MockLLMProvider';
 import { ToolRegistry } from '../tools/ToolRegistry';
 import { SafetyGuard } from '../core/SafetyLayer';
+import { createTestTool } from './testUtils';
 
 describe('Planner Safety Integration', () => {
   let provider: MockLLMProvider;
@@ -15,9 +16,9 @@ describe('Planner Safety Integration', () => {
     safetyGuard = new SafetyGuard();
     
     // Register mock tools to pass validation
-    registry.register({ name: 'delete_logs', description: 'Delete logs', execute: async () => ({}) });
-    registry.register({ name: 'exec_malware', description: 'Exec malware', execute: async () => ({}) });
-    registry.register({ name: 'get_weather', description: 'Get weather', execute: async () => ({}) });
+    registry.register(createTestTool({ name: 'delete_logs', description: 'Delete logs' }));
+    registry.register(createTestTool({ name: 'exec_malware', description: 'Exec malware' }));
+    registry.register(createTestTool({ name: 'get_weather', description: 'Get weather' }));
   });
 
   it('LLMPlanner should reject unsafe plans', async () => {

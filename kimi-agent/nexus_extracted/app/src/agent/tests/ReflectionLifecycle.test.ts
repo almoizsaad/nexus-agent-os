@@ -5,6 +5,7 @@ import { TaskPlanner } from '../planner/TaskPlanner';
 import { TaskExecutor } from '../executor/TaskExecutor';
 import { ToolRegistry } from '../tools/ToolRegistry';
 import { AgentEventType } from '../types/agent';
+import { createTestTool } from './testUtils';
 
 describe('Reflection Lifecycle Integration', () => {
   let eventBus: EventBus;
@@ -18,10 +19,10 @@ describe('Reflection Lifecycle Integration', () => {
     planner = new TaskPlanner();
     registry = new ToolRegistry();
     
-    registry.register({ name: 'search_flights', description: 'flights', execute: async () => ({ success: true }) });
-    registry.register({ name: 'find_hotels', description: 'hotels', execute: async () => ({ success: true }) });
-    registry.register({ name: 'get_current_weather', description: 'weather', execute: async () => ({ success: true }) });
-    registry.register({ name: 'exchange_rate_lookup', description: 'fx', execute: async () => ({ success: true }) });
+    registry.register(createTestTool({ name: 'search_flights', description: 'flights' }));
+    registry.register(createTestTool({ name: 'find_hotels', description: 'hotels' }));
+    registry.register(createTestTool({ name: 'get_current_weather', description: 'weather' }));
+    registry.register(createTestTool({ name: 'exchange_rate_lookup', description: 'fx' }));
 
     executor = new TaskExecutor(registry);
     runtime = new AgentRuntime(eventBus, planner, executor);

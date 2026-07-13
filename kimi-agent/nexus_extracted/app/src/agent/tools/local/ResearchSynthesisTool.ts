@@ -68,7 +68,7 @@ export class ResearchSynthesisTool implements Tool<any, any> {
   private summarize(sources: any[], focus?: string): any {
     // In a real agent, this would call an LLM to summarize
     // For now, we provide a structured template that the agent can fill
-    const combinedContent = sources.map(s => s.content).join('\n\n');
+    // const combinedContent = sources.map(s => s.content).join('\n\n');
     return {
       summary: `[SUMMARY OF SOURCES${focus ? ' FOCUSED ON ' + focus : ''}]`,
       sourceCount: sources.length,

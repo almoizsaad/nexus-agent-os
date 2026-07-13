@@ -27,7 +27,7 @@ export class HTTPTool implements Tool<any, any> {
   public readonly inputSchema = z.object({
     url: z.string(),
     method: z.enum(['GET', 'POST', 'PUT', 'DELETE', 'PATCH']).default('GET'),
-    headers: z.record(z.string()).optional(),
+    headers: z.record(z.string(), z.string()).optional(),
     body: z.any().optional(),
     responseType: z.enum(['json', 'text', 'blob']).default('json')
   });

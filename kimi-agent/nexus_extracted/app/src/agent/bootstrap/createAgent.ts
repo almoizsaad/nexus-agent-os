@@ -1,6 +1,6 @@
 import { globalContainer, ServiceContainer } from '../core/ServiceContainer';
 import { DependencyRegistry } from '../core/DependencyRegistry';
-import { EventBus } from './EventBus';
+import { EventBus } from '../core/EventBus';
 import { ToolRegistry } from '../tools/ToolRegistry';
 import { registerDefaultTools } from '../tools/registerTools';
 import { AgentFactory } from '../core/AgentFactory';

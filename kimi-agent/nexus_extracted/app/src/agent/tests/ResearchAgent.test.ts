@@ -14,6 +14,8 @@ import { KnowledgeDatabase } from '../knowledge/KnowledgeDatabase';
 import { EmbeddingStore } from '../knowledge/EmbeddingStore';
 import { VectorSearch } from '../knowledge/VectorSearch';
 import { AgentChannel } from '../core/AgentChannel';
+import { AgentInbox } from '../core/AgentInbox';
+import { AgentOutbox } from '../core/AgentOutbox';
 
 describe('ResearchAgent Integration', () => {
   let agent: ResearchAgent;
@@ -38,7 +40,7 @@ describe('ResearchAgent Integration', () => {
 
     const planner = new LLMPlanner(llmProvider, toolRegistry);
     const executor = new TaskExecutor(toolRegistry, monitor);
-    const channel = new AgentChannel(eventBus, { id: 'test-agent', name: 'Test', role: 'worker', capabilities: [] });
+    const channel = new AgentChannel('test-agent', new AgentInbox(), new AgentOutbox({ route: async () => {} }));
 
     agent = new ResearchAgent(
       eventBus,
@@ -72,10 +74,9 @@ describe('ResearchAgent Integration', () => {
           id: 'task-1',
           description: 'Search for quantum computing basics',
           tool: 'search',
-          input: { query: 'quantum computing basics' },
           dependencies: [],
           status: 'pending',
-          metadata: {}
+          metadata: { query: 'quantum computing basics' }
         }
       ],
       reasoning: 'Starting with a broad search.',

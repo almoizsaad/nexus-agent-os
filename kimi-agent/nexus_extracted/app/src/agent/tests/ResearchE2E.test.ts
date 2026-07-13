@@ -78,8 +78,8 @@ describe('Research Agent End-to-End Mission Validation', () => {
         // If it was a search tool, record a fact automatically for the E2E test
         if (payload.tool === 'search' && result?.success) {
           const searchData = result.data as any;
-          if (searchData.data?.results) {
-            for (const res of searchData.data.results) {
+          if (searchData.results) {
+            for (const res of searchData.results) {
               console.log(`[TestWorker] Recording fact: ${res.title}`);
               await researchAgent.research.recordFact({
                 claim: res.snippet,

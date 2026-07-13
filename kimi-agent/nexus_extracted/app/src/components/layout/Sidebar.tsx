@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  Code2, Palette, BarChart3, Globe, MessageSquare,
+  Code2, Palette, BarChart3, Globe,
   Database, Cpu, ChevronRight, Activity, CircleDot,
   Trash2, AlertTriangle, AlertCircle, Info, Bug
 } from 'lucide-react';

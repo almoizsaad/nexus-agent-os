@@ -14,6 +14,7 @@ export interface MemoryEntry<T = unknown> {
     goalId?: string;
     taskId?: string;
     score?: number; // Retrieval score
+    [key: string]: unknown;
   };
   embedding?: number[]; // For future vector search
 }

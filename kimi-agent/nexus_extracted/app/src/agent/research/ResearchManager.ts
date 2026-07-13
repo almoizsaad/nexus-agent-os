@@ -1,5 +1,5 @@
-import type { GraphNode, KnowledgeGraph } from '../knowledge/KnowledgeGraph';
-import { RelationType } from '../types/knowledge';
+import type { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
+import type { GraphNode, RelationType } from '../types/knowledge';
 
 export interface ResearchFact {
   id: string;

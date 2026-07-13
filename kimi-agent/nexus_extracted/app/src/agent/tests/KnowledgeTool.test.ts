@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { ToolRegistry } from '../tools/ToolRegistry';
 import { KnowledgeTool } from '../tools/local/KnowledgeTool';
 import { KnowledgeDatabase } from '../knowledge/KnowledgeDatabase';

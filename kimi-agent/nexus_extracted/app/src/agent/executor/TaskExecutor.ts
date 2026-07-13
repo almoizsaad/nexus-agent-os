@@ -50,11 +50,12 @@ export class TaskExecutor implements Executor {
       const result = await this.toolRegistry.executeTool(toolName, toolInput);
       const latency = Date.now() - startTime;
       
-      this.monitor?.trackToolUse(toolName, latency, true);
+      this.monitor?.trackToolUse(toolName, latency, result.success);
 
       return {
-        success: true,
-        data: result,
+        success: result.success,
+        data: result.data,
+        error: result.error,
         taskId: task.id,
       };
     } catch (error) {
@@ -77,7 +78,7 @@ export class TaskExecutor implements Executor {
    * Prioritizes the 'tool' field from StructuredTask, falls back to description.
    */
   private resolveToolName(task: Task | StructuredTask): string {
-    if ('tool' in task) {
+    if ('tool' in task && task.tool) {
       return task.tool;
     }
     return task.description;

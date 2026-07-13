@@ -32,7 +32,7 @@ export const CollaborativeCanvas: React.FC = () => {
                      <Skeleton className="h-20 w-full bg-white/5" />
                    </div>
                  ) : entry ? (
-                   <entry.component {...comp.props} />
+                   <entry.component id={comp.id} data={comp.props} />
                  ) : (
                    <div className="flex flex-col items-center justify-center h-24 text-muted-foreground space-y-2">
                      <span className="text-[10px] font-mono uppercase">Inert Process</span>
@@ -41,7 +41,7 @@ export const CollaborativeCanvas: React.FC = () => {
                  )}
                </div>
 
-               {comp.metadata?.source && (
+               {!!comp.metadata?.source && (
                  <div className="px-4 py-2 border-t border-white/5 bg-black/20">
                    <span className="text-[8px] font-mono text-muted-foreground uppercase">
                      Source: {comp.metadata.source as string}

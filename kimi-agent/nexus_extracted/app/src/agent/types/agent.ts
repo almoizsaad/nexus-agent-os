@@ -36,6 +36,7 @@ export interface Task {
   id: string;
   description: string;
   status: 'pending' | 'in-progress' | 'running' | 'completed' | 'failed';
+  tool?: string;
   dependencies?: string[];
   metadata?: Record<string, unknown>;
 }
@@ -127,9 +128,11 @@ export interface AgentUpdateAction {
 export interface RenderComponentAction {
   type: typeof AgentActionType.RENDER_COMPONENT;
   payload: {
-    componentId: string;
+    id: string;
+    type: string;
     props: Record<string, unknown>;
-    position?: 'sidebar' | 'main' | 'modal';
+    status: 'loading' | 'ready' | 'error' | 'stale';
+    metadata?: Record<string, unknown>;
   };
 }
 
@@ -159,6 +162,19 @@ export interface TerminateAgentAction {
   };
 }
 
+export interface UpdateComponentAction {
+  type: typeof AgentActionType.UPDATE_COMPONENT;
+  payload: {
+    id: string;
+    updates: Record<string, unknown>;
+  };
+}
+
+export interface UpdateEntityAction {
+  type: typeof AgentActionType.UPDATE_ENTITY;
+  payload: Record<string, unknown>;
+}
+
 export type AgentProtocolAction =
   | UpdateWorkspaceAction
   | RequestToolAction
@@ -168,7 +184,9 @@ export type AgentProtocolAction =
   | RenderComponentAction
   | RequireApprovalAction
   | SpawnAgentAction
-  | TerminateAgentAction;
+  | TerminateAgentAction
+  | UpdateComponentAction
+  | UpdateEntityAction;
 
 // --- Protocol Events ---
 

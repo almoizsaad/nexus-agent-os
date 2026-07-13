@@ -1,20 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import { TaskExecutor } from '../executor/TaskExecutor';
 import { ToolRegistry } from '../tools/ToolRegistry';
-import type { Tool } from '../tools/Tool';
-
-class MockTool implements Tool {
-  name = 'test_tool';
-  description = 'A test tool';
-  async execute(input: unknown) {
-    return { result: 'success', input };
-  }
-}
+import { createTestTool } from './testUtils';
 
 describe('TaskExecutor', () => {
   it('should execute a successful tool', async () => {
     const registry = new ToolRegistry();
-    registry.register(new MockTool());
+    registry.register(createTestTool({
+      name: 'test_tool',
+      description: 'A test tool',
+      execute: async (input: unknown) => ({ result: 'success', input })
+    }));
     const executor = new TaskExecutor(registry);
     
     const task = { id: '1', description: 'test_tool', status: 'pending' as const };
