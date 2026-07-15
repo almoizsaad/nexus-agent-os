@@ -56,9 +56,9 @@ export class EventBus<M extends { type: string; payload: unknown } = AgentMessag
    * Publishes a message to all subscribers of a topic.
    */
   public publish<T extends M>(topic: string, message: T): void {
-    const pattern = this.mapTopicToPattern(topic);
+    const topicPath = this.mapTopicToPattern(topic);
     this.unifiedBus.publish({
-      type: pattern.replace('.*', '.legacy'), // Map wildcard publish to a legacy type if needed
+      type: topicPath,
       payload: message,
       timestamp: Date.now(),
       source: 'legacy_event_bus'

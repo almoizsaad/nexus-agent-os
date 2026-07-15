@@ -12,6 +12,7 @@ export const AgentEventType = {
   THOUGHT_GENERATED: 'THOUGHT_GENERATED',
   MISSION_CREATED: 'MISSION_CREATED',
   MISSION_STATUS_UPDATED: 'MISSION_STATUS_UPDATED',
+  KNOWLEDGE_UPDATED: 'KNOWLEDGE_UPDATED',
   MESSAGE_BUS_STATS: 'SYS_MESSAGE_BUS_STATS',
   TASK_ASSIGNED: 'SYS_TASK_ASSIGNED',
   TASK_COMPLETED: 'SYS_TASK_COMPLETED',
@@ -274,6 +275,32 @@ export interface ThoughtGeneratedEvent extends AgentEvent {
   };
 }
 
+export interface MissionCreatedEvent extends AgentEvent {
+  type: typeof AgentEventType.MISSION_CREATED;
+  payload: {
+    mission: any; // Using any to avoid circular dependency with mission types
+  };
+}
+
+export interface MissionStatusUpdatedEvent extends AgentEvent {
+  type: typeof AgentEventType.MISSION_STATUS_UPDATED;
+  payload: {
+    missionId: string;
+    status: string;
+    mission: any;
+  };
+}
+
+export interface KnowledgeUpdatedEvent extends AgentEvent {
+  type: typeof AgentEventType.KNOWLEDGE_UPDATED;
+  payload: {
+    workflowId?: string;
+    type: string;
+    summary: string;
+    metadata?: Record<string, unknown>;
+  };
+}
+
 export const SystemTelemetryType = {
   MESSAGE_BUS_STATS: 'SYS_MESSAGE_BUS_STATS',
   TASK_ASSIGNED: 'SYS_TASK_ASSIGNED',
@@ -298,6 +325,9 @@ export type AgentProtocolEvent =
   | AgentLifecycleEvent
   | AgentReflectionEvent
   | ThoughtGeneratedEvent
+  | MissionCreatedEvent
+  | MissionStatusUpdatedEvent
+  | KnowledgeUpdatedEvent
   | SystemTelemetryEvent;
 
 // --- Extension Points ---

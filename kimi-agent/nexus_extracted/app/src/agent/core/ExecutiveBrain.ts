@@ -43,7 +43,19 @@ export class ExecutiveBrain {
 
   private setupEventListeners(): void {
     this.eventBus.subscribe('agent:events', (event) => {
-      // Listen for mission completions or failures to trigger rescheduling
+      // 1. Listen for direct user messages to create missions (Bridge)
+      if (event.type === AgentEventType.USER_MESSAGE) {
+        const text = (event.payload as any).text;
+        if (text) {
+          this.createMission(text, {
+            description: text,
+            successCriteria: ['Task completed as requested'],
+            priority: 'medium'
+          }).catch(err => console.error('[ExecutiveBrain] Failed to create mission from USER_MESSAGE:', err));
+        }
+      }
+
+      // 2. Listen for mission completions or failures to trigger rescheduling
       if (event.type === AgentEventType.AGENT_UPDATE) {
         const payload = event.payload as Record<string, unknown>;
         if (payload.status === 'PLAN_COMPLETED' || payload.status === 'PLAN_FAILED') {

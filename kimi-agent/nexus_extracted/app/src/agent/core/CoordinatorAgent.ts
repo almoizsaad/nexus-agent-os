@@ -228,17 +228,36 @@ export class CoordinatorAgent extends AgentRuntime {
     }
 
     const goal = `${mission.goal.description}. Success criteria: ${mission.goal.successCriteria.join(', ')}`;
-    const plan = await this.planner.generatePlan(goal, this.getState()) as CooperativePlan;
     
-    plan.id = mission.id; // Using missionId as planId for simplicity
-    plan.coordinatorId = this.identity?.id || 'unknown';
-    
-    // Track missionId in metadata of tasks
-    plan.tasks.forEach(t => {
-      t.metadata = { ...t.metadata, missionId: mission.id };
-    });
+    try {
+      const plan = await this.planner.generatePlan(goal, this.getState()) as CooperativePlan;
+      
+      plan.id = mission.id; // Using missionId as planId for simplicity
+      plan.coordinatorId = this.identity?.id || 'unknown';
+      
+      // Track missionId in metadata of tasks
+      plan.tasks.forEach(t => {
+        t.metadata = { ...t.metadata, missionId: mission.id };
+      });
 
-    await this.startCooperativePlan(plan);
+      await this.startCooperativePlan(plan);
+    } catch (error) {
+      console.error(`[CoordinatorAgent] Failed to start mission ${mission.id}:`, error);
+      
+      this._eventBus.publish('agent:events', {
+        type: AgentEventType.AGENT_UPDATE,
+        payload: { 
+          missionId: mission.id, 
+          planId: mission.id, 
+          status: 'PLAN_FAILED', 
+          error: error instanceof Error ? error.message : String(error) 
+        },
+        timestamp: Date.now()
+      });
+      
+      // Re-throw to inform the caller (ExecutiveBrain/Scheduler)
+      throw error;
+    }
   }
 
   public async pauseMission(missionId: string): Promise<void> {

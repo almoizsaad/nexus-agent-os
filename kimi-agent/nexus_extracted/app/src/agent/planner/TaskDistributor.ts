@@ -16,6 +16,13 @@ export class TaskDistributor {
 
     if (requiredRole) {
       candidates = candidates.filter(a => a.identity.role === requiredRole);
+    } else {
+      // By default, don't assign to coordinators/orchestrators unless they are the only ones
+      // or if they are specifically requested (handled above)
+      const nonCoordinators = candidates.filter(a => a.identity.role !== 'coordinator' && a.identity.role !== 'orchestrator');
+      if (nonCoordinators.length > 0) {
+        candidates = nonCoordinators;
+      }
     }
 
     if (requiredCapability) {

@@ -230,7 +230,10 @@ export class AgentRuntime {
     
     switch (event.type) {
       case AgentEventType.USER_MESSAGE:
-        await this.onUserMessage(event.payload.text);
+        // Only orchestrators/coordinators should process direct user messages
+        if (this._identity?.role === 'orchestrator' || this._identity?.role === 'coordinator' || !this._identity) {
+          await this.onUserMessage(event.payload.text);
+        }
         break;
       case AgentEventType.WORKSPACE_ACTION:
         await this.onWorkspaceAction(event.payload.action, event.payload.metadata);
@@ -501,9 +504,8 @@ export class AgentRuntime {
 
   private async onUserMessage(text: string): Promise<void> {
     // Phase 8.7: Missions are the preferred way to interact with the system.
-    // We log a thought instead of processing directly to encourage mission-driven flow.
-    this._stream.thought(`Received user message: "${text}". Delegating to mission system if applicable.`, 'observation');
-    // await this.processGoal(text); // Disabled in favor of mission-driven architecture
+    // The ExecutiveBrain now listens for USER_MESSAGE events and creates missions.
+    this._stream.thought(`Received user message: "${text}". Delegating to ExecutiveBrain mission synthesis.`, 'observation');
   }
 
   private async onWorkspaceAction(action: string, metadata?: Record<string, unknown>): Promise<void> {

@@ -5,11 +5,46 @@ import type {
   NodeType, 
   IKnowledgeGraph 
 } from '../types/knowledge';
+import { KnowledgePersistence } from './KnowledgePersistence';
 
 export class KnowledgeGraph implements IKnowledgeGraph {
   public nodes: Map<string, GraphNode> = new Map();
   private edges: Map<string, GraphEdge> = new Map();
   private adjacencyList: Map<string, string[]> = new Map(); // nodeId -> edgeIds
+  private persistence?: KnowledgePersistence;
+
+  constructor(persistence?: KnowledgePersistence) {
+    this.persistence = persistence;
+    if (this.persistence) {
+      this.load();
+    }
+  }
+
+  private async save(): Promise<void> {
+    if (this.persistence) {
+      await this.persistence.save(
+        Array.from(this.nodes.values()),
+        Array.from(this.edges.values())
+      );
+    }
+  }
+
+  private async load(): Promise<void> {
+    if (this.persistence) {
+      const data = await this.persistence.load();
+      if (data) {
+        data.nodes.forEach(node => {
+          this.nodes.set(node.id, node);
+          this.adjacencyList.set(node.id, []);
+        });
+        data.edges.forEach(edge => {
+          this.edges.set(edge.id, edge);
+          this.adjacencyList.get(edge.sourceId)?.push(edge.id);
+          this.adjacencyList.get(edge.targetId)?.push(edge.id);
+        });
+      }
+    }
+  }
 
   public async createNode(node: Omit<GraphNode, 'id' | 'createdAt' | 'updatedAt'>): Promise<GraphNode> {
     const newNode: GraphNode = {
@@ -20,6 +55,7 @@ export class KnowledgeGraph implements IKnowledgeGraph {
     };
     this.nodes.set(newNode.id, newNode);
     this.adjacencyList.set(newNode.id, []);
+    await this.save();
     return newNode;
   }
 
@@ -37,6 +73,7 @@ export class KnowledgeGraph implements IKnowledgeGraph {
       updatedAt: Date.now()
     };
     this.nodes.set(id, updated);
+    await this.save();
     return updated;
   }
 
@@ -44,9 +81,10 @@ export class KnowledgeGraph implements IKnowledgeGraph {
     this.nodes.delete(id);
     const edgeIds = this.adjacencyList.get(id) || [];
     for (const edgeId of edgeIds) {
-      this.deleteRelation(edgeId);
+      await this.deleteRelation(edgeId);
     }
     this.adjacencyList.delete(id);
+    await this.save();
   }
 
   public async createRelation(
@@ -73,6 +111,7 @@ export class KnowledgeGraph implements IKnowledgeGraph {
     this.adjacencyList.get(sourceId)?.push(edge.id);
     this.adjacencyList.get(targetId)?.push(edge.id);
 
+    await this.save();
     return edge;
   }
 
@@ -95,6 +134,7 @@ export class KnowledgeGraph implements IKnowledgeGraph {
     if (targetEdges) {
       this.adjacencyList.set(edge.targetId, targetEdges.filter(eId => eId !== id));
     }
+    await this.save();
   }
 
   public async findRelated(

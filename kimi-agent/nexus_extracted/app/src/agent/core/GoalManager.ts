@@ -32,7 +32,7 @@ export class GoalManager {
     this.missions.set(mission.id, mission);
 
     this.eventBus.publish('agent:events', {
-      type: AgentEventType.MISSION_CREATED,
+      type: AgentEventType.MISSION_CREATED as any,
       payload: { mission },
       timestamp: Date.now()
     });
@@ -51,7 +51,7 @@ export class GoalManager {
       mission.updatedAt = Date.now();
 
       this.eventBus.publish('agent:events', {
-        type: AgentEventType.MISSION_STATUS_UPDATED,
+        type: AgentEventType.MISSION_STATUS_UPDATED as any,
         payload: { missionId: id, status, mission },
         timestamp: Date.now()
       });

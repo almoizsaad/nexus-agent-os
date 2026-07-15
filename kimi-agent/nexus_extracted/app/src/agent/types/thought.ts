@@ -1,4 +1,13 @@
-export type ThoughtType = 'reasoning' | 'observation' | 'plan' | 'decision' | 'reflection' | 'error';
+export type ThoughtType = 
+  | 'reasoning' 
+  | 'observation' 
+  | 'plan' 
+  | 'decision' 
+  | 'reflection' 
+  | 'error' 
+  | 'correction' 
+  | 'alternative_plan' 
+  | 'trace';
 
 export interface Thought {
   id: string;

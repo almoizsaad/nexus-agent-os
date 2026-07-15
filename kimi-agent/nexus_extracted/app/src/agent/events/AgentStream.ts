@@ -65,6 +65,14 @@ export class AgentStream {
     });
   }
 
+  public event(type: string, payload: Record<string, unknown>): void {
+    this.eventBus.publish('agent:events', {
+      type: type as any,
+      payload,
+      timestamp: Date.now()
+    });
+  }
+
   private emitStatus(
     status: string, 
     message: string, 

@@ -9,8 +9,8 @@ import { KnowledgeDatabase } from '../knowledge/KnowledgeDatabase';
 import { EmbeddingStore } from '../knowledge/EmbeddingStore';
 import { VectorSearch } from '../knowledge/VectorSearch';
 import { GeminiLLMProvider } from '../providers/GeminiLLMProvider';
+import type { LLMProvider } from '../providers/LLMProvider';
 import { LLMPlanner } from '../planner/LLMPlanner';
-import { TaskPlanner } from '../planner/TaskPlanner';
 import { TaskExecutor } from '../executor/TaskExecutor';
 import { AgentRegistry } from './AgentRegistry';
 import { AgentFactory } from './AgentFactory';
@@ -32,11 +32,11 @@ import { ComponentRegistry } from '../../registry/ComponentRegistry';
 import { WorkspaceAdapter } from '../adapters/workspaceAdapter';
 import { MissionAdapter } from '../adapters/MissionAdapter';
 import { PersistentMemory } from '../memory/PersistentMemory';
+import { KnowledgePersistence } from '../knowledge/KnowledgePersistence';
 import { AgentMessageBus } from './AgentMessageBus';
 import { MessageRouter } from './MessageRouter';
 import { AgentOutbox } from './AgentOutbox';
 import { AgentInbox } from './AgentInbox';
-import { AgentChannel } from './AgentChannel';
 
 export class DependencyRegistry {
   public static registerCoreServices(container: ServiceContainer): void {
@@ -49,7 +49,13 @@ export class DependencyRegistry {
     if (!container.has(MemoryManager)) container.registerSingleton(MemoryManager, (c) => new MemoryManager(c.resolve(PerformanceMonitor)));
     if (!container.has(ImprovementEngine)) container.registerSingleton(ImprovementEngine, new ImprovementEngine());
     if (!container.has(OptimizationSuggestions)) container.registerSingleton(OptimizationSuggestions, new OptimizationSuggestions());
-    if (!container.has(KnowledgeGraph)) container.registerSingleton(KnowledgeGraph, new KnowledgeGraph());
+    if (!container.has(KnowledgeGraph)) {
+      container.registerSingleton(KnowledgeGraph, () => {
+        const memory = new PersistentMemory();
+        const persistence = new KnowledgePersistence(memory);
+        return new KnowledgeGraph(persistence);
+      });
+    }
     
     // Knowledge Database & Vector Search
     if (!container.has(EmbeddingStore)) container.registerSingleton(EmbeddingStore, new EmbeddingStore());
@@ -73,13 +79,12 @@ export class DependencyRegistry {
     
     if (!container.has('Planner')) {
       container.registerSingleton('Planner', (c) => {
-        const provider = c.resolve<GeminiLLMProvider>('LLMProvider');
+        const provider = c.resolve<LLMProvider>('LLMProvider');
         const toolRegistry = c.resolve(ToolRegistry);
         const monitor = c.resolve(PerformanceMonitor);
         const graph = c.resolve(KnowledgeGraph);
         const stream = c.resolve(AgentStream);
-        const fallback = new TaskPlanner();
-        return new LLMPlanner(provider, toolRegistry, fallback, monitor, graph, undefined, stream);
+        return new LLMPlanner(provider, toolRegistry, undefined, monitor, graph, undefined, stream);
       });
     }
 
@@ -148,7 +153,6 @@ export class DependencyRegistry {
       container.registerSingleton(CoordinatorAgent, (c) => {
         const factory = c.resolve(AgentFactory);
         const registry = c.resolve(AgentRegistry);
-        const eventBus = c.resolve(EventBus);
         const messageBus = c.resolve(AgentMessageBus);
         
         // Setup communication infrastructure for coordinator

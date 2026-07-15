@@ -68,6 +68,12 @@ export class ReflectionEngine implements ISelfReflectionEngine {
 
     if (this.graph && this.linker) {
       await this.recordReflectionInGraph(result, analysis.events);
+      
+      this.stream?.event('KNOWLEDGE_UPDATED', {
+        workflowId: result.workflowId,
+        type: 'reflection',
+        summary: `Stored reflection and ${result.mistakes.length + result.improvements.length} insights in Knowledge Graph.`
+      });
     }
 
     return result;

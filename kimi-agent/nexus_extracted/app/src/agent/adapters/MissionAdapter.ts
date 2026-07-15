@@ -23,7 +23,7 @@ export class MissionAdapter {
     const unsubMissions = this.eventBus.subscribe<AgentProtocolEvent>('agent:events', (event) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const payload = event.payload as any;
-      switch (event.type) {
+      switch (event.type as string) {
         case AgentEventType.MISSION_CREATED:
           missionStore.addMission(payload.mission as Mission);
           missionStore.setActiveMission(payload.mission.id);
@@ -59,18 +59,14 @@ export class MissionAdapter {
           break;
         }
 
-        case AgentEventType.THOUGHT_GENERATED: {
-          // thoughts usually have a missionId or taskId in metadata
-          const missionId = (payload.thought.metadata?.missionId as string) || missionStore.activeMissionId;
+        case AgentEventType.KNOWLEDGE_UPDATED: {
+          const missionId = payload.workflowId || missionStore.activeMissionId;
           if (missionId) {
-            missionStore.addThought(missionId, payload.thought);
-            missionStore.addTimelineEntry(missionId, {
+            missionStore.addKnowledgeUpdate(missionId, {
               id: crypto.randomUUID(),
-              timestamp: Date.now(),
-              type: 'thought',
-              title: 'Agent Thought',
-              description: payload.thought.content.slice(0, 100) + '...',
-              data: payload.thought
+              type: payload.type as string,
+              summary: payload.summary as string,
+              timestamp: Date.now()
             });
           }
           break;
@@ -78,6 +74,25 @@ export class MissionAdapter {
       }
     });
     this.unsubscribers.push(unsubMissions);
+
+    // 2. Thoughts
+    const unsubThoughts = this.eventBus.subscribe<any>('agent:thoughts', (event) => {
+      const { thought } = event.payload;
+      const missionId = (thought.metadata?.missionId as string) || (thought.workflowId as string) || missionStore.activeMissionId;
+      
+      if (missionId) {
+        missionStore.addThought(missionId, thought);
+        missionStore.addTimelineEntry(missionId, {
+          id: crypto.randomUUID(),
+          timestamp: Date.now(),
+          type: 'thought',
+          title: `Agent ${thought.type.charAt(0).toUpperCase() + thought.type.slice(1)}`,
+          description: thought.content.slice(0, 100) + (thought.content.length > 100 ? '...' : ''),
+          data: thought
+        });
+      }
+    });
+    this.unsubscribers.push(unsubThoughts);
 
     // 2. System Telemetry (Tasks)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
