@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import { CollaborativeCanvas } from './CollaborativeCanvas';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Send, Command, Users, Zap, Layout, Settings, Layers } from 'lucide-react';
+import { Send, Command, Users, Zap, Layout, Settings, Layers, Clock } from 'lucide-react';
 import { globalEventBus } from '@/agent/core/EventBus';
 import { AgentEventType } from '@/agent/types/agent';
 import ParticleCanvas from '../generative-ui/ParticleCanvas';
+import { useSystemStore } from '@/stores/systemStore';
 
 export const CollaborativeWorkspace: React.FC = () => {
   const [command, setCommand] = useState('');
+  const telemetry = useSystemStore(state => state.telemetry);
+  const agentsCount = useSystemStore(state => Object.keys(state.agents).length);
 
   const handleSendCommand = () => {
     if (!command.trim()) return;
@@ -42,12 +45,12 @@ export const CollaborativeWorkspace: React.FC = () => {
 
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/5">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Uptime: 1,420:12:05</span>
+            <Clock className="w-3 h-3 text-primary" />
+            <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Uptime: {telemetry.uptime}% Stable</span>
           </div>
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/5">
             <Users className="w-3 h-3 text-primary" />
-            <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Collaborators: 2 Active Agents</span>
+            <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Collaborators: {agentsCount} Active Agents</span>
           </div>
           <div className="flex items-center gap-2 border-l border-white/10 pl-4">
             <Button size="icon" variant="ghost" className="rounded-xl w-10 h-10 border border-white/5">

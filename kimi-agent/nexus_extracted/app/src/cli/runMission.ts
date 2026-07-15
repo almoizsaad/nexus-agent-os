@@ -2,7 +2,7 @@ import { bootstrapHeadlessRuntime } from './bootstrap';
 import { ExecutiveBrain } from '../agent/core/ExecutiveBrain';
 import { EventBus } from '../agent/core/EventBus';
 import { AgentEventType } from '../agent/types/agent';
-import type { AgentProtocolEvent, ThoughtGeneratedEvent, AgentProtocolAction } from '../agent/types/agent';
+import type { AgentProtocolEvent } from '../agent/types/agent';
 import { TraceCollector } from './traceCollector';
 import * as fs from 'fs';
 

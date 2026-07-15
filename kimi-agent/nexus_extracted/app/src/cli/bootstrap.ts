@@ -43,11 +43,12 @@ export function bootstrapHeadlessRuntime() {
   // 1. Register all services in the container
   DependencyRegistry.registerCoreServices(globalContainer);
 
-  // 2. Override MoonshotLLMProvider with MockLLMProvider if no API key is present
-  // This ensures the runtime works even without external API access, while keeping
-  // the rest of the orchestration logic REAL.
-  if (!process.env.VITE_API_KEY) {
-    console.warn('[HeadlessRuntime] VITE_API_KEY not found. Using MockLLMProvider for planning.');
+  // 2. Use MockLLMProvider only if NO real provider keys are present
+  const hasMoonshotKey = !!process.env.VITE_API_KEY;
+  const hasGeminiKey = !!process.env.VITE_GEMINI_API_KEY;
+  
+  if (!hasMoonshotKey && !hasGeminiKey) {
+    console.warn('[HeadlessRuntime] No LLM API keys found. Using MockLLMProvider for planning.');
     globalContainer.registerSingleton('LLMProvider', new MockLLMProvider());
   }
 

@@ -7,7 +7,7 @@ import type { CooperativePlan } from '../types/planning';
 import type { AgentCommunicationMessage } from '../types/communication';
 import { EventBus } from './EventBus';
 import type { Planner, Executor, AgentIdentity } from '../types/agent';
-import { AgentEventType } from '../types/agent';
+import { AgentEventType, SystemTelemetryType } from '../types/agent';
 import type { IPerformanceMonitor, IImprovementEngine } from '../types/improvement';
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
 import { AgentChannel } from './AgentChannel';
@@ -68,6 +68,19 @@ export class CoordinatorAgent extends AgentRuntime {
     // Decompose and delegate
     await this.coordinator.coordinatePlan(plan);
     
+    // Notify system of task assignments
+    plan.tasks.filter(t => t.status === 'running').forEach(t => {
+      this._eventBus.publish('system:telemetry', {
+        type: SystemTelemetryType.TASK_ASSIGNED,
+        payload: {
+          agentId: t.assigneeId,
+          taskId: t.id,
+          planId: plan.id,
+        },
+        timestamp: Date.now()
+      });
+    });
+
     this._eventBus.publish('agent:events', {
       type: AgentEventType.AGENT_UPDATE,
       payload: { planId: plan.id, coordinatorId: this.identity?.id, status: 'PLAN_STARTED' },
@@ -89,6 +102,17 @@ export class CoordinatorAgent extends AgentRuntime {
       this._stream.thought(`Task ${taskId} completed by agent ${message.sender}`, 'observation', { planId, taskId });
       this.coordinator.handleTaskCompletion(plan, taskId, result);
       
+      // Notify system of task completion
+      this._eventBus.publish('system:telemetry', {
+        type: SystemTelemetryType.TASK_COMPLETED,
+        payload: {
+          agentId: message.sender,
+          taskId,
+          planId,
+        },
+        timestamp: Date.now()
+      });
+
       // Check if plan is complete or if new tasks are ready
       const readyTasks = this.coordinator.getReadyTasks(plan);
       if (readyTasks.length > 0) {
@@ -97,6 +121,16 @@ export class CoordinatorAgent extends AgentRuntime {
           // Double check status to avoid race conditions if multiple tasks completed at once
           if (task.status === 'pending') {
             await this.coordinator.delegateTask(task, plan.id);
+            // Notify system of task assignment
+            this._eventBus.publish('system:telemetry', {
+              type: SystemTelemetryType.TASK_ASSIGNED,
+              payload: {
+                agentId: task.assigneeId,
+                taskId: task.id,
+                planId: plan.id,
+              },
+              timestamp: Date.now()
+            });
           }
         }
       } else if (this.isPlanComplete(plan)) {

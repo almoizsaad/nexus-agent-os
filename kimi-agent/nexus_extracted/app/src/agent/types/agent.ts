@@ -10,6 +10,10 @@ export const AgentEventType = {
   AGENT_LIFECYCLE: 'AGENT_LIFECYCLE',
   REFLECTION: 'REFLECTION',
   THOUGHT_GENERATED: 'THOUGHT_GENERATED',
+  MESSAGE_BUS_STATS: 'SYS_MESSAGE_BUS_STATS',
+  TASK_ASSIGNED: 'SYS_TASK_ASSIGNED',
+  TASK_COMPLETED: 'SYS_TASK_COMPLETED',
+  AGENT_PERFORMANCE: 'SYS_AGENT_PERFORMANCE',
 } as const;
 
 export type AgentEventType = typeof AgentEventType[keyof typeof AgentEventType];
@@ -268,6 +272,21 @@ export interface ThoughtGeneratedEvent extends AgentEvent {
   };
 }
 
+export const SystemTelemetryType = {
+  MESSAGE_BUS_STATS: 'SYS_MESSAGE_BUS_STATS',
+  TASK_ASSIGNED: 'SYS_TASK_ASSIGNED',
+  TASK_COMPLETED: 'SYS_TASK_COMPLETED',
+  AGENT_PERFORMANCE: 'SYS_AGENT_PERFORMANCE',
+} as const;
+
+export type SystemTelemetryType = typeof SystemTelemetryType[keyof typeof SystemTelemetryType];
+
+export interface SystemTelemetryEvent {
+  type: SystemTelemetryType;
+  payload: Record<string, any>;
+  timestamp: number;
+}
+
 export type AgentProtocolEvent = 
   | UserMessageEvent 
   | WorkspaceActionEvent 
@@ -276,7 +295,8 @@ export type AgentProtocolEvent =
   | ErrorEvent
   | AgentLifecycleEvent
   | AgentReflectionEvent
-  | ThoughtGeneratedEvent;
+  | ThoughtGeneratedEvent
+  | SystemTelemetryEvent;
 
 // --- Extension Points ---
 

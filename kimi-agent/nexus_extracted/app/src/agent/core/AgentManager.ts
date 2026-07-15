@@ -112,4 +112,8 @@ export class AgentManager {
   public getSystemMetrics(): Record<string, unknown> {
     return this.stateManager.getSystemMetrics();
   }
+
+  public getMessageBusStats(): Record<string, unknown> {
+    return (this.messageBus as any).stats || {};
+  }
 }

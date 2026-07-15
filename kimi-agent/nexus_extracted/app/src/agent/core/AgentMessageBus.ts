@@ -1,10 +1,19 @@
 import type { AgentCommunicationMessage, IAgentMessageBus } from '../types/communication';
+import { SystemTelemetryType } from '../types/agent';
 import { EventBus } from './EventBus';
 import type { AgentMessage as EventBusMessage } from './EventBus';
 
 export class AgentMessageBus implements IAgentMessageBus {
   private eventBus: EventBus;
   private subscribers: Map<string, Array<(message: AgentCommunicationMessage) => void>> = new Map();
+  private stats = {
+    totalMessages: 0,
+    activeSubscribers: 0,
+    lastMessageTimestamp: 0,
+    messageRates: [] as number[],
+  };
+  private lastStatsEmit = 0;
+  private statsThrottleMs = 100;
 
   constructor(eventBus: EventBus) {
     this.eventBus = eventBus;
@@ -12,7 +21,24 @@ export class AgentMessageBus implements IAgentMessageBus {
     // Subscribe to a generic communication topic on the underlying event bus
     this.eventBus.subscribe('agent:communication', (message: EventBusMessage) => {
       this.notifySubscribers(message as unknown as AgentCommunicationMessage);
+      this.updateStats();
     });
+  }
+
+  private updateStats() {
+    this.stats.totalMessages++;
+    this.stats.lastMessageTimestamp = Date.now();
+    this.stats.activeSubscribers = this.subscribers.size;
+    
+    // Emit telemetry with throttling
+    if (Date.now() - this.lastStatsEmit > this.statsThrottleMs) {
+      this.eventBus.publish('system:telemetry', {
+        type: SystemTelemetryType.MESSAGE_BUS_STATS,
+        payload: { ...this.stats },
+        timestamp: Date.now()
+      });
+      this.lastStatsEmit = Date.now();
+    }
   }
 
   public async publish(message: AgentCommunicationMessage): Promise<void> {

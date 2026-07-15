@@ -8,7 +8,7 @@ import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
 import { KnowledgeDatabase } from '../knowledge/KnowledgeDatabase';
 import { EmbeddingStore } from '../knowledge/EmbeddingStore';
 import { VectorSearch } from '../knowledge/VectorSearch';
-import { MoonshotLLMProvider } from '../providers/MoonshotLLMProvider';
+import { GeminiLLMProvider } from '../providers/GeminiLLMProvider';
 import { LLMPlanner } from '../planner/LLMPlanner';
 import { TaskPlanner } from '../planner/TaskPlanner';
 import { TaskExecutor } from '../executor/TaskExecutor';
@@ -62,11 +62,11 @@ export class DependencyRegistry {
     if (!container.has('Safety')) container.registerSingleton('Safety', new SafetyGuard());
 
     // Provider/Implementation mapping
-    if (!container.has('LLMProvider')) container.registerSingleton('LLMProvider', () => new MoonshotLLMProvider());
+    if (!container.has('LLMProvider')) container.registerSingleton('LLMProvider', () => new GeminiLLMProvider());
     
     if (!container.has('Planner')) {
       container.registerSingleton('Planner', (c) => {
-        const provider = c.resolve<MoonshotLLMProvider>('LLMProvider');
+        const provider = c.resolve<GeminiLLMProvider>('LLMProvider');
         const toolRegistry = c.resolve(ToolRegistry);
         const monitor = c.resolve(PerformanceMonitor);
         const graph = c.resolve(KnowledgeGraph);

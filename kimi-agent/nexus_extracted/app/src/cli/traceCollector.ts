@@ -22,11 +22,11 @@ export class TraceCollector {
     
     // Subscribe to all topics we care about
     this.unsubscribers.push(
-      this.eventBus.subscribe('agent:events', (event) => this.record('EVENT', 'AgentEventBus', event as Record<string, unknown>)),
-      this.eventBus.subscribe('agent:thoughts', (event) => this.record('THOUGHT', 'ThoughtBus', event as Record<string, unknown>)),
-      this.eventBus.subscribe('agent:actions', (action) => this.record('ACTION', 'ActionBus', action as Record<string, unknown>)),
-      this.eventBus.subscribe('agent:communication', (msg) => this.record('COMMUNICATION', 'CommBus', msg as Record<string, unknown>)),
-      this.eventBus.subscribe('agent:lifecycle', (event) => this.record('EVENT', 'LifecycleBus', event as Record<string, unknown>))
+      this.eventBus.subscribe('agent:events', (event: any) => this.record('EVENT', 'AgentEventBus', event)),
+      this.eventBus.subscribe('agent:thoughts', (event: any) => this.record('THOUGHT', 'ThoughtBus', event)),
+      this.eventBus.subscribe('agent:actions', (action: any) => this.record('ACTION', 'ActionBus', action)),
+      this.eventBus.subscribe('agent:communication', (msg: any) => this.record('COMMUNICATION', 'CommBus', msg)),
+      this.eventBus.subscribe('agent:lifecycle', (event: any) => this.record('EVENT', 'LifecycleBus', event))
     );
   }
 
@@ -56,7 +56,7 @@ export class TraceCollector {
 
     for (const entry of this.entries) {
       let desc = '';
-      const p = entry.payload;
+      const p = entry.payload as any;
       
       if (entry.type === 'EVENT') {
         desc = `**${p.type}**: `;

@@ -5,31 +5,28 @@ import {
   Cpu, Activity, TrendingUp, Zap, Brain, Database,
   Wifi, Server, Globe, Clock, Shield
 } from 'lucide-react';
+import { useSystemStore } from '../stores/systemStore';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const MODELS = [
-  { name: 'Moonshot v1', status: 'standby', latency: '...' },
-  { name: 'Claude 3.5', status: 'standby', latency: '...' },
-  { name: 'GPT-4o', status: 'standby', latency: '...' },
-  { name: 'Llama 3', status: 'standby', latency: '...' },
-];
-
-const METRICS = [
-  { label: 'Tokens/sec', value: 0, max: 5000, icon: Zap },
-  { label: 'Active Threads', value: 0, max: 64, icon: Cpu },
-  { label: 'Memory Used', value: 0, max: 100, icon: Database },
-  { label: 'Uptime', value: 0, max: 100, icon: Clock },
-];
-
 const SENTIMENT_LABELS = ['Critical', 'Low', 'Normal', 'Good', 'Excellent'];
 const SENTIMENT_COLORS = ['#991B1B', '#B45309', '#15803D', '#0F766E', '#BE123C'];
-const SENTIMENT_VALUES = [0, 0, 0, 0, 0];
+const SENTIMENT_VALUES = [2, 5, 12, 45, 36];
 
 export default function NeuralDatastream() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+
+  const telemetry = useSystemStore(state => state.telemetry);
+  const agents = useSystemStore(state => Object.values(state.agents));
+
+  const METRICS = [
+    { label: 'Tokens/sec', value: telemetry.tokensPerSec, max: 1000, icon: Zap },
+    { label: 'Active Threads', value: telemetry.activeThreads, max: 64, icon: Cpu },
+    { label: 'Memory Used', value: telemetry.memoryUsage, max: 100, icon: Database },
+    { label: 'Uptime', value: telemetry.uptime, max: 100, icon: Clock },
+  ];
 
   useEffect(() => {
     if (!sectionRef.current || !trackRef.current) return;
@@ -115,28 +112,30 @@ export default function NeuralDatastream() {
               }}
             >
               <div className="nexus-label mb-3 flex items-center gap-1.5" style={{ color: '#78716C', fontSize: 10 }}>
-                <Brain className="w-3 h-3" /> Active Models
+                <Brain className="w-3 h-3" /> Live Agents
               </div>
               <div className="space-y-2" style={{ minWidth: 200 }}>
-                {MODELS.map((model, i) => (
+                {agents.length > 0 ? agents.slice(0, 4).map((agent, i) => (
                   <div key={i} className="flex items-center justify-between">
-                    <span className="text-xs" style={{ color: '#FAF9F6' }}>{model.name}</span>
+                    <span className="text-xs" style={{ color: '#FAF9F6' }}>{agent.name} <span style={{ color: '#78716C', fontSize: 9 }}>({agent.role})</span></span>
                     <div className="flex items-center gap-2">
                       <span
                         className="text-[10px]"
-                        style={{ color: model.status === 'active' ? '#15803D' : '#78716C' }}
+                        style={{ color: agent.status === 'executing' ? '#15803D' : '#78716C' }}
                       >
-                        {model.latency}
+                        {agent.latency}ms
                       </span>
                       <div
                         className="w-1.5 h-1.5 rounded-full"
                         style={{
-                          background: model.status === 'active' ? '#15803D' : '#44403C',
+                          background: agent.status === 'executing' ? '#15803D' : agent.status === 'thinking' ? '#B45309' : '#44403C',
                         }}
                       />
                     </div>
                   </div>
-                ))}
+                )) : (
+                  <div className="text-[10px]" style={{ color: '#78716C' }}>Waiting for agent initialization...</div>
+                )}
               </div>
             </div>
           ))}
@@ -246,13 +245,13 @@ export default function NeuralDatastream() {
               }}
             >
               <div className="nexus-label mb-3 flex items-center gap-1.5" style={{ color: '#78716C', fontSize: 10 }}>
-                <Wifi className="w-3 h-3" /> Network
+                <Wifi className="w-3 h-3" /> Agent Message Bus
               </div>
               <div className="space-y-2" style={{ minWidth: 180 }}>
                 {[
-                  { icon: Globe, label: 'API Latency', value: '...', color: '#15803D' },
-                  { icon: Server, label: 'Nodes', value: '0/0', color: '#BE123C' },
-                  { icon: Shield, label: 'Security', value: 'INIT', color: '#B45309' },
+                  { icon: Globe, label: 'Messages', value: telemetry.totalMessages.toLocaleString(), color: '#15803D' },
+                  { icon: Server, label: 'Subscribers', value: telemetry.activeSubscribers, color: '#BE123C' },
+                  { icon: Shield, label: 'Security', value: 'ENCRYPTED', color: '#B45309' },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
