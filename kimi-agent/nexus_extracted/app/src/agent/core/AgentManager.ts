@@ -22,10 +22,11 @@ export class AgentManager {
   constructor(
     eventBus: EventBus,
     runtimeFactory: (identity: AgentIdentity, channel: AgentChannel) => AgentRuntime,
-    registry?: AgentRegistry
+    registry?: AgentRegistry,
+    messageBus?: AgentMessageBus
   ) {
     this.registry = registry || new AgentRegistry();
-    this.messageBus = new AgentMessageBus(eventBus);
+    this.messageBus = messageBus || new AgentMessageBus(eventBus);
     this.messageRouter = new MessageRouter(this.registry, this.messageBus);
     
     const communicationRuntimeFactory = (identity: AgentIdentity) => {

@@ -11,6 +11,7 @@ import { PerformanceMonitor } from '../improvement/PerformanceMonitor';
 import { ImprovementEngine } from '../improvement/ImprovementEngine';
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
 import { AgentRuntime } from '../core/AgentRuntime';
+import { ExecutiveBrain } from '../core/ExecutiveBrain';
 
 /**
  * Bootstraps and returns a fully configured Agent OS instance using DI.
@@ -37,12 +38,14 @@ export function createAgent(container: ServiceContainer = new ServiceContainer()
 
   // Get or create default runtime instance
   const runtime = container.resolve(AgentRuntime);
+  const executiveBrain = container.resolve(ExecutiveBrain);
 
 
   return {
     runtime,
     manager,
     eventBus,
+    executiveBrain,
     toolRegistry,
     planner: container.resolve('Planner'),
     executor: container.resolve('Executor'),

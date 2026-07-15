@@ -69,6 +69,7 @@ export class AgentFactory {
     const monitor = this.container.resolve<IPerformanceMonitor>('PerformanceMonitor');
     const improvementEngine = this.container.resolve<IImprovementEngine>('ImprovementEngine');
     const suggestions = this.container.resolve(OptimizationSuggestions);
+    const knowledgeGraph = this.container.resolve(KnowledgeGraph);
 
     return new CoordinatorAgent(
       eventBus,
@@ -79,7 +80,8 @@ export class AgentFactory {
       improvementEngine,
       suggestions,
       identity,
-      channel
+      channel,
+      knowledgeGraph
     );
   }
 }

@@ -3,8 +3,7 @@ import { CollaborativeCanvas } from './CollaborativeCanvas';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Send, Command, Users, Zap, Layout, Settings, Layers, Clock } from 'lucide-react';
-import { globalEventBus } from '@/agent/core/EventBus';
-import { AgentEventType } from '@/agent/types/agent';
+import { agent } from '@/agent/bootstrap/createAgent';
 import ParticleCanvas from '../generative-ui/ParticleCanvas';
 import { useSystemStore } from '@/stores/systemStore';
 
@@ -13,13 +12,13 @@ export const CollaborativeWorkspace: React.FC = () => {
   const telemetry = useSystemStore(state => state.telemetry);
   const agentsCount = useSystemStore(state => Object.keys(state.agents).length);
 
-  const handleSendCommand = () => {
+  const handleSendCommand = async () => {
     if (!command.trim()) return;
     
-    globalEventBus.publish('agent:events', {
-      type: AgentEventType.USER_MESSAGE,
-      payload: { text: command, sender: 'user' },
-      timestamp: Date.now()
+    await agent.executiveBrain.createMission(command, {
+      description: command,
+      successCriteria: ['Task completed as requested'],
+      priority: 'medium'
     });
     
     setCommand('');

@@ -12,9 +12,9 @@ describe('MissionScheduler', () => {
   let eventBus: EventBus;
 
   beforeEach(() => {
-    goalManager = new GoalManager();
-    priorityManager = new PriorityManager();
     eventBus = new EventBus();
+    goalManager = new GoalManager(eventBus);
+    priorityManager = new PriorityManager();
     scheduler = new MissionScheduler(goalManager, priorityManager, eventBus);
   });
 

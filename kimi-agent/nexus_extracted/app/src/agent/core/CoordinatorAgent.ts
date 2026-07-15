@@ -11,6 +11,7 @@ import { AgentEventType, SystemTelemetryType } from '../types/agent';
 import type { IPerformanceMonitor, IImprovementEngine } from '../types/improvement';
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
 import { AgentChannel } from './AgentChannel';
+import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
 
 export class CoordinatorAgent extends AgentRuntime {
   private coordinator: PlannerCoordinator;
@@ -27,10 +28,11 @@ export class CoordinatorAgent extends AgentRuntime {
     improvementEngine?: IImprovementEngine,
     suggestions?: OptimizationSuggestions,
     identity?: AgentIdentity,
-    channel?: AgentChannel
+    channel?: AgentChannel,
+    knowledgeGraph?: KnowledgeGraph
   ) {
-    super(eventBus, planner, executor, monitor, improvementEngine, suggestions, identity, channel);
-    this.coordinator = new PlannerCoordinator(registry);
+    super(eventBus, planner, executor, monitor, improvementEngine, suggestions, identity, channel, knowledgeGraph);
+    this.coordinator = new PlannerCoordinator(registry, this.channel);
     this.consensus = new PlannerConsensus();
     
     this.setupMessageHandlers();
@@ -95,7 +97,7 @@ export class CoordinatorAgent extends AgentRuntime {
     const result = payload.result;
     const error = payload.error as string;
     const plan = this.activePlans.get(planId);
-    
+
     if (!plan) return;
 
     if (success) {

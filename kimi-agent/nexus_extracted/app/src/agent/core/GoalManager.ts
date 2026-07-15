@@ -1,7 +1,13 @@
 import type { Mission, MissionGoal, MissionStatus } from '../types/mission';
+import { EventBus } from './EventBus';
 
 export class GoalManager {
   private missions: Map<string, Mission> = new Map();
+  private eventBus: EventBus;
+
+  constructor(eventBus: EventBus) {
+    this.eventBus = eventBus;
+  }
 
   public createMission(title: string, goal: MissionGoal, context: Record<string, unknown> = {}): Mission {
     const mission: Mission = {
@@ -23,6 +29,14 @@ export class GoalManager {
     };
     
     this.missions.set(mission.id, mission);
+
+    this.eventBus.publish('agent:events', {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      type: 'MISSION_CREATED' as any,
+      payload: { mission },
+      timestamp: Date.now()
+    });
+
     return mission;
   }
 
@@ -35,6 +49,13 @@ export class GoalManager {
     if (mission) {
       mission.status = status;
       mission.updatedAt = Date.now();
+
+      this.eventBus.publish('agent:events', {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        type: 'MISSION_STATUS_UPDATED' as any,
+        payload: { missionId: id, status, mission },
+        timestamp: Date.now()
+      });
     }
   }
 

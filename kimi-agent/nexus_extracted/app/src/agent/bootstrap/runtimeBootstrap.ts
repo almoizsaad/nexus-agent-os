@@ -7,6 +7,7 @@ import { AgentRuntime } from '../core/AgentRuntime';
 import { ThoughtManager } from '../reflection/ThoughtManager';
 import { ComponentRegistry } from '../../registry/ComponentRegistry';
 import { WorkspaceAdapter } from '../adapters/workspaceAdapter';
+import { MissionAdapter } from '../adapters/MissionAdapter';
 import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
 import { MemoryManager } from '../memory/MemoryManager';
 import { EventBus } from '../core/EventBus';
@@ -58,6 +59,7 @@ export function bootstrapRuntime() {
     // External Adapters
     globalContainer.resolve(ComponentRegistry);
     globalContainer.resolve(WorkspaceAdapter);
+    globalContainer.resolve(MissionAdapter);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).__AGENT_OS_BOOTSTRAPPED__ = true;

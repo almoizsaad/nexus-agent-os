@@ -30,12 +30,19 @@ import { SafetyGuard } from './SafetyLayer';
 import { ThoughtManager } from '../reflection/ThoughtManager';
 import { ComponentRegistry } from '../../registry/ComponentRegistry';
 import { WorkspaceAdapter } from '../adapters/workspaceAdapter';
+import { MissionAdapter } from '../adapters/MissionAdapter';
 import { PersistentMemory } from '../memory/PersistentMemory';
+import { AgentMessageBus } from './AgentMessageBus';
+import { MessageRouter } from './MessageRouter';
+import { AgentOutbox } from './AgentOutbox';
+import { AgentInbox } from './AgentInbox';
+import { AgentChannel } from './AgentChannel';
 
 export class DependencyRegistry {
   public static registerCoreServices(container: ServiceContainer): void {
     // Singletons - only if not already registered
     if (!container.has(EventBus)) container.registerSingleton(EventBus, new EventBus());
+    if (!container.has(AgentMessageBus)) container.registerSingleton(AgentMessageBus, (c) => new AgentMessageBus(c.resolve(EventBus)));
     if (!container.has(AgentStream)) container.registerSingleton(AgentStream, (c) => new AgentStream(c.resolve(EventBus)));
     if (!container.has(ToolRegistry)) container.registerSingleton(ToolRegistry, new ToolRegistry());
     if (!container.has(PerformanceMonitor)) container.registerSingleton(PerformanceMonitor, new PerformanceMonitor());
@@ -121,6 +128,7 @@ export class DependencyRegistry {
     // Registry & Adapters
     if (!container.has(ComponentRegistry)) container.registerSingleton(ComponentRegistry, new ComponentRegistry());
     if (!container.has(WorkspaceAdapter)) container.registerSingleton(WorkspaceAdapter, (c) => new WorkspaceAdapter(c.resolve(EventBus)));
+    if (!container.has(MissionAdapter)) container.registerSingleton(MissionAdapter, (c) => new MissionAdapter(c.resolve(EventBus)));
 
     // Manager
     if (!container.has(AgentManager)) {
@@ -128,18 +136,39 @@ export class DependencyRegistry {
         const eventBus = c.resolve(EventBus);
         const factory = c.resolve(AgentFactory);
         const registry = c.resolve(AgentRegistry);
+        const messageBus = c.resolve(AgentMessageBus);
         return new AgentManager(eventBus, (identity: AgentIdentity, channel: AgentChannel) => {
           return factory.createAgent(identity, channel);
-        }, registry);
+        }, registry, messageBus);
       });
     }
 
     // Coordinator & Executive Brain
     if (!container.has(CoordinatorAgent)) {
       container.registerSingleton(CoordinatorAgent, (c) => {
-        const manager = c.resolve(AgentManager);
-        const coordinator = manager.spawnAgent('System Coordinator', 'coordinator', ['orchestration', 'coordination']);
-        return coordinator as CoordinatorAgent;
+        const factory = c.resolve(AgentFactory);
+        const registry = c.resolve(AgentRegistry);
+        const eventBus = c.resolve(EventBus);
+        const messageBus = c.resolve(AgentMessageBus);
+        
+        // Setup communication infrastructure for coordinator
+        const router = new MessageRouter(registry, messageBus);
+        const outbox = new AgentOutbox(router);
+        const inbox = new AgentInbox();
+        
+        const identity = { 
+          id: 'system-coordinator', 
+          name: 'System Coordinator', 
+          role: 'coordinator' as const, 
+          capabilities: ['orchestration', 'coordination'] 
+        };
+        
+        const channel = new AgentChannel(identity.id, inbox, outbox);
+        messageBus.subscribe(identity.id, (msg) => inbox.push(msg));
+        
+        const coordinator = factory.createCoordinator(identity, channel);
+        registry.register(identity, coordinator);
+        return coordinator;
       });
     }
 

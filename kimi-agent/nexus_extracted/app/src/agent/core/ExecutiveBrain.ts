@@ -22,7 +22,7 @@ export class ExecutiveBrain {
   ) {
     this.eventBus = eventBus;
     this.coordinator = coordinator;
-    this.goalManager = goalManager || new GoalManager();
+    this.goalManager = goalManager || new GoalManager(this.eventBus);
     this.priorityManager = priorityManager || new PriorityManager();
     this.scheduler = scheduler || new MissionScheduler(this.goalManager, this.priorityManager, this.eventBus);
 

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { agent } from '../agent/bootstrap/createAgent';
-import { AgentActionType, AgentEventType } from '../agent/types/agent';
-import type { AgentStatus, Plan, AgentProtocolAction, AgentProtocolEvent } from '../agent/types/agent';
+import { AgentActionType } from '../agent/types/agent';
+import type { AgentStatus, Plan, AgentProtocolAction } from '../agent/types/agent';
 import type { SystemMetrics, OptimizationRecommendation } from '../agent/types/improvement';
 
 export function useAgent() {
@@ -30,13 +30,12 @@ export function useAgent() {
     };
   }, []);
 
-  const sendMessage = useCallback((text: string) => {
-    const event: AgentProtocolEvent = {
-      type: AgentEventType.USER_MESSAGE,
-      payload: { text, sender: 'user' },
-      timestamp: Date.now(),
-    };
-    agent.eventBus.publish('agent:events', event);
+  const sendMessage = useCallback(async (text: string) => {
+    await agent.executiveBrain.createMission(text, {
+      description: text,
+      successCriteria: ['Goal accomplished'],
+      priority: 'medium'
+    });
   }, []);
 
   return {

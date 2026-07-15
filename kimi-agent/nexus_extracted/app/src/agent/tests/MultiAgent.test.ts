@@ -9,7 +9,8 @@ describe('Multi-Agent Orchestration', () => {
     const agent1 = manager.spawnAgent('Agent One', 'orchestrator', ['planning', 'routing']);
     const agent2 = manager.spawnAgent('Agent Two', 'worker', ['coding', 'testing']);
     
-    const agents = manager.listAgents();
+    // Total agents: 2 spawned here + 1 System Coordinator
+    const agents = manager.listAgents().filter(a => a.identity.role !== 'coordinator');
     expect(agents).toHaveLength(2);
     
     expect(agents[0].identity.name).toBe('Agent One');
@@ -69,7 +70,10 @@ describe('Multi-Agent Orchestration', () => {
       payload: expect.objectContaining({ action: 'destroyed', agentId })
     }));
     
-    expect(manager.listAgents()).toHaveLength(0);
+    // Remaining agent should be the coordinator
+    const agents = manager.listAgents();
+    expect(agents).toHaveLength(1);
+    expect(agents[0].identity.role).toBe('coordinator');
   });
 
   it('should track agent statuses and metrics', () => {

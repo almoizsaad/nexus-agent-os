@@ -1,12 +1,15 @@
 import type { DelegatedTask } from '../types/planning';
 import { AgentRegistry } from '../core/AgentRegistry';
 import { MessagePriority } from '../types/communication';
+import { AgentChannel } from '../core/AgentChannel';
 
 export class TaskDelegator {
   private registry: AgentRegistry;
+  private senderChannel?: AgentChannel;
 
-  constructor(registry: AgentRegistry) {
+  constructor(registry: AgentRegistry, senderChannel?: AgentChannel) {
     this.registry = registry;
+    this.senderChannel = senderChannel;
   }
 
   public async delegateTask(task: DelegatedTask, planId: string): Promise<boolean> {
@@ -15,7 +18,7 @@ export class TaskDelegator {
     const agent = this.registry.getAgent(task.assigneeId);
     if (!agent) return false;
 
-    const channel = agent.runtime.getChannel();
+    const channel = this.senderChannel || agent.runtime.getChannel();
     if (!channel) return false;
 
     try {
@@ -40,7 +43,7 @@ export class TaskDelegator {
     const agent = this.registry.getAgent(task.assigneeId);
     if (!agent) return false;
 
-    const channel = agent.runtime.getChannel();
+    const channel = this.senderChannel || agent.runtime.getChannel();
     if (!channel) return false;
 
     try {

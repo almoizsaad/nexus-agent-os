@@ -3,16 +3,17 @@ import { DependencyResolver } from './DependencyResolver';
 import { TaskDistributor } from './TaskDistributor';
 import { TaskDelegator } from './TaskDelegator';
 import { AgentRegistry } from '../core/AgentRegistry';
+import { AgentChannel } from '../core/AgentChannel';
 
 export class PlannerCoordinator {
   private dependencyResolver: DependencyResolver;
   private taskDistributor: TaskDistributor;
   private taskDelegator: TaskDelegator;
 
-  constructor(registry: AgentRegistry) {
+  constructor(registry: AgentRegistry, channel?: AgentChannel) {
     this.dependencyResolver = new DependencyResolver();
     this.taskDistributor = new TaskDistributor(registry);
-    this.taskDelegator = new TaskDelegator(registry);
+    this.taskDelegator = new TaskDelegator(registry, channel);
   }
 
   public async coordinatePlan(plan: CooperativePlan): Promise<void> {
