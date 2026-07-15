@@ -23,13 +23,13 @@ export class MissionAdapter {
     const unsubMissions = this.eventBus.subscribe<AgentProtocolEvent>('agent:events', (event) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const payload = event.payload as any;
-      switch (event.type as string) {
-        case 'MISSION_CREATED':
+      switch (event.type) {
+        case AgentEventType.MISSION_CREATED:
           missionStore.addMission(payload.mission as Mission);
           missionStore.setActiveMission(payload.mission.id);
           break;
 
-        case 'MISSION_STATUS_UPDATED':
+        case AgentEventType.MISSION_STATUS_UPDATED:
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           missionStore.updateMissionStatus(payload.missionId as string, payload.status as any);
           break;

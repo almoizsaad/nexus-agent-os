@@ -500,7 +500,10 @@ export class AgentRuntime {
   }
 
   private async onUserMessage(text: string): Promise<void> {
-    await this.processGoal(text);
+    // Phase 8.7: Missions are the preferred way to interact with the system.
+    // We log a thought instead of processing directly to encourage mission-driven flow.
+    this._stream.thought(`Received user message: "${text}". Delegating to mission system if applicable.`, 'observation');
+    // await this.processGoal(text); // Disabled in favor of mission-driven architecture
   }
 
   private async onWorkspaceAction(action: string, metadata?: Record<string, unknown>): Promise<void> {

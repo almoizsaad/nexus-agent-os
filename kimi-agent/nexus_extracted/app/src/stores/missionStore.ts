@@ -20,6 +20,7 @@ export interface MissionStoreState {
   addMemoryUpdate: (id: string, update: { key: string; value: unknown; timestamp: number }) => void;
   addKnowledgeUpdate: (id: string, update: { id: string; type: string; summary: string; timestamp: number }) => void;
   setMissionOutcome: (id: string, outcome: MissionOutcome) => void;
+  reset: () => void;
 }
 
 export const useMissionStore = create<MissionStoreState>((set) => ({
@@ -27,6 +28,8 @@ export const useMissionStore = create<MissionStoreState>((set) => ({
   missions: {},
 
   setActiveMission: (id) => set({ activeMissionId: id }),
+
+  reset: () => set({ activeMissionId: null, missions: {} }),
 
   addMission: (mission) => set((state) => ({
     missions: { ...state.missions, [mission.id]: mission }

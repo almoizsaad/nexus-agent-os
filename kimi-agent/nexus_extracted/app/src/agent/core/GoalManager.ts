@@ -1,5 +1,6 @@
 import type { Mission, MissionGoal, MissionStatus } from '../types/mission';
 import { EventBus } from './EventBus';
+import { AgentEventType } from '../types/agent';
 
 export class GoalManager {
   private missions: Map<string, Mission> = new Map();
@@ -31,8 +32,7 @@ export class GoalManager {
     this.missions.set(mission.id, mission);
 
     this.eventBus.publish('agent:events', {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      type: 'MISSION_CREATED' as any,
+      type: AgentEventType.MISSION_CREATED,
       payload: { mission },
       timestamp: Date.now()
     });
@@ -51,8 +51,7 @@ export class GoalManager {
       mission.updatedAt = Date.now();
 
       this.eventBus.publish('agent:events', {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        type: 'MISSION_STATUS_UPDATED' as any,
+        type: AgentEventType.MISSION_STATUS_UPDATED,
         payload: { missionId: id, status, mission },
         timestamp: Date.now()
       });
