@@ -12,6 +12,7 @@ describe('MissionScheduler', () => {
   let eventBus: EventBus;
 
   beforeEach(() => {
+    localStorage.clear();
     eventBus = new EventBus();
     goalManager = new GoalManager(eventBus);
     priorityManager = new PriorityManager();

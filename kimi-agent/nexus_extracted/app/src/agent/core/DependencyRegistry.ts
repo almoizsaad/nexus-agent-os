@@ -19,6 +19,7 @@ import type { AgentIdentity, Executor } from '../types/agent';
 import { AgentChannel } from './AgentChannel';
 import { AgentStream } from '../events/AgentStream';
 import { MemoryManager } from '../memory/MemoryManager';
+import { GoalManager } from './GoalManager';
 
 // Phase 8 additions
 import { ExecutiveBrain } from './ExecutiveBrain';
@@ -37,6 +38,13 @@ import { AgentMessageBus } from './AgentMessageBus';
 import { MessageRouter } from './MessageRouter';
 import { AgentOutbox } from './AgentOutbox';
 import { AgentInbox } from './AgentInbox';
+import { BackgroundRuntime } from './BackgroundRuntime';
+import { AutonomousMonitoring } from './AutonomousMonitoring';
+import { SelfHealing } from './SelfHealing';
+import { ContinuousLearning } from './ContinuousLearning';
+import { MissionIntelligence } from './MissionIntelligence';
+import { MissionNotifications } from './MissionNotifications';
+import { MissionInbox } from './MissionInbox';
 
 export class DependencyRegistry {
   public static registerCoreServices(container: ServiceContainer): void {
@@ -179,6 +187,48 @@ export class DependencyRegistry {
     if (!container.has(ExecutiveBrain)) {
       container.registerSingleton(ExecutiveBrain, (c) => {
         return new ExecutiveBrain(c.resolve(EventBus), c.resolve(CoordinatorAgent));
+      });
+    }
+
+    if (!container.has(BackgroundRuntime)) {
+      container.registerSingleton(BackgroundRuntime, (c) => {
+        return new BackgroundRuntime(c.resolve(EventBus), c.resolve(ExecutiveBrain));
+      });
+    }
+
+    if (!container.has(AutonomousMonitoring)) {
+      container.registerSingleton(AutonomousMonitoring, (c) => {
+        return new AutonomousMonitoring(c.resolve(EventBus));
+      });
+    }
+
+    if (!container.has(SelfHealing)) {
+      container.registerSingleton(SelfHealing, (c) => {
+        return new SelfHealing(c.resolve(EventBus));
+      });
+    }
+
+    if (!container.has(ContinuousLearning)) {
+      container.registerSingleton(ContinuousLearning, (c) => {
+        return new ContinuousLearning(c.resolve(EventBus), c.resolve(AgentRegistry));
+      });
+    }
+
+    if (!container.has(MissionIntelligence)) {
+      container.registerSingleton(MissionIntelligence, (c) => {
+        return new MissionIntelligence(c.resolve(GoalManager));
+      });
+    }
+
+    if (!container.has(MissionNotifications)) {
+      container.registerSingleton(MissionNotifications, (c) => {
+        return new MissionNotifications(c.resolve(EventBus));
+      });
+    }
+
+    if (!container.has(MissionInbox)) {
+      container.registerSingleton(MissionInbox, (c) => {
+        return new MissionInbox(c.resolve(EventBus));
       });
     }
 

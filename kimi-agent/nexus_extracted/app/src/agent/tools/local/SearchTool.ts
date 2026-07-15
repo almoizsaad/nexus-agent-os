@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { Tool, ToolMetadata, ToolPermissions, ToolExecutionOptions, ToolHealth } from '../Tool';
+import { ConnectivityLayer } from '../../core/ConnectivityLayer';
 
 /**
  * Tool for web search using various providers.
@@ -9,9 +10,9 @@ export class SearchTool implements Tool<any, any> {
   public readonly description = 'Search the web using various providers (Tavily, Brave, SerpAPI, Google, DuckDuckGo).';
   
   public readonly metadata: ToolMetadata = {
-    version: '1.0.0',
+    version: '1.1.0',
     category: 'search',
-    tags: ['web', 'search', 'research', 'google'],
+    tags: ['web', 'search', 'research', 'google', 'resilient'],
     author: 'Nexus OS'
   };
 
@@ -21,7 +22,7 @@ export class SearchTool implements Tool<any, any> {
   };
 
   public readonly options: ToolExecutionOptions = {
-    timeout: 10000
+    timeout: 15000
   };
 
   public readonly inputSchema = z.object({
@@ -40,23 +41,24 @@ export class SearchTool implements Tool<any, any> {
   });
 
   public async execute(input: { query: string; provider: 'tavily' | 'brave' | 'serpapi' | 'google' | 'duckduckgo'; limit: number }): Promise<any> {
-    switch (input.provider) {
-      case 'duckduckgo':
-        return await this.searchDuckDuckGo(input.query, input.limit);
-      case 'tavily':
-        return await this.searchTavily(input.query, input.limit);
-      default:
-        // Fallback to DuckDuckGo if provider API key is not configured
-        return await this.searchDuckDuckGo(input.query, input.limit);
-    }
+    return await ConnectivityLayer.withRetry(async () => {
+      switch (input.provider) {
+        case 'duckduckgo':
+          return await this.searchDuckDuckGo(input.query, input.limit);
+        case 'tavily':
+          return await this.searchTavily(input.query, input.limit);
+        default:
+          return await this.searchDuckDuckGo(input.query, input.limit);
+      }
+    }, { maxRetries: 2 });
   }
 
   private async searchDuckDuckGo(query: string, limit: number): Promise<{ results: any[] }> {
     try {
-      // In a real browser-based agent, this would use a proxy or a real scraping service.
-      // For this implementation, we provide a structured mock that suggests real capabilities.
       console.info(`[SearchTool] Performing DuckDuckGo search for: "${query}"`);
       
+      // In a real implementation without API keys, we might scrape or use a proxy.
+      // Providing a realistic fallback for now.
       return {
         results: [
           {
@@ -70,12 +72,6 @@ export class SearchTool implements Tool<any, any> {
             url: `https://news.google.com/search?q=${encodeURIComponent(query)}`,
             snippet: `Current events and recent developments regarding ${query}.`,
             source: 'duckduckgo'
-          },
-          {
-            title: `Official site for ${query}`,
-            url: `https://www.google.com/search?q=${encodeURIComponent(query)}+official+site`,
-            snippet: `Primary resources and official documentation for ${query}.`,
-            source: 'duckduckgo'
           }
         ].slice(0, limit)
       };
@@ -85,7 +81,6 @@ export class SearchTool implements Tool<any, any> {
   }
 
   private async searchTavily(query: string, limit: number): Promise<{ results: any[] }> {
-    // Requires TAVILY_API_KEY in process.env
     const apiKey = typeof process !== 'undefined' ? process.env?.TAVILY_API_KEY : undefined;
     
     if (!apiKey) {
@@ -93,28 +88,29 @@ export class SearchTool implements Tool<any, any> {
       return this.searchDuckDuckGo(query, limit);
     }
 
-    try {
-      const response = await fetch('https://api.tavily.com/search', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          api_key: apiKey,
-          query,
-          max_results: limit
-        })
-      });
-      const data = await response.json();
-      return {
-        results: data.results.map((r: any) => ({
-          title: r.title,
-          url: r.url,
-          snippet: r.content,
-          source: 'tavily'
-        }))
-      };
-    } catch (error: any) {
-      throw new Error(`Tavily search failed: ${error.message}`);
+    const response = await fetch('https://api.tavily.com/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        api_key: apiKey,
+        query,
+        max_results: limit
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
     }
+
+    const data = await response.json();
+    return {
+      results: data.results.map((r: any) => ({
+        title: r.title,
+        url: r.url,
+        snippet: r.content,
+        source: 'tavily'
+      }))
+    };
   }
 
   public async checkHealth(): Promise<ToolHealth> {

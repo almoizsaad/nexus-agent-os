@@ -7,7 +7,7 @@ export interface ToolMetadata {
   version: string;
   author?: string;
   tags?: string[];
-  category?: 'filesystem' | 'network' | 'utility' | 'browser' | 'search' | 'git' | 'http' | 'other';
+  category?: 'filesystem' | 'network' | 'utility' | 'browser' | 'search' | 'git' | 'http' | 'system' | 'knowledge' | 'protocol' | 'other';
 }
 
 /**
@@ -39,6 +39,8 @@ export interface ToolHealth {
   status: 'healthy' | 'degraded' | 'failing';
   lastChecked: Date;
   errorCount: number;
+  message?: string;
+  latency?: number;
 }
 
 /**

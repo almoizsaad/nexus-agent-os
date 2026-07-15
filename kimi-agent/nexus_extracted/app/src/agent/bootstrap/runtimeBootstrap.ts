@@ -12,6 +12,13 @@ import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
 import { MemoryManager } from '../memory/MemoryManager';
 import { EventBus } from '../core/EventBus';
 import { initializeRegistry } from '../../registry/defaultRegistry';
+import { BackgroundRuntime } from '../core/BackgroundRuntime';
+import { MissionIntelligence } from '../core/MissionIntelligence';
+import { ContinuousLearning } from '../core/ContinuousLearning';
+import { MissionNotifications } from '../core/MissionNotifications';
+import { MissionInbox } from '../core/MissionInbox';
+import { AutonomousMonitoring } from '../core/AutonomousMonitoring';
+import { SelfHealing } from '../core/SelfHealing';
 
 /**
  * Bootstraps the complete Agent OS runtime exactly once.
@@ -52,16 +59,27 @@ export function bootstrapRuntime() {
     globalContainer.resolve(AgentManager);
     globalContainer.resolve(CoordinatorAgent);
     globalContainer.resolve(ExecutiveBrain);
-    
+    globalContainer.resolve(MissionIntelligence);
+    globalContainer.resolve(ContinuousLearning);
+    globalContainer.resolve(MissionNotifications);
+    globalContainer.resolve(MissionInbox);
+    globalContainer.resolve(AutonomousMonitoring);
+    globalContainer.resolve(SelfHealing);
+
     // Main Entry Point Runtime
     globalContainer.resolve(AgentRuntime);
-    
+
     // External Adapters
     globalContainer.resolve(ComponentRegistry);
     globalContainer.resolve(WorkspaceAdapter);
     globalContainer.resolve(MissionAdapter);
 
+    // Phase 8.9: Continuous OS
+    const background = globalContainer.resolve(BackgroundRuntime);
+    background.start().catch(err => console.error('[AgentOS] BackgroundRuntime start failed:', err));
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     (window as any).__AGENT_OS_BOOTSTRAPPED__ = true;
     console.info('[AgentOS] Runtime bootstrap complete.');
   } catch (error) {

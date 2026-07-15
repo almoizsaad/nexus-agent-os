@@ -173,6 +173,11 @@ export class LLMPlanner implements Planner {
       AVAILABLE TOOLS:
       ${toolsDescription}
 
+      UI CAPABILITIES:
+      You can suggest UI components to render for each task.
+      Supported components: 
+      - flight-card, hotel-card, budget-chart, timeline, overview, weather, table, form, list, analysis, confidence-badge, system-metrics, mission-card, mission-report.
+
       AGENT HISTORY:
       ${JSON.stringify(state.history.slice(-5))}
       
@@ -181,7 +186,8 @@ export class LLMPlanner implements Planner {
       2. Define clear dependencies (e.g., task B depends on task A).
       3. Provide a brief reasoning for your plan.
       4. Estimate your confidence in this plan (0-100).
-      5. Return ONLY a valid JSON object matching the schema.
+      5. OPTIONAL: Suggest a 'ui_component' and 'ui_props' if a task result should be visualized.
+      6. Return ONLY a valid JSON object matching the schema.
     `;
   }
 }

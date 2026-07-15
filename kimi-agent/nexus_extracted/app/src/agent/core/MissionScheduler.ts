@@ -4,6 +4,9 @@ import type { Mission } from '../types/mission';
 import { EventBus } from './EventBus';
 import { AgentEventType } from '../types/agent';
 
+/**
+ * MissionScheduler manages the mission queue, priorities, and execution state.
+ */
 export class MissionScheduler {
   private readonly maxConcurrentMissions = 3;
   private onStart?: (mission: Mission) => Promise<void>;
@@ -36,6 +39,10 @@ export class MissionScheduler {
 
   public async schedule(): Promise<void> {
     const allMissions = this.goalManager.getAllMissions();
+    
+    // Phase 8.9: Self-healing - Detect missions stuck in 'running' status
+    this.healStuckMissions(allMissions);
+
     const runningMissions = allMissions.filter(m => m.status === 'running');
     const pendingMissions = allMissions.filter(m => m.status === 'idle' || m.status === 'paused');
 
@@ -65,6 +72,24 @@ export class MissionScheduler {
         }
       }
     }
+  }
+
+  private healStuckMissions(missions: Mission[]): void {
+    const STUCK_THRESHOLD = 300000; // 5 minutes
+    const now = Date.now();
+
+    missions.forEach(m => {
+      if (m.status === 'running' && (now - m.updatedAt > STUCK_THRESHOLD)) {
+        console.warn(`[MissionScheduler] Detected stuck mission: ${m.title}. Resetting to idle for recovery.`);
+        this.goalManager.updateMissionStatus(m.id, 'idle');
+        
+        this.eventBus.publish('system:anomaly', {
+          type: 'STUCK_MISSION',
+          missionId: m.id,
+          timestamp: now
+        } as any);
+      }
+    });
   }
 
   private async startMission(mission: Mission): Promise<void> {

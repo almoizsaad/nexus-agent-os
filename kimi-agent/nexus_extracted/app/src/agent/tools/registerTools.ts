@@ -15,6 +15,11 @@ import { PDFTool } from './local/PDFTool';
 import { ImageMetadataTool } from './local/ImageMetadataTool';
 import { KnowledgeTool } from './local/KnowledgeTool';
 import { ResearchSynthesisTool } from './local/ResearchSynthesisTool';
+import { DockerTool } from './local/DockerTool';
+import { OpenAPITool } from './local/OpenAPITool';
+import { MCPTool } from './local/MCPTool';
+import { ToolDiagnosticsTool } from './local/ToolDiagnosticsTool';
+import { RepositoryIndexerTool } from './local/RepositoryIndexerTool';
 import type { IKnowledgeDatabase } from '../types/knowledge';
 import type { Tool } from './Tool';
 
@@ -38,6 +43,11 @@ export function registerDefaultTools(registry: ToolRegistry, knowledgeDb?: IKnow
     new PDFTool(),
     new ImageMetadataTool(),
     new ResearchSynthesisTool(),
+    new DockerTool(),
+    new OpenAPITool(),
+    new MCPTool(),
+    new ToolDiagnosticsTool(registry),
+    new RepositoryIndexerTool(knowledgeDb),
   ];
 
   if (knowledgeDb) {

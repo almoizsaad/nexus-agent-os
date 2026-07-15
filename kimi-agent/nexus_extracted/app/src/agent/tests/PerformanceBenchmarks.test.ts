@@ -2,6 +2,8 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { createAgent } from '../bootstrap/createAgent';
 import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
 import { MemoryManager } from '../memory/MemoryManager';
+import { ServiceContainer } from '../core/ServiceContainer';
+import { MockLLMProvider } from '../providers/MockLLMProvider';
 import type { Planner } from '../types/agent';
 
 interface PerformanceWithMemory extends Performance {
@@ -16,7 +18,9 @@ describe('Phase 8.4 — Performance Benchmarks', () => {
   let agent: ReturnType<typeof createAgent>;
 
   beforeEach(() => {
-    agent = createAgent();
+    const container = new ServiceContainer();
+    container.registerSingleton('LLMProvider', new MockLLMProvider());
+    agent = createAgent(container);
   });
 
   it('Benchmark: System Startup (Cold)', async () => {

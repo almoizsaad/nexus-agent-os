@@ -9,6 +9,10 @@ import { TableComponent } from '../components/generative-ui/runtime/TableCompone
 import { FormComponent } from '../components/generative-ui/runtime/FormComponent';
 import { ListComponent } from '../components/generative-ui/runtime/ListComponent';
 import { AnalysisCard } from '../components/generative-ui/runtime/AnalysisCard';
+import { ConfidenceBadge } from '../components/generative-ui/runtime/ConfidenceBadge';
+import { SystemMetrics } from '../components/generative-ui/runtime/SystemMetrics';
+import { MissionCard } from '../components/generative-ui/runtime/MissionCard';
+import { MissionReport } from '../components/generative-ui/runtime/MissionReport';
 
 export function initializeRegistry() {
   globalComponentRegistry.register({
@@ -69,5 +73,29 @@ export function initializeRegistry() {
     type: 'analysis',
     name: 'Analysis Card',
     component: AnalysisCard
+  });
+
+  globalComponentRegistry.register({
+    type: 'confidence-badge',
+    name: 'Confidence Badge',
+    component: ConfidenceBadge
+  });
+
+  globalComponentRegistry.register({
+    type: 'system-metrics',
+    name: 'System Metrics',
+    component: SystemMetrics
+  });
+
+  globalComponentRegistry.register({
+    type: 'mission-card',
+    name: 'Mission Card',
+    component: MissionCard
+  });
+
+  globalComponentRegistry.register({
+    type: 'mission-report',
+    name: 'Mission Report',
+    component: MissionReport
   });
 }

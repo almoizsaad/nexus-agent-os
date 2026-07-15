@@ -293,19 +293,27 @@ export class AgentRuntime {
 
         // Phase 9: Continuous Learning - Record tool results as events for reflection
         if (status === 'completed' || status === 'failed') {
-          const task = this._state.currentPlan!.tasks.find(t => t.id === taskId);
+          const task = this._state.currentPlan!.tasks.find(t => t.id === taskId) as any;
           this._eventBus.publish('agent:events', {
             type: AgentEventType.TOOL_RESULT,
             payload: {
               workflowId: this._state.currentPlan!.id,
               taskId,
-              toolName: (task as any)?.tool || 'unknown',
+              toolName: task?.tool || 'unknown',
               description: task?.description || '',
               result,
               success: status === 'completed'
             },
             timestamp: Date.now()
           });
+
+          // Phase 8.7.6: Runtime Driven Generative UI
+          if (status === 'completed' && task?.ui_component) {
+            this.renderComponent(task.ui_component, {
+              ...(task.ui_props || {}),
+              ...(result as any)?.data || {}
+            }, { taskId, source: task.tool });
+          }
         }
 
         // Sync plan state

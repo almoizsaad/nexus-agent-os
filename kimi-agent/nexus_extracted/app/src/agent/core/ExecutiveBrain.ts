@@ -9,7 +9,7 @@ import { AgentEventType } from '../types/agent';
 export class ExecutiveBrain {
   private readonly goalManager: GoalManager;
   private readonly priorityManager: PriorityManager;
-  private readonly scheduler: MissionScheduler;
+  public readonly scheduler: MissionScheduler;
   private readonly coordinator: CoordinatorAgent;
   private readonly eventBus: EventBus;
 
