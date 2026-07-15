@@ -67,13 +67,22 @@ export class ExecutiveBrain {
 
   public async createMission(title: string, goal: MissionGoal, context: Record<string, unknown> = {}): Promise<string> {
     const mission = this.goalManager.createMission(title, goal, context);
-    await this.scheduler.schedule();
+    try {
+      await this.scheduler.schedule();
+    } catch (error) {
+      console.error(`[ExecutiveBrain] Critical failure during mission scheduling for "${title}":`, error);
+      this.goalManager.updateMissionStatus(mission.id, 'failed');
+    }
     return mission.id;
   }
 
   public async cancelMission(missionId: string): Promise<void> {
-    await this.scheduler.cancelMission(missionId);
-    await this.scheduler.schedule();
+    try {
+      await this.scheduler.cancelMission(missionId);
+      await this.scheduler.schedule();
+    } catch (error) {
+      console.error(`[ExecutiveBrain] Error during mission cancellation for "${missionId}":`, error);
+    }
   }
 
   private async handlePlanResult(payload: Record<string, unknown>): Promise<void> {

@@ -40,7 +40,7 @@ export class CalculatorTool implements Tool<{ expression: string }, { result: nu
       const sanitized = input.expression.replace(/[^0-9+\-*/().\s]/g, '');
       
       // Still using Function to evaluate the sanitized expression
-      // eslint-disable-next-line no-new-func
+       
       const result = new Function(`return ${sanitized}`)();
       
       if (typeof result !== 'number' || !isFinite(result)) {

@@ -9,8 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "mission": "npx tsx src/cli/runMission.ts",
-    "repl": "npx tsx src/cli/repl.ts"
+    "mission": "npx tsx --env-file=.env src/cli/runMission.ts",
+    "repl": "npx tsx --env-file=.env src/cli/repl.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

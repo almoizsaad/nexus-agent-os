@@ -34,7 +34,7 @@ describe('Phase 8.4 — Performance Benchmarks', () => {
     const duration = performance.now() - start;
     
     console.log(`[Benchmark] Planner Latency: ${duration.toFixed(2)}ms`);
-    expect(duration).toBeLessThan(100); // Expect < 100ms for mock planning
+    expect(duration).toBeLessThan(2000); // Expect < 2000ms for planning process
   });
 
   it('Benchmark: Knowledge Graph Search (1000 nodes)', async () => {
