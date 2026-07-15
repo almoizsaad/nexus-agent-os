@@ -28,13 +28,25 @@ export class MockLLMProvider implements LLMProvider {
       } as any as T;
     }
 
+    if (prompt.toLowerCase().includes('diagnostic') || prompt.toLowerCase().includes('health')) {
+      return {
+        id: 'mock-plan-diagnostic',
+        goal: 'Run diagnostics',
+        reasoning: 'Evaluating system health requires running tool diagnostics.',
+        tasks: [
+          { id: 'task_01', description: 'Run tool diagnostics', tool: 'tool_diagnostics', dependencies: [] }
+        ]
+      } as any as T;
+    }
+
     if (prompt.toLowerCase().includes('research')) {
       return {
         id: 'mock-plan-research',
         goal: 'Research topic',
-        reasoning: 'Researching requires searching and synthesis.',
+        reasoning: 'Researching requires search and synthesis.',
         tasks: [
-          { id: 'task_01', description: 'Research AI', tool: 'research_topic', metadata: { topic: 'AI Agents' }, dependencies: [] }
+          { id: 'task_01', description: 'Search web', tool: 'search', metadata: { query: 'AI Agents' }, dependencies: [] },
+          { id: 'task_02', description: 'Synthesize findings', tool: 'research_synthesis', metadata: { operation: 'summarize', sources: [] }, dependencies: ['task_01'] }
         ]
       } as any as T;
     }
@@ -110,9 +122,35 @@ export class MockLLMProvider implements LLMProvider {
     return `Mock text response for: ${prompt.substring(0, 50)}...`;
   }
 
-  public async generateEmbedding(text: string): Promise<number[]> {
+  public async embed(text: string): Promise<number[]> {
     const size = 1536;
-    const embedding = new Array(size).fill(0).map(() => Math.random());
+    const embedding = new Array(size).fill(0);
+    const lowerText = text.toLowerCase();
+    const words = lowerText.match(/\w+/g) || [];
+    
+    // Simple word-overlap based embedding
+    words.forEach(word => {
+      let hash = 0;
+      for (let i = 0; i < word.length; i++) {
+        hash = ((hash << 5) - hash) + word.charCodeAt(i);
+        hash |= 0;
+      }
+      const index = Math.abs(hash) % size;
+      embedding[index] += 1.0;
+    });
+
+    // Boost similarity for specific test keywords
+    if (lowerText.includes('artificial intelligence') || lowerText.includes('ai')) {
+      embedding[0] = 10.0;
+    }
+    if (lowerText.includes('space') || lowerText.includes('exploration')) {
+      embedding[1] = 10.0;
+    }
+    if (lowerText.includes('paris') || lowerText.includes('france')) {
+      embedding[2] = 10.0;
+    }
+    
+    // Normalize
     const norm = Math.sqrt(embedding.reduce((sum, val) => sum + val * val, 0));
     return embedding.map(v => v / (norm || 1));
   }

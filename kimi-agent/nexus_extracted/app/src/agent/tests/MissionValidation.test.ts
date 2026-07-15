@@ -55,27 +55,6 @@ describe('Mission Validation - End-to-End', () => {
     registry.register(workerIdentity, worker);
     registry.register(identity, coordinator);
     
-    workerChannel.onMessage(async (message) => {
-      if (message.type === 'TASK_ASSIGNMENT') {
-        const payload = message.payload as { taskId: string; description: string; tool: string; metadata?: Record<string, unknown>; planId: string };
-        const result = await worker.executor?.executeTask({
-          id: payload.taskId,
-          description: payload.description,
-          tool: payload.tool,
-          metadata: payload.metadata,
-          dependencies: [],
-          status: 'pending'
-        } as StructuredTask, {});
-        
-        await workerChannel.sendDirect('coordinator', result?.success ? 'TASK_COMPLETED' : 'TASK_FAILED', {
-          taskId: payload.taskId,
-          planId: payload.planId,
-          result: result?.data,
-          error: result?.error
-        });
-      }
-    });
-    
     brain = new ExecutiveBrain(agent.eventBus, coordinator);
 
     const registerSafe = (tool: any) => {

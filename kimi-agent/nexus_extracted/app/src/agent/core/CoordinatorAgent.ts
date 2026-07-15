@@ -35,7 +35,9 @@ export class CoordinatorAgent extends AgentRuntime {
     this.coordinator = new PlannerCoordinator(registry, this.channel);
     this.consensus = new PlannerConsensus();
     
-    this.setupMessageHandlers();
+    // Base constructor calls setupMessageHandlers, but we might need to re-register 
+    // or ensure coordinator is ready. Since setupMessageHandlers is overridden,
+    // the version called in super() will be the one below.
   }
 
   protected setupMessageHandlers(): void {
@@ -105,8 +107,8 @@ export class CoordinatorAgent extends AgentRuntime {
     const taskId = payload.taskId as string;
     const result = payload.result;
     const error = payload.error as string;
+    
     const plan = this.activePlans.get(planId);
-
     if (!plan) return;
 
     if (success) {
@@ -124,12 +126,12 @@ export class CoordinatorAgent extends AgentRuntime {
         timestamp: Date.now()
       });
 
-      // Check if plan is complete or if new tasks are ready
+      // Check if new tasks are ready for delegation
       const readyTasks = this.coordinator.getReadyTasks(plan);
       if (readyTasks.length > 0) {
         this._stream.thought(`Decomposition revealed ${readyTasks.length} new tasks ready for delegation.`, 'reasoning', { planId });
         for (const task of readyTasks) {
-          // Double check status to avoid race conditions if multiple tasks completed at once
+          // Double check status to avoid race conditions
           if (task.status === 'pending') {
             await this.coordinator.delegateTask(task, plan.id);
             
@@ -151,7 +153,10 @@ export class CoordinatorAgent extends AgentRuntime {
             }
           }
         }
-      } else if (this.isPlanComplete(plan)) {
+      } 
+      
+      // Check for plan completion after handling result
+      if (this.isPlanComplete(plan)) {
         await this.finalizePlan(plan);
       }
     } else {

@@ -4,6 +4,8 @@ import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
 import { MemoryManager } from '../memory/MemoryManager';
 import { ServiceContainer } from '../core/ServiceContainer';
 import { MockLLMProvider } from '../providers/MockLLMProvider';
+import { ToolRegistry } from '../tools/ToolRegistry';
+import { createTestTool } from './testUtils';
 import type { Planner } from '../types/agent';
 
 interface PerformanceWithMemory extends Performance {
@@ -21,6 +23,10 @@ describe('Phase 8.4 — Performance Benchmarks', () => {
     const container = new ServiceContainer();
     container.registerSingleton('LLMProvider', new MockLLMProvider());
     agent = createAgent(container);
+    
+    const toolRegistry = agent.container.resolve(ToolRegistry);
+    toolRegistry.register(createTestTool({ name: 'search_flights', description: 'Search flights', execute: async () => ({}) }));
+    toolRegistry.register(createTestTool({ name: 'find_hotels', description: 'Find hotels', execute: async () => ({}) }));
   });
 
   it('Benchmark: System Startup (Cold)', async () => {
