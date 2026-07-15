@@ -42,25 +42,29 @@ export class ExecutiveBrain {
   }
 
   private setupEventListeners(): void {
-    this.eventBus.subscribe('agent:events', (event) => {
-      // 1. Listen for direct user messages to create missions (Bridge)
-      if (event.type === AgentEventType.USER_MESSAGE) {
-        const text = (event.payload as any).text;
-        if (text) {
-          this.createMission(text, {
-            description: text,
-            successCriteria: ['Task completed as requested'],
-            priority: 'medium'
-          }).catch(err => console.error('[ExecutiveBrain] Failed to create mission from USER_MESSAGE:', err));
+    this.eventBus.subscribe('agent:events', async (event) => {
+      try {
+        // 1. Listen for direct user messages to create missions (Bridge)
+        if (event.type === AgentEventType.USER_MESSAGE) {
+          const text = (event.payload as any).text;
+          if (text) {
+            this.createMission(text, {
+              description: text,
+              successCriteria: ['Task completed as requested'],
+              priority: 'medium'
+            }).catch(err => console.error('[ExecutiveBrain] Failed to create mission from USER_MESSAGE:', err));
+          }
         }
-      }
 
-      // 2. Listen for mission completions or failures to trigger rescheduling
-      if (event.type === AgentEventType.AGENT_UPDATE) {
-        const payload = event.payload as Record<string, unknown>;
-        if (payload.status === 'PLAN_COMPLETED' || payload.status === 'PLAN_FAILED') {
-          this.handlePlanResult(payload);
+        // 2. Listen for mission completions or failures to trigger rescheduling
+        if (event.type === AgentEventType.AGENT_UPDATE) {
+          const payload = event.payload as Record<string, unknown>;
+          if (payload.status === 'PLAN_COMPLETED' || payload.status === 'PLAN_FAILED') {
+            await this.handlePlanResult(payload);
+          }
         }
+      } catch (error) {
+        console.error('[ExecutiveBrain] Error processing agent event:', error);
       }
     });
   }
@@ -92,22 +96,26 @@ export class ExecutiveBrain {
     const mission = this.goalManager.getMission(missionId);
     if (!mission) return;
 
-    if (payload.status === 'PLAN_COMPLETED') {
-      this.goalManager.updateMissionStatus(missionId, 'completed');
-      console.info(`[ExecutiveBrain] Mission completed: ${mission.title}`);
-    } else if (payload.status === 'PLAN_FAILED') {
-      const retries = (mission.context.retries as number || 0);
-      if (retries < 2) {
-        console.warn(`[ExecutiveBrain] Mission failed: ${mission.title}. Retrying (attempt ${retries + 1})...`);
-        mission.context.retries = retries + 1;
-        this.goalManager.updateMissionStatus(missionId, 'idle'); // Put back to idle for rescheduling
-      } else {
-        console.error(`[ExecutiveBrain] Mission failed after retries: ${mission.title}`);
-        this.goalManager.updateMissionStatus(missionId, 'failed');
+    try {
+      if (payload.status === 'PLAN_COMPLETED') {
+        this.goalManager.updateMissionStatus(missionId, 'completed');
+        console.info(`[ExecutiveBrain] Mission completed: ${mission.title} (${missionId})`);
+      } else if (payload.status === 'PLAN_FAILED') {
+        const retries = (mission.context.retries as number || 0);
+        if (retries < 2) {
+          console.warn(`[ExecutiveBrain] Mission failed: ${mission.title} (${missionId}). Retrying (attempt ${retries + 1})...`);
+          mission.context.retries = retries + 1;
+          this.goalManager.updateMissionStatus(missionId, 'idle'); // Put back to idle for rescheduling
+        } else {
+          console.error(`[ExecutiveBrain] Mission failed after retries: ${mission.title} (${missionId})`);
+          this.goalManager.updateMissionStatus(missionId, 'failed');
+        }
       }
-    }
 
-    await this.scheduler.schedule();
+      await this.scheduler.schedule();
+    } catch (error) {
+      console.error(`[ExecutiveBrain] Error in handlePlanResult for mission ${missionId}:`, error);
+    }
   }
 
   public getGoalManager(): GoalManager {

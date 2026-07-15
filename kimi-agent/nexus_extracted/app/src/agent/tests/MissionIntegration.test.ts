@@ -2,6 +2,8 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { createAgent } from '../bootstrap/createAgent';
 import { useMissionStore } from '../../stores/missionStore';
 import { MissionAdapter } from '../adapters/MissionAdapter';
+import { GeminiLLMProvider } from '../providers/GeminiLLMProvider';
+import { ServiceContainer } from '../core/ServiceContainer';
 
 describe('Mission Integration', () => {
   beforeEach(() => {
@@ -9,13 +11,16 @@ describe('Mission Integration', () => {
   });
 
   it('should synchronize mission creation from ExecutiveBrain to missionStore', async () => {
-    const { executiveBrain, eventBus } = createAgent();
+    const container = new ServiceContainer();
+    container.registerSingleton('LLMProvider', new GeminiLLMProvider());
+    
+    const { executiveBrain, eventBus } = createAgent(container);
     
     // Explicitly initialize MissionAdapter with the same eventBus
     new MissionAdapter(eventBus);
 
     const missionId = await executiveBrain.createMission('Test Integration Mission', {
-      description: 'Verifying end-to-end sync',
+      description: 'Verifying end-to-end sync. Just say hello.',
       successCriteria: ['Store is updated'],
       priority: 'medium'
     });
@@ -27,11 +32,14 @@ describe('Mission Integration', () => {
   });
 
   it('should synchronize mission status updates', async () => {
-    const { executiveBrain, eventBus } = createAgent();
+    const container = new ServiceContainer();
+    container.registerSingleton('LLMProvider', new GeminiLLMProvider());
+    
+    const { executiveBrain, eventBus } = createAgent(container);
     new MissionAdapter(eventBus);
 
     const missionId = await executiveBrain.createMission('Status Sync Mission', {
-      description: 'Verifying status sync',
+      description: 'Verifying status sync. Just say hello.',
       successCriteria: ['Status is updated'],
       priority: 'low'
     });

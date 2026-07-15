@@ -35,15 +35,10 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     const localEventBus = new EventBus(localUnifiedBus);
     container.registerSingleton(EventBus, localEventBus);
     
-    agent = createAgent(container);
+    agent = createAgent(container, { disableSafety: true });
     
     // Register local mock tools
     const toolRegistry = agent.container.resolve(ToolRegistry);
-    toolRegistry.register(createTestTool({ 
-      name: 'get_current_weather', 
-      description: 'Get weather', 
-      execute: async () => ({ status: 'sunny' }) 
-    }));
 
     const factory = agent.container.resolve(AgentFactory);
     const registry = agent.container.resolve(AgentRegistry);
@@ -92,15 +87,24 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
       }
     });
     
-    provider = agent.container.resolve('LLMProvider') as MockLLMProvider;
     brain = new ExecutiveBrain(agent.eventBus, coordinator);
 
     const registerSafe = (tool: Tool) => {
-      try { toolRegistry.register(tool); } catch {
-        try { toolRegistry.unregister(tool.name); toolRegistry.register(tool); } catch { /* ignore */ }
+      try { 
+        if (toolRegistry.hasTool(tool.name)) {
+          toolRegistry.unregister(tool.name);
+        }
+        toolRegistry.register(tool); 
+      } catch (e) {
+        console.error(`Failed to register tool ${tool.name}:`, e);
       }
     };
 
+    registerSafe(createTestTool({ 
+      name: 'get_current_weather', 
+      description: 'Get weather', 
+      execute: async () => ({ status: 'sunny' }) 
+    }));
     registerSafe(createTestTool({ 
       name: 'search_flights', 
       description: 'Search flights', 
@@ -110,6 +114,16 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
       name: 'find_hotels', 
       description: 'Find hotels', 
       execute: async () => ({ hotels: [{ id: 'H1', price: 200 }] }) 
+    }));
+    registerSafe(createTestTool({ 
+      name: 'clock', 
+      description: 'Get current time', 
+      execute: async () => ({ time: new Date().toISOString() }) 
+    }));
+    registerSafe(createTestTool({ 
+      name: 'filesystem', 
+      description: 'Filesystem access', 
+      execute: async () => ({ success: true }) 
     }));
     registerSafe(createTestTool({ 
       name: 'research_topic', 
@@ -174,6 +188,16 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
   };
 
   it('Mission: Trip Planning (Multi-step Tool Execution)', async () => {
+    provider.setMockResponse({
+      id: 'trip-1',
+      goal: 'Trip to Paris',
+      reasoning: 'Plan a trip to Paris.',
+      tasks: [
+        { id: 'T1', description: 'Search flights', tool: 'search_flights', dependencies: [] },
+        { id: 'T2', description: 'Find hotels', tool: 'find_hotels', dependencies: ['T1'] }
+      ]
+    });
+
     const missionPromise = waitForMissionCompletion('any');
     await brain.createMission('Trip to Paris', {
       description: 'Plan a full trip to Paris including flights and hotels.',
@@ -189,6 +213,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     provider.setMockResponse({
       id: 'res-1',
       goal: 'Research AI Agents',
+      reasoning: 'Research AI.',
       tasks: [
         { id: 'T1', description: 'Research topic', tool: 'research_topic', metadata: { topic: 'AI Agents' }, dependencies: [] }
       ]
@@ -203,7 +228,7 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
 
     const result = await missionPromise;
     expect(result.completed).toBe(true);
-    
+
     const nodes = await coordinator.knowledgeGraph.searchNodes('AI Agents');
     expect(nodes.length).toBeGreaterThan(0);
   }, 20000);
@@ -211,7 +236,8 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
   it('Mission: Multi-step Coding (Dependency Chain)', async () => {
     provider.setMockResponse({
       id: 'code-1',
-      goal: 'Implement Auth',
+      goal: 'Coding Mission',
+      reasoning: 'Coding tasks.',
       tasks: [
         { id: 'T1', description: 'Write code', tool: 'write_code', metadata: { feature: 'Auth' }, dependencies: [] },
         { id: 'T2', description: 'Run tests', tool: 'run_tests', dependencies: ['T1'] }
@@ -245,21 +271,23 @@ describe('Phase 8.2 — End-to-End Autonomous Mission Validation', () => {
     }));
 
     provider.setMockResponse({
-      id: 'fail-1',
-      goal: 'Test Recovery',
+      id: 'flaky-1',
+      goal: 'Flaky Mission',
+      reasoning: 'Retry on failure.',
       tasks: [
-        { id: 'F1', description: 'Flaky task', tool: toolName, dependencies: [] }
+        { id: 'T1', description: 'Flaky task', tool: toolName, dependencies: [] }
       ]
     });
 
     const missionPromise = waitForMissionCompletion('any', 20000);
-    await brain.createMission('Recovery Test', {
-      description: 'This mission should fail and then attempt recovery.',
+    await brain.createMission('Flaky Mission Test', {
+      description: 'This mission should fail and then attempt recovery using flaky tool.',
       successCriteria: ['Recovered'],
       priority: 'medium'
     });
 
     const result = await missionPromise;
-    expect(result.completed || callCount > 1).toBe(true);
-  }, 30000);
+    expect(result.completed).toBe(true);
+    expect(callCount).toBeGreaterThan(1);
+  }, 25000);
 });

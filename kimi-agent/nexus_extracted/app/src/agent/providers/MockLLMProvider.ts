@@ -4,116 +4,116 @@ import type { LLMProvider } from './LLMProvider';
  * A mock LLM provider for testing and development.
  */
 export class MockLLMProvider implements LLMProvider {
-  private mockResponse: unknown = null;
+  private mockResponse: any = null;
 
-  public setMockResponse(response: unknown): void {
+  public setMockResponse(response: any): void {
     this.mockResponse = response;
   }
 
-  public async generateStructuredOutput<T>(prompt: string): Promise<T> {
-
-    console.log(`[MockLLMProvider] Received prompt: ${prompt.substring(0, 100)}...`);
-    
+  public async generateStructuredOutput<T>(prompt: string, _schema: any): Promise<T> {
     if (this.mockResponse) {
       return this.mockResponse as T;
     }
 
-    // Default mock response logic for planning
-    if (prompt.includes('trip') || prompt.includes('Tokyo')) {
+    // Default heuristics based on prompt keywords if no mock set
+    if (prompt.toLowerCase().includes('trip') || prompt.toLowerCase().includes('tokyo')) {
       return {
-        id: crypto.randomUUID(),
-        goal: 'Plan a trip to Tokyo',
-        reasoning: 'The user wants to plan a trip to Tokyo, requiring flight, hotel, and attraction search.',
+        id: 'mock-plan-trip',
+        goal: 'Plan a trip',
+        reasoning: 'Planning a trip requires flights and hotels.',
         tasks: [
-          { id: '1', description: 'Search flights to Tokyo', tool: 'clock', dependencies: [] },
-          { id: '2', description: 'Search hotels in Shinjuku', tool: 'filesystem', metadata: { operation: 'list_directory', path: '.' }, dependencies: ['1'] },
-          { id: '3', description: 'Search top attractions', tool: 'clock', dependencies: [] }
+          { id: 'task_01', description: 'Search flights', tool: 'search_flights', dependencies: [] },
+          { id: 'task_02', description: 'Find hotels', tool: 'find_hotels', dependencies: ['task_01'] }
         ]
-      } as unknown as T;
+      } as any as T;
     }
 
-    if (prompt.includes('Research') || prompt.includes('Generative AI')) {
+    if (prompt.toLowerCase().includes('research')) {
       return {
-        id: crypto.randomUUID(),
-        goal: 'Research Generative AI market',
-        reasoning: 'Analyzing trends and players in GenAI requires market search and synthesis.',
+        id: 'mock-plan-research',
+        goal: 'Research topic',
+        reasoning: 'Researching requires searching and synthesis.',
         tasks: [
-          { id: '1', description: 'Search GenAI trends 2026', tool: 'clock', dependencies: [] },
-          { id: '2', description: 'Identify key market players', tool: 'filesystem', metadata: { operation: 'list_directory', path: '.' }, dependencies: ['1'] },
-          { id: '3', description: 'Synthesize future projections', tool: 'clock', dependencies: [] }
+          { id: 'task_01', description: 'Research AI', tool: 'research_topic', metadata: { topic: 'AI Agents' }, dependencies: [] }
         ]
-      } as unknown as T;
+      } as any as T;
     }
 
-    if (prompt.includes('startup') || prompt.includes('solar')) {
+    if (prompt.toLowerCase().includes('coding') || prompt.toLowerCase().includes('auth')) {
       return {
-        id: crypto.randomUUID(),
-        goal: 'Design a solar energy startup',
-        reasoning: 'Designing a startup involves market analysis and strategy mapping.',
+        id: 'mock-plan-coding',
+        goal: 'Implement feature',
+        reasoning: 'Coding requires writing and testing.',
         tasks: [
-          { id: '1', description: 'Analyze solar energy market', tool: 'clock', dependencies: [] },
-          { id: '2', description: 'Define operational strategy', tool: 'filesystem', metadata: { operation: 'list_directory', path: '.' }, dependencies: ['1'] },
-          { id: '3', description: 'Project financial outcomes', tool: 'clock', dependencies: [] }
+          { id: 'task_01', description: 'Write Auth', tool: 'write_code', metadata: { feature: 'Auth' }, dependencies: [] },
+          { id: 'task_02', description: 'Run tests', tool: 'run_tests', dependencies: ['task_01'] }
         ]
-      } as unknown as T;
+      } as any as T;
     }
 
-    if (prompt.includes('production failure') || prompt.includes('root cause')) {
+    if (prompt.toLowerCase().includes('ghost')) {
       return {
-        id: crypto.randomUUID(),
-        goal: 'Investigate a production failure',
-        reasoning: 'Root cause analysis requires log analysis and system inspection.',
+        id: 'mock-plan-fail',
+        goal: 'Fail test',
+        reasoning: 'Using a non-existent tool.',
         tasks: [
-          { id: '1', description: 'Check user service logs', tool: 'clock', dependencies: [] },
-          { id: '2', description: 'Inspect resource usage', tool: 'filesystem', metadata: { operation: 'list_directory', path: '.' }, dependencies: ['1'] },
-          { id: '3', description: 'Identify failure pattern', tool: 'clock', dependencies: [] }
+          { id: 'task_01', description: 'Ghost task', tool: 'ghost_tool', dependencies: [] }
         ]
-      } as unknown as T;
+      } as any as T;
     }
 
-    if (prompt.includes('PostgreSQL') || prompt.includes('migration')) {
+    if (prompt.toLowerCase().includes('cycle')) {
       return {
-        id: crypto.randomUUID(),
-        goal: 'Build a migration strategy for PostgreSQL',
-        reasoning: 'Zero-downtime migration requires mapping source to destination and cutover plan.',
+        id: 'mock-plan-cycle',
+        goal: 'Cycle test',
+        reasoning: 'Creating a circular dependency.',
         tasks: [
-          { id: '1', description: 'Assess source DB load', tool: 'clock', dependencies: [] },
-          { id: '2', description: 'Validate destination Cloud SQL config', tool: 'filesystem', metadata: { operation: 'list_directory', path: '.' }, dependencies: ['1'] },
-          { id: '3', description: 'Define replication lag thresholds', tool: 'clock', dependencies: [] }
+          { id: 'task_01', description: 'Task 1', tool: 'clock', dependencies: ['task_02'] },
+          { id: 'task_02', description: 'Task 2', tool: 'clock', dependencies: ['task_01'] }
         ]
-      } as unknown as T;
+      } as any as T;
     }
 
-    throw new Error('[MockLLMProvider] No mock response configured for this prompt.');
+    if (prompt.toLowerCase().includes('slow')) {
+      return {
+        id: 'mock-plan-slow',
+        goal: 'Slow test',
+        reasoning: 'Using a slow tool.',
+        tasks: [
+          { id: 'task_01', description: 'Slow task', tool: 'slow_tool', dependencies: [] }
+        ]
+      } as any as T;
+    }
+
+    if (prompt.toLowerCase().includes('flaky')) {
+      return {
+        id: 'mock-plan-flaky',
+        goal: 'Flaky test',
+        reasoning: 'Using a flaky tool.',
+        tasks: [
+          { id: 'task_01', description: 'Flaky task', tool: 'flaky_tool', dependencies: [] }
+        ]
+      } as any as T;
+    }
+
+    return {
+      id: 'mock-plan-default',
+      goal: 'Default goal',
+      reasoning: 'Default mock reasoning.',
+      tasks: [
+        { id: 'task_01', description: 'Generic task', tool: 'clock', dependencies: [] }
+      ]
+    } as any as T;
   }
 
-  public async embed(text: string): Promise<number[]> {
-    const size = 128;
-    const embedding = new Array(size).fill(0);
-    const words = text.toLowerCase().split(/\W+/).filter(w => w.length > 0);
+  public async generateText(prompt: string): Promise<string> {
+    return `Mock text response for: ${prompt.substring(0, 50)}...`;
+  }
 
-    for (const word of words) {
-      let hash = 0;
-      for (let i = 0; i < word.length; i++) {
-        const char = word.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash;
-      }
-
-      for (let i = 0; i < size; i++) {
-        const x = Math.sin(hash + i) * 10000;
-        embedding[i] += x - Math.floor(x);
-      }
-    }
-
-    // Normalize
+  public async generateEmbedding(text: string): Promise<number[]> {
+    const size = 1536;
+    const embedding = new Array(size).fill(0).map(() => Math.random());
     const norm = Math.sqrt(embedding.reduce((sum, val) => sum + val * val, 0));
-    if (norm > 0) {
-      for (let i = 0; i < size; i++) {
-        embedding[i] /= norm;
-      }
-    }
-
-    return embedding;
+    return embedding.map(v => v / (norm || 1));
   }
 }

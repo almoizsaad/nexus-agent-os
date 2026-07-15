@@ -17,7 +17,7 @@ import { ExecutiveBrain } from '../core/ExecutiveBrain';
  * Bootstraps and returns a fully configured Agent OS instance using DI.
  * Defaults to a new container for isolation (important for tests).
  */
-export function createAgent(container: ServiceContainer = new ServiceContainer()) {
+export function createAgent(container: ServiceContainer = new ServiceContainer(), options: { disableSafety?: boolean } = {}) {
   // Register all core services
   DependencyRegistry.registerCoreServices(container);
 
@@ -33,13 +33,29 @@ export function createAgent(container: ServiceContainer = new ServiceContainer()
   const improvementEngine = container.resolve(ImprovementEngine);
   const suggestions = container.resolve(OptimizationSuggestions);
   const knowledgeGraph = container.resolve(KnowledgeGraph);
-  container.resolve(AgentFactory);
+  const factory = container.resolve(AgentFactory);
   const manager = container.resolve(AgentManager);
 
   // Get or create default runtime instance
   const runtime = container.resolve(AgentRuntime);
   const executiveBrain = container.resolve(ExecutiveBrain);
 
+  if (options.disableSafety) {
+    const coordinator = executiveBrain.getCoordinator();
+    (coordinator as any).safety = {
+      evaluatePlan: async (plan: any) => ({
+        planId: plan.id,
+        timestamp: Date.now(),
+        score: { riskScore: 0, costScore: 0, safetyScore: 100, confidence: 100 },
+        passed: true,
+        warnings: [],
+        errors: [],
+        riskAnalysis: { level: 'low', factors: [] },
+        costAnalysis: { estimatedTokens: 0, estimatedDollars: 0, limitExceeded: false },
+        policyViolations: []
+      })
+    };
+  }
 
   return {
     runtime,

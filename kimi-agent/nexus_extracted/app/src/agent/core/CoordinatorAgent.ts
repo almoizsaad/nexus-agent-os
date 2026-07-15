@@ -70,6 +70,14 @@ export class CoordinatorAgent extends AgentRuntime {
     // Decompose and delegate
     await this.coordinator.coordinatePlan(plan);
     
+    // Check for delegation failures in initial batch
+    for (const task of plan.tasks) {
+      if (task.status === 'failed') {
+        const error = (task.metadata?.error as string) || 'Initial delegation failed';
+        await this.handleTaskFailure(plan, task.id, error);
+      }
+    }
+
     // Notify system of task assignments
     plan.tasks.filter(t => t.status === 'running').forEach(t => {
       this._eventBus.publish('system:telemetry', {
@@ -85,10 +93,11 @@ export class CoordinatorAgent extends AgentRuntime {
 
     this._eventBus.publish('agent:events', {
       type: AgentEventType.AGENT_UPDATE,
-      payload: { planId: plan.id, coordinatorId: this.identity?.id, status: 'PLAN_STARTED' },
+      payload: { missionId: plan.id, planId: plan.id, coordinatorId: this.identity?.id, status: 'PLAN_STARTED' },
       timestamp: Date.now()
     });
-  }
+    }
+
 
   private async handleTaskResult(message: AgentCommunicationMessage, success: boolean): Promise<void> {
     const payload = message.payload as Record<string, unknown>;
@@ -123,16 +132,23 @@ export class CoordinatorAgent extends AgentRuntime {
           // Double check status to avoid race conditions if multiple tasks completed at once
           if (task.status === 'pending') {
             await this.coordinator.delegateTask(task, plan.id);
-            // Notify system of task assignment
-            this._eventBus.publish('system:telemetry', {
-              type: SystemTelemetryType.TASK_ASSIGNED,
-              payload: {
-                agentId: task.assigneeId,
-                taskId: task.id,
-                planId: plan.id,
-              },
-              timestamp: Date.now()
-            });
+            
+            if (task.status === 'failed') {
+              const error = (task.metadata?.error as string) || 'Delegation failed';
+              this._stream.thought(`Task ${task.id} delegation failed: ${error}`, 'error', { planId, taskId: task.id });
+              await this.handleTaskFailure(plan, task.id, error);
+            } else {
+              // Notify system of task assignment
+              this._eventBus.publish('system:telemetry', {
+                type: SystemTelemetryType.TASK_ASSIGNED,
+                payload: {
+                  agentId: task.assigneeId,
+                  taskId: task.id,
+                  planId: plan.id,
+                },
+                timestamp: Date.now()
+              });
+            }
           }
         }
       } else if (this.isPlanComplete(plan)) {
@@ -216,7 +232,7 @@ export class CoordinatorAgent extends AgentRuntime {
     }
   }
 
-  private isPlanComplete(plan: CooperativePlan): boolean {
+  public isPlanComplete(plan: CooperativePlan): boolean {
     return plan.tasks.every(t => t.status === 'completed');
   }
 
@@ -282,7 +298,7 @@ export class CoordinatorAgent extends AgentRuntime {
     }
   }
 
-  private async finalizePlan(plan: CooperativePlan): Promise<void> {
+  public async finalizePlan(plan: CooperativePlan): Promise<void> {
     console.info(`[CoordinatorAgent] Plan ${plan.id} completed successfully.`);
     const results = plan.tasks.map(t => ({ taskId: t.id, result: t.metadata?.result }));
     this._eventBus.publish('agent:events', {

@@ -96,8 +96,23 @@ export class MissionScheduler {
     console.info(`[MissionScheduler] Starting mission: ${mission.title} (${mission.id})`);
     this.goalManager.updateMissionStatus(mission.id, 'running');
     
-    if (this.onStart) {
-      await this.onStart(mission);
+    try {
+      if (this.onStart) {
+        await this.onStart(mission);
+      }
+    } catch (error) {
+      console.error(`[MissionScheduler] Error in onStart for mission ${mission.id}:`, error);
+      this.goalManager.updateMissionStatus(mission.id, 'failed');
+      this.eventBus.publish('agent:events', {
+        type: AgentEventType.AGENT_UPDATE,
+        payload: { 
+          missionId: mission.id, 
+          status: 'PLAN_FAILED',
+          error: error instanceof Error ? error.message : String(error)
+        },
+        timestamp: Date.now()
+      });
+      return;
     }
 
     this.eventBus.publish('agent:events', {
@@ -111,8 +126,12 @@ export class MissionScheduler {
     console.info(`[MissionScheduler] Pausing mission: ${mission.title} (${mission.id})`);
     this.goalManager.updateMissionStatus(mission.id, 'paused');
 
-    if (this.onPause) {
-      await this.onPause(mission.id);
+    try {
+      if (this.onPause) {
+        await this.onPause(mission.id);
+      }
+    } catch (error) {
+      console.error(`[MissionScheduler] Error in onPause for mission ${mission.id}:`, error);
     }
 
     this.eventBus.publish('agent:events', {
@@ -126,8 +145,15 @@ export class MissionScheduler {
     console.info(`[MissionScheduler] Resuming mission: ${mission.title} (${mission.id})`);
     this.goalManager.updateMissionStatus(mission.id, 'running');
 
-    if (this.onResume) {
-      await this.onResume(mission.id);
+    try {
+      if (this.onResume) {
+        await this.onResume(mission.id);
+      }
+    } catch (error) {
+      console.error(`[MissionScheduler] Error in onResume for mission ${mission.id}:`, error);
+      // If resume fails, maybe mark it as failed?
+      this.goalManager.updateMissionStatus(mission.id, 'failed');
+      return;
     }
 
     this.eventBus.publish('agent:events', {
