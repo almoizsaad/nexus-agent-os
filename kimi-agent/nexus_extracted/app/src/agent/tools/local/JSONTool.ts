@@ -27,13 +27,13 @@ export class JSONTool implements Tool<any, any> {
   public readonly inputSchema = z.discriminatedUnion('operation', [
     z.object({
       operation: z.literal('parse'),
-      text: z.string()
-    }),
+      text: z.any() // Allow any, we will stringify if needed or handle objects
+    }).passthrough(),
     z.object({
       operation: z.literal('format'),
       data: z.any(),
       space: z.number().default(2)
-    })
+    }).passthrough()
   ]);
   
   public readonly outputSchema = z.any();
@@ -41,6 +41,10 @@ export class JSONTool implements Tool<any, any> {
   public async execute(input: any): Promise<any> {
     switch (input.operation) {
       case 'parse':
+        if (typeof input.text !== 'string') {
+          // If already an object/array, just return it (no-op parse)
+          return input.text;
+        }
         return JSON.parse(input.text);
       case 'format':
         return JSON.stringify(input.data, null, input.space);

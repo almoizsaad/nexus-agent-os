@@ -26,7 +26,7 @@ export class ImageMetadataTool implements Tool<{ path: string }, { width: number
 
   public readonly inputSchema = z.object({
     path: z.string().describe('Path to the image file')
-  });
+  }).passthrough();
   
   public readonly outputSchema = z.object({
     width: z.number(),

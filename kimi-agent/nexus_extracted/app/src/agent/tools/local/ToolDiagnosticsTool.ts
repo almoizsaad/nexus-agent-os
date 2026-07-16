@@ -34,7 +34,7 @@ export class ToolDiagnosticsTool implements Tool<any, any> {
   public readonly inputSchema = z.object({
     operation: z.enum(['check_all', 'check_one', 'get_stats']).default('check_all'),
     toolName: z.string().optional()
-  });
+  }).passthrough();
   
   public readonly outputSchema = z.any();
 

@@ -28,7 +28,7 @@ export class MarkdownTool implements Tool<any, any> {
     text: z.string(),
     operation: z.enum(['extract_headers', 'extract_links', 'chunk']),
     chunkSize: z.number().default(500).optional()
-  });
+  }).passthrough();
   
   public readonly outputSchema = z.any();
 

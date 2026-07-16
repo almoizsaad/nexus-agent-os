@@ -28,7 +28,7 @@ export class TerminalTool implements Tool<{ command: string; cwd?: string }, { s
   public readonly inputSchema = z.object({
     command: z.string(),
     cwd: z.string().optional()
-  });
+  }).passthrough();
   
   public readonly outputSchema = z.object({
     stdout: z.string(),

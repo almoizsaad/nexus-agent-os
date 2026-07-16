@@ -26,12 +26,12 @@ export class FilesystemTool implements Tool<any, any> {
   };
 
   public readonly inputSchema = z.object({
-    operation: z.enum(['read_file', 'write_file', 'list_directory', 'delete_file', 'make_directory', 'exists']).optional().default('list_directory'),
+    operation: z.string().optional(),
     path: z.string().optional().default('.'),
-    content: z.string().optional(),
+    content: z.any().optional(),
     encoding: z.string().optional().default('utf8'),
     recursive: z.boolean().optional().default(true)
-  });
+  }).passthrough();
   
   public readonly outputSchema = z.any();
 
@@ -47,19 +47,29 @@ export class FilesystemTool implements Tool<any, any> {
     let operation = input.operation;
     const path = input.path || '.';
 
-    // Smarter inference if operation is missing
+    // Smarter inference and mapping
     if (!operation) {
       if (input.content !== undefined) operation = 'write_file';
       else if (path.includes('.')) operation = 'read_file';
       else operation = 'list_directory';
     }
 
+    // Map common synonyms
+    if (operation === 'write' || operation === 'save') operation = 'write_file';
+    if (operation === 'read' || operation === 'load') operation = 'read_file';
+    if (operation === 'ls' || operation === 'list') operation = 'list_directory';
+    if (operation === 'rm' || operation === 'remove' || operation === 'delete') operation = 'delete_file';
+    if (operation === 'mkdir' || operation === 'mkdirp') operation = 'make_directory';
+
     switch (operation) {
       case 'read_file':
         return await fs.readFile(path, { encoding: input.encoding as any });
       
       case 'write_file':
-        await fs.writeFile(path, input.content || '', { encoding: input.encoding as any });
+        const fileContent = typeof input.content === 'string' 
+          ? input.content 
+          : JSON.stringify(input.content, null, 2);
+        await fs.writeFile(path, fileContent || '', { encoding: input.encoding as any });
         return { success: true, path };
       
       case 'list_directory':
@@ -82,7 +92,7 @@ export class FilesystemTool implements Tool<any, any> {
         }
       
       default:
-        return await fs.readdir(path);
+        throw new Error(`Unsupported operation: ${operation}. Valid operations: read_file, write_file, list_directory, delete_file, make_directory, exists`);
     }
   }
 

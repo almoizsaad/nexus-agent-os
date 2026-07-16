@@ -29,35 +29,35 @@ export class GitTool implements Tool<any, any> {
     z.object({
       operation: z.literal('status'),
       cwd: z.string().optional()
-    }),
+    }).passthrough(),
     z.object({
       operation: z.literal('clone'),
       url: z.string(),
       path: z.string().optional()
-    }),
+    }).passthrough(),
     z.object({
       operation: z.literal('commit'),
       message: z.string(),
       all: z.boolean().default(true),
       cwd: z.string().optional()
-    }),
+    }).passthrough(),
     z.object({
       operation: z.literal('push'),
       remote: z.string().default('origin'),
       branch: z.string().optional(),
       cwd: z.string().optional()
-    }),
+    }).passthrough(),
     z.object({
       operation: z.literal('pull'),
       remote: z.string().default('origin'),
       branch: z.string().optional(),
       cwd: z.string().optional()
-    }),
+    }).passthrough(),
     z.object({
       operation: z.literal('log'),
       limit: z.number().default(10),
       cwd: z.string().optional()
-    })
+    }).passthrough()
   ]);
   
   public readonly outputSchema = z.any();

@@ -22,11 +22,12 @@ import { ToolDiagnosticsTool } from './local/ToolDiagnosticsTool';
 import { RepositoryIndexerTool } from './local/RepositoryIndexerTool';
 import type { IKnowledgeDatabase } from '../types/knowledge';
 import type { Tool } from './Tool';
+import type { LLMProvider } from '../providers/LLMProvider';
 
 /**
  * Registers all production-grade local tools into the registry.
  */
-export function registerDefaultTools(registry: ToolRegistry, knowledgeDb?: IKnowledgeDatabase): void {
+export function registerDefaultTools(registry: ToolRegistry, knowledgeDb?: IKnowledgeDatabase, llmProvider?: LLMProvider): void {
   const tools: Tool<any, any>[] = [
     new ClockTool(),
     new UUIDTool(),
@@ -42,7 +43,7 @@ export function registerDefaultTools(registry: ToolRegistry, knowledgeDb?: IKnow
     new CSVTool(),
     new PDFTool(),
     new ImageMetadataTool(),
-    new ResearchSynthesisTool(),
+    new ResearchSynthesisTool(llmProvider),
     new DockerTool(),
     new OpenAPITool(),
     new MCPTool(),

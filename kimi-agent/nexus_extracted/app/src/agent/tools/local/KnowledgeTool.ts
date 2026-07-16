@@ -31,14 +31,14 @@ export class KnowledgeTool implements Tool<any, any> {
       query: z.string(),
       limit: z.number().default(5),
       threshold: z.number().default(0.5)
-    }),
+    }).passthrough(),
     z.object({
       operation: z.literal('get'),
       id: z.string()
-    }),
+    }).passthrough(),
     z.object({
       operation: z.literal('list_tags')
-    })
+    }).passthrough()
   ]);
   
   public readonly outputSchema = z.any();

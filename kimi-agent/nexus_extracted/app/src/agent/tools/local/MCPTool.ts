@@ -28,22 +28,22 @@ export class MCPTool implements Tool<any, any> {
     z.object({
       operation: z.literal('list_tools'),
       serverUrl: z.string()
-    }),
+    }).passthrough(),
     z.object({
       operation: z.literal('call_tool'),
       serverUrl: z.string(),
       toolName: z.string(),
       args: z.record(z.string(), z.any()).optional()
-    }),
+    }).passthrough(),
     z.object({
       operation: z.literal('list_resources'),
       serverUrl: z.string()
-    }),
+    }).passthrough(),
     z.object({
       operation: z.literal('read_resource'),
       serverUrl: z.string(),
       uri: z.string()
-    })
+    }).passthrough()
   ]);
   
   public readonly outputSchema = z.any();

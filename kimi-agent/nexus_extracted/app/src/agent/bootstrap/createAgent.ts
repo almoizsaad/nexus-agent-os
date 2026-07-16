@@ -12,6 +12,7 @@ import { ImprovementEngine } from '../improvement/ImprovementEngine';
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
 import { AgentRuntime } from '../core/AgentRuntime';
 import { ExecutiveBrain } from '../core/ExecutiveBrain';
+import type { LLMProvider } from '../providers/LLMProvider';
 
 /**
  * Bootstraps and returns a fully configured Agent OS instance using DI.
@@ -25,9 +26,10 @@ export function createAgent(container: ServiceContainer = new ServiceContainer()
   const eventBus = container.resolve(EventBus);
   const toolRegistry = container.resolve(ToolRegistry);
   const knowledgeDb = container.resolve(KnowledgeDatabase);
+  const llmProvider = container.resolve<LLMProvider>('LLMProvider');
 
   // Register default production tools
-  registerDefaultTools(toolRegistry, knowledgeDb);
+  registerDefaultTools(toolRegistry, knowledgeDb, llmProvider);
 
   const monitor = container.resolve(PerformanceMonitor);
   const improvementEngine = container.resolve(ImprovementEngine);

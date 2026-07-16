@@ -27,7 +27,7 @@ export class PDFTool implements Tool<{ path: string; operation: 'inspect' | 'ext
   public readonly inputSchema = z.object({
     path: z.string().describe('Path to the PDF file'),
     operation: z.enum(['inspect', 'extract_text']).default('inspect')
-  });
+  }).passthrough();
   
   public readonly outputSchema = z.any();
 

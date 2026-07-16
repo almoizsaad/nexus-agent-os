@@ -35,7 +35,7 @@ export class RepositoryIndexerTool implements Tool<any, any> {
     repoPath: z.string().describe('Local path to the repository'),
     glob: z.string().default('**/*.{ts,tsx,js,jsx,md,py,go}').describe('Glob pattern for files to index'),
     recursive: z.boolean().default(true)
-  });
+  }).passthrough();
   
   public readonly outputSchema = z.object({
     indexedFiles: z.number(),

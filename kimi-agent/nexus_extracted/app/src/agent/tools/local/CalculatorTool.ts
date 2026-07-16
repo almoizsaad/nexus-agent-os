@@ -26,7 +26,7 @@ export class CalculatorTool implements Tool<{ expression: string }, { result: nu
 
   public readonly inputSchema = z.object({
     expression: z.string().describe('The mathematical expression to evaluate (e.g., "2 + 2 * 3")')
-  });
+  }).passthrough();
   
   public readonly outputSchema = z.object({
     result: z.number()

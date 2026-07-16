@@ -1,0 +1,1 @@
+[SUMMARY OF 2 SOURCES FOCUSED ON Daily itinerary for Tokyo, Kyoto, and Osaka]

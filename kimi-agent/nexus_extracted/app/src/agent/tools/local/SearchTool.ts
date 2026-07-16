@@ -29,7 +29,7 @@ export class SearchTool implements Tool<any, any> {
     query: z.string(),
     provider: z.enum(['tavily', 'brave', 'serpapi', 'google', 'duckduckgo']).default('duckduckgo'),
     limit: z.number().default(5)
-  });
+  }).passthrough();
   
   public readonly outputSchema = z.object({
     results: z.array(z.object({

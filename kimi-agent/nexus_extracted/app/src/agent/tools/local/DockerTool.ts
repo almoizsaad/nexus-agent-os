@@ -29,26 +29,26 @@ export class DockerTool implements Tool<any, any> {
     z.object({
       operation: z.literal('list_containers'),
       all: z.boolean().default(false)
-    }),
+    }).passthrough(),
     z.object({
       operation: z.literal('run_container'),
       image: z.string(),
       name: z.string().optional(),
       command: z.string().optional(),
       detach: z.boolean().default(true)
-    }),
+    }).passthrough(),
     z.object({
       operation: z.literal('stop_container'),
       containerId: z.string()
-    }),
+    }).passthrough(),
     z.object({
       operation: z.literal('remove_container'),
       containerId: z.string(),
       force: z.boolean().default(false)
-    }),
+    }).passthrough(),
     z.object({
       operation: z.literal('list_images')
-    })
+    }).passthrough()
   ]);
   
   public readonly outputSchema = z.any();

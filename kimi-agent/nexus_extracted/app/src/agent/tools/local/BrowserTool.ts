@@ -28,24 +28,24 @@ export class BrowserTool implements Tool<any, any> {
     z.object({
       operation: z.literal('navigate'),
       url: z.string()
-    }),
+    }).passthrough(),
     z.object({
       operation: z.literal('read_page'),
       url: z.string()
-    }),
+    }).passthrough(),
     z.object({
       operation: z.literal('extract_links'),
       url: z.string()
-    }),
+    }).passthrough(),
     z.object({
       operation: z.literal('screenshot'),
       url: z.string()
-    }),
+    }).passthrough(),
     z.object({
       operation: z.literal('extract_dom'),
       url: z.string(),
       selector: z.string().optional()
-    })
+    }).passthrough()
   ]);
   
   public readonly outputSchema = z.any();

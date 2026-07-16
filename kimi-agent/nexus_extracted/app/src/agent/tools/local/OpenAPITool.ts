@@ -31,7 +31,7 @@ export class OpenAPITool implements Tool<any, any> {
     parameters: z.record(z.string(), z.any()).optional().describe('Path, query, or header parameters'),
     body: z.any().optional().describe('Request body'),
     baseUrl: z.string().optional().describe('Override the base URL defined in the spec')
-  });
+  }).passthrough();
   
   public readonly outputSchema = z.any();
 

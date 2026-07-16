@@ -152,11 +152,11 @@ export class ToolRegistry {
       try {
         validatedInput = tool.inputSchema.parse(input);
       } catch (validationError: any) {
+        console.error(`[ToolRegistry] Validation failed for tool "${name}". Input:`, input);
         const isZodError = validationError instanceof z.ZodError || validationError.name === 'ZodError';
         if (isZodError) {
           const issues = validationError.issues || validationError.errors || [];
-          console.error(`[ToolRegistry] Validation failed for tool "${name}". Input:`, JSON.stringify(input, null, 2));
-          console.error(`[ToolRegistry] Validation issues:`, JSON.stringify(issues, null, 2));
+          console.error(`[ToolRegistry] Zod validation issues for tool "${name}":`, JSON.stringify(issues, null, 2));
           throw new Error(`Input validation failed for ${name}: ${issues.map((e: any) => `${e.path.join('.')}: ${e.message}`).join(', ')}`);
         }
         console.error(`[ToolRegistry] Unexpected error during validation for tool "${name}":`, validationError);

@@ -32,7 +32,7 @@ export class HTTPTool implements Tool<any, any> {
     body: z.any().optional(),
     responseType: z.enum(['json', 'text', 'blob']).default('json'),
     rateLimitKey: z.string().optional()
-  });
+  }).passthrough();
   
   public readonly outputSchema = z.any();
 

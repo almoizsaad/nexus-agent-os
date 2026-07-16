@@ -26,7 +26,7 @@ export class UUIDTool implements Tool<{ version: 4 }, { uuid: string }> {
 
   public readonly inputSchema = z.object({
     version: z.literal(4).default(4)
-  });
+  }).passthrough();
   
   public readonly outputSchema = z.object({
     uuid: z.string()

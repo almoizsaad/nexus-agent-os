@@ -27,7 +27,7 @@ export class CSVTool implements Tool<{ text: string; delimiter?: string }, { row
   public readonly inputSchema = z.object({
     text: z.string(),
     delimiter: z.string().default(',')
-  });
+  }).passthrough();
   
   public readonly outputSchema = z.object({
     rows: z.array(z.array(z.string()))

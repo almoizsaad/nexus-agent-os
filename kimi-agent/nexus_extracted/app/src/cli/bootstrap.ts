@@ -14,6 +14,7 @@ import { initializeRegistry } from '../registry/defaultRegistry';
 import { MockLLMProvider } from '../agent/providers/MockLLMProvider';
 import { ToolRegistry } from '../agent/tools/ToolRegistry';
 import { registerDefaultTools } from '../agent/tools/registerTools';
+import type { LLMProvider } from '../agent/providers/LLMProvider';
 
 /**
  * Bootstraps the Agent OS runtime for CLI/Headless use.
@@ -49,7 +50,8 @@ export function bootstrapHeadlessRuntime() {
   // 4. Register tools explicitly for headless environment
   const toolRegistry = globalContainer.resolve(ToolRegistry);
   const knowledgeDb = globalContainer.resolve(KnowledgeDatabase);
-  registerDefaultTools(toolRegistry, knowledgeDb);
+  const llmProvider = globalContainer.resolve<LLMProvider>('LLMProvider');
+  registerDefaultTools(toolRegistry, knowledgeDb, llmProvider);
 
   // 5. Eagerly instantiate core singletons
   try {
