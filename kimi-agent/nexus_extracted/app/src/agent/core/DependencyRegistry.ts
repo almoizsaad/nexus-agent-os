@@ -161,25 +161,13 @@ export class DependencyRegistry {
     if (!container.has(WorkspaceAdapter)) container.registerSingleton(WorkspaceAdapter, (c) => new WorkspaceAdapter(c.resolve(EventBus)));
     if (!container.has(MissionAdapter)) container.registerSingleton(MissionAdapter, (c) => new MissionAdapter(c.resolve(EventBus)));
 
-    // Manager
-    if (!container.has(AgentManager)) {
-      container.registerSingleton(AgentManager, (c) => {
-        const eventBus = c.resolve(EventBus);
-        const factory = c.resolve(AgentFactory);
-        const registry = c.resolve(AgentRegistry);
-        const messageBus = c.resolve(AgentMessageBus);
-        return new AgentManager(eventBus, (identity: AgentIdentity, channel: AgentChannel) => {
-          return factory.createAgent(identity, channel);
-        }, registry, messageBus);
-      });
-    }
-
     // Coordinator & Executive Brain
     if (!container.has(CoordinatorAgent)) {
       container.registerSingleton(CoordinatorAgent, (c) => {
         const factory = c.resolve(AgentFactory);
         const registry = c.resolve(AgentRegistry);
         const messageBus = c.resolve(AgentMessageBus);
+        const eventBus = c.resolve(EventBus);
         
         // Setup communication infrastructure for coordinator
         const router = new MessageRouter(registry, messageBus);
@@ -196,9 +184,30 @@ export class DependencyRegistry {
         const channel = new AgentChannel(identity.id, inbox, outbox);
         messageBus.subscribe(identity.id, (msg) => inbox.push(msg));
         
+        // We need AgentManager for spawning, but AgentManager needs CoordinatorAgent.
+        // We'll use a lazy resolution or setter if needed, but for now let's pass null and 
+        // the AgentManager will set itself when it's ready.
         const coordinator = factory.createCoordinator(identity, channel);
         registry.register(identity, coordinator);
         return coordinator;
+      });
+    }
+
+    if (!container.has(AgentManager)) {
+      container.registerSingleton(AgentManager, (c) => {
+        const eventBus = c.resolve(EventBus);
+        const factory = c.resolve(AgentFactory);
+        const registry = c.resolve(AgentRegistry);
+        const messageBus = c.resolve(AgentMessageBus);
+        const manager = new AgentManager(eventBus, (identity: AgentIdentity, channel: AgentChannel) => {
+          return factory.createAgent(identity, channel);
+        }, registry, messageBus);
+
+        // Inject manager into coordinator
+        const coordinator = c.resolve(CoordinatorAgent);
+        coordinator.setManager(manager);
+
+        return manager;
       });
     }
 

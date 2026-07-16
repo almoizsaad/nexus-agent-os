@@ -186,9 +186,14 @@ export class LLMPlanner implements Planner {
       2. **CRITICAL**: You MUST provide all required input parameters for the chosen tool inside the 'metadata' field.
          - Look at the 'Input' section for each tool below.
          - Example: If a tool has Input '{ query (String) }', you MUST include '{ "metadata": { "query": "..." } }' in the task object.
-      3. Define clear dependencies (e.g., task B depends on task A).
-      4. Provide a brief reasoning for your plan.
-      5. Estimate your confidence in this plan (0-100).
+      3. **DATA FLOW**: You can use placeholders to pass results between tasks.
+         - Use '{{task-id.result}}' to reference the full output of a previous task.
+         - Use '{{task-id.result.path.to.field}}' to reference a specific nested field.
+         - **HINT**: 'search' tool returns an object '{ results: [{ title, snippet, url }, ...] }'.
+         - Example: If task-1 is 'search', task-2 can use '{ "metadata": { "sources": "{{task-1.result.results}}" } }' to get the array of results directly.
+      4. Define clear dependencies (e.g., task B depends on task A).
+      5. Provide a brief reasoning for your plan.
+      6. Estimate your confidence in this plan (0-100).
 
       **OUTPUT FORMAT**:
       You MUST return ONLY a valid JSON object with the following EXACT structure:

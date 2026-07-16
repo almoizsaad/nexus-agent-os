@@ -7,6 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Plus, Target, Activity, Cpu, History, Settings } from 'lucide-react';
 import ParticleCanvas from '../generative-ui/ParticleCanvas';
 import { Card } from '../ui/card';
+import { agent } from '@/agent/bootstrap/createAgent';
 
 export const MissionWorkspace: React.FC = () => {
   const { missions, activeMissionId, setActiveMission, addMission } = useMissionStore();
@@ -15,6 +16,17 @@ export const MissionWorkspace: React.FC = () => {
   useEffect(() => {
     // Initial state setup if needed, but no mock data
   }, [missions, addMission, setActiveMission]);
+
+  const handleInitiateMission = async () => {
+    const goal = window.prompt('Enter mission objective:');
+    if (!goal) return;
+
+    await agent.executiveBrain.createMission(goal, {
+      description: goal,
+      successCriteria: ['Task completed as requested'],
+      priority: 'medium'
+    });
+  };
 
   const missionList = Object.values(missions).sort((a, b) => b.updatedAt - a.updatedAt);
 
@@ -41,7 +53,10 @@ export const MissionWorkspace: React.FC = () => {
         </div>
 
         <div className="p-4 border-b border-white/5">
-          <Button className="w-full gap-2 font-mono text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20">
+          <Button 
+            className="w-full gap-2 font-mono text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20"
+            onClick={handleInitiateMission}
+          >
             <Plus className="w-4 h-4" />
             Initiate Mission
           </Button>

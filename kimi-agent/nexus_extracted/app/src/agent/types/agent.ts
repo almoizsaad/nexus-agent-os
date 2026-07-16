@@ -63,6 +63,7 @@ export interface AgentIdentity {
   name: string;
   role: AgentRole;
   capabilities: string[];
+  metadata?: Record<string, unknown>;
 }
 
 export interface AgentState {

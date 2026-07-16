@@ -25,36 +25,13 @@ export class FilesystemTool implements Tool<any, any> {
     timeout: 5000
   };
 
-  public readonly inputSchema = z.discriminatedUnion('operation', [
-    z.object({
-      operation: z.literal('read_file'),
-      path: z.string(),
-      encoding: z.string().default('utf8')
-    }),
-    z.object({
-      operation: z.literal('write_file'),
-      path: z.string(),
-      content: z.string(),
-      encoding: z.string().default('utf8')
-    }),
-    z.object({
-      operation: z.literal('list_directory'),
-      path: z.string().default('.')
-    }),
-    z.object({
-      operation: z.literal('delete_file'),
-      path: z.string()
-    }),
-    z.object({
-      operation: z.literal('make_directory'),
-      path: z.string(),
-      recursive: z.boolean().default(true)
-    }),
-    z.object({
-      operation: z.literal('exists'),
-      path: z.string()
-    })
-  ]);
+  public readonly inputSchema = z.object({
+    operation: z.enum(['read_file', 'write_file', 'list_directory', 'delete_file', 'make_directory', 'exists']).optional().default('list_directory'),
+    path: z.string().optional().default('.'),
+    content: z.string().optional(),
+    encoding: z.string().optional().default('utf8'),
+    recursive: z.boolean().optional().default(true)
+  });
   
   public readonly outputSchema = z.any();
 
@@ -67,35 +44,45 @@ export class FilesystemTool implements Tool<any, any> {
       throw new Error('FilesystemTool is only available in a Node.js environment.');
     }
 
-    switch (input.operation) {
+    let operation = input.operation;
+    const path = input.path || '.';
+
+    // Smarter inference if operation is missing
+    if (!operation) {
+      if (input.content !== undefined) operation = 'write_file';
+      else if (path.includes('.')) operation = 'read_file';
+      else operation = 'list_directory';
+    }
+
+    switch (operation) {
       case 'read_file':
-        return await fs.readFile(input.path, { encoding: input.encoding as any });
+        return await fs.readFile(path, { encoding: input.encoding as any });
       
       case 'write_file':
-        await fs.writeFile(input.path, input.content, { encoding: input.encoding as any });
-        return { success: true, path: input.path };
+        await fs.writeFile(path, input.content || '', { encoding: input.encoding as any });
+        return { success: true, path };
       
       case 'list_directory':
-        return await fs.readdir(input.path);
+        return await fs.readdir(path);
       
       case 'delete_file':
-        await fs.unlink(input.path);
+        await fs.unlink(path);
         return { success: true };
       
       case 'make_directory':
-        await fs.mkdir(input.path, { recursive: input.recursive });
-        return { success: true, path: input.path };
+        await fs.mkdir(path, { recursive: input.recursive });
+        return { success: true, path };
       
       case 'exists':
         try {
-          await fs.access(input.path);
+          await fs.access(path);
           return { exists: true };
         } catch {
           return { exists: false };
         }
       
       default:
-        throw new Error(`Unsupported operation: ${input.operation}`);
+        return await fs.readdir(path);
     }
   }
 

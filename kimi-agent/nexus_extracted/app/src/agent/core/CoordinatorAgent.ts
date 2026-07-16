@@ -12,10 +12,12 @@ import type { IPerformanceMonitor, IImprovementEngine } from '../types/improveme
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
 import { AgentChannel } from './AgentChannel';
 import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
+import { AgentManager } from './AgentManager';
 
 export class CoordinatorAgent extends AgentRuntime {
   private coordinator: PlannerCoordinator;
   private consensus: PlannerConsensus;
+  private manager?: AgentManager;
   private activePlans: Map<string, CooperativePlan> = new Map();
   private maxRetries = 3;
 
@@ -29,15 +31,21 @@ export class CoordinatorAgent extends AgentRuntime {
     suggestions?: OptimizationSuggestions,
     identity?: AgentIdentity,
     channel?: AgentChannel,
-    knowledgeGraph?: KnowledgeGraph
+    knowledgeGraph?: KnowledgeGraph,
+    manager?: AgentManager
   ) {
     super(eventBus, planner, executor, monitor, improvementEngine, suggestions, identity, channel, knowledgeGraph);
     this.coordinator = new PlannerCoordinator(registry, this.channel);
     this.consensus = new PlannerConsensus();
+    this.manager = manager;
     
     // Base constructor calls setupMessageHandlers, but we might need to re-register 
     // or ensure coordinator is ready. Since setupMessageHandlers is overridden,
     // the version called in super() will be the one below.
+  }
+
+  public setManager(manager: AgentManager): void {
+    this.manager = manager;
   }
 
   protected setupMessageHandlers(): void {
@@ -69,6 +77,20 @@ export class CoordinatorAgent extends AgentRuntime {
     this.activePlans.set(plan.id, plan);
     this.consensus.proposePlan(plan.id);
     
+    // Spawn specialized agents if needed
+    if (this.manager) {
+      plan.tasks.forEach(task => {
+        const role = task.assignedRole || 'worker';
+        const name = `${role.charAt(0).toUpperCase() + role.slice(1)} Agent ${task.id.slice(0, 4)}`;
+        this.manager!.spawnAgent(
+          name, 
+          role, 
+          task.metadata?.requiredCapabilities as string[] || ['general'],
+          { missionId: plan.id }
+        );
+      });
+    }
+
     // Decompose and delegate
     await this.coordinator.coordinatePlan(plan);
     
@@ -91,12 +113,6 @@ export class CoordinatorAgent extends AgentRuntime {
         },
         timestamp: Date.now()
       });
-    });
-
-    this._eventBus.publish('agent:events', {
-      type: AgentEventType.AGENT_UPDATE,
-      payload: { missionId: plan.id, planId: plan.id, coordinatorId: this.identity?.id, status: 'PLAN_STARTED' },
-      timestamp: Date.now()
     });
     }
 
@@ -133,7 +149,7 @@ export class CoordinatorAgent extends AgentRuntime {
         for (const task of readyTasks) {
           // Double check status to avoid race conditions
           if (task.status === 'pending') {
-            await this.coordinator.delegateTask(task, plan.id);
+            await this.coordinator.delegateTask(task, plan.id, plan);
             
             if (task.status === 'failed') {
               const error = (task.metadata?.error as string) || 'Delegation failed';
@@ -173,11 +189,13 @@ export class CoordinatorAgent extends AgentRuntime {
     
     if (retries < this.maxRetries) {
       console.info(`[CoordinatorAgent] Retrying task ${taskId} (attempt ${retries + 1})`);
+      this._stream.thought(`Retrying task ${taskId} (Attempt ${retries + 1}/${this.maxRetries}). Error: ${error}`, 'error', { planId: plan.id, taskId });
       task.metadata = { ...task.metadata, retries: retries + 1 };
       task.status = 'pending';
-      await this.coordinator.delegateTask(task, plan.id);
+      await this.coordinator.delegateTask(task, plan.id, plan);
     } else {
       console.warn(`[CoordinatorAgent] Task ${taskId} failed after ${this.maxRetries} retries. Attempting replan.`);
+      this._stream.thought(`Task ${taskId} failed critically after ${this.maxRetries} retries. Initiating autonomous recovery/replan.`, 'error', { planId: plan.id, taskId });
       this.coordinator.handleTaskFailure(plan, taskId, error);
       await this.replan(plan, taskId, error);
     }
@@ -201,6 +219,7 @@ export class CoordinatorAgent extends AgentRuntime {
     if (!this.planner) return;
 
     console.info(`[CoordinatorAgent] Replanning for plan ${plan.id} due to failure in task ${failedTaskId}`);
+    this._stream.thought(`Autonomous recovery sequence initiated. Synthesizing new operational strategy to bypass failure in ${failedTaskId}.`, 'plan', { planId: plan.id });
     
     // Logic for replanning: generate a new plan from the current state
     const remainingGoal = `Recover from failure in task ${failedTaskId}: ${error}. Original goal: ${plan.goal}`;
@@ -209,6 +228,8 @@ export class CoordinatorAgent extends AgentRuntime {
       newPlan.id = plan.id; // Keep same ID or handle as subplan
       newPlan.coordinatorId = this.identity?.id || 'unknown';
       
+      this._stream.thought(`New recovery plan formulated with ${newPlan.tasks.length} tasks. Resuming mission execution.`, 'observation', { planId: plan.id });
+
       this.activePlans.set(plan.id, newPlan);
       await this.coordinator.coordinatePlan(newPlan);
     } catch (e) {
@@ -259,6 +280,17 @@ export class CoordinatorAgent extends AgentRuntime {
       // Track missionId in metadata of tasks
       plan.tasks.forEach(t => {
         t.metadata = { ...t.metadata, missionId: mission.id };
+      });
+
+      this._eventBus.publish('agent:events', {
+        type: AgentEventType.AGENT_UPDATE,
+        payload: { 
+          missionId: mission.id, 
+          planId: mission.id, 
+          status: 'PLAN_STARTED',
+          plan: plan 
+        },
+        timestamp: Date.now()
       });
 
       await this.startCooperativePlan(plan);

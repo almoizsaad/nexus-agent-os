@@ -24,62 +24,93 @@ export class ResearchSynthesisTool implements Tool<any, any> {
     timeout: 30000
   };
 
-  public readonly inputSchema = z.discriminatedUnion('operation', [
-    z.object({
-      operation: z.literal('summarize'),
-      sources: z.array(z.object({
-        content: z.string(),
-        title: z.string().optional(),
-        url: z.string().optional()
-      })),
-      focus: z.string().optional()
-    }),
-    z.object({
-      operation: z.literal('compare'),
-      facts: z.array(z.object({
-        claim: z.string(),
-        source: z.string(),
-        url: z.string().optional()
-      }))
-    }),
-    z.object({
-      operation: z.literal('generate_report'),
-      topic: z.string(),
-      findings: z.array(z.any()),
-      includeCitations: z.boolean().default(true)
-    })
-  ]);
+  public readonly inputSchema = z.object({
+    operation: z.enum(['summarize', 'compare', 'generate_report']).optional().default('summarize'),
+    sources: z.array(z.object({
+      content: z.string().optional(),
+      snippet: z.string().optional(),
+      title: z.string().optional(),
+      url: z.string().optional()
+    })).optional().default([]),
+    focus: z.string().optional(),
+    facts: z.array(z.object({
+      claim: z.string().optional(),
+      snippet: z.string().optional(),
+      content: z.string().optional(),
+      source: z.string().optional(),
+      url: z.string().optional()
+    })).optional().default([]),
+    topic: z.string().optional().default('General Research'),
+    findings: z.array(z.any()).optional().default([]),
+    includeCitations: z.boolean().optional().default(true)
+  });
   
   public readonly outputSchema = z.any();
 
   public async execute(input: any): Promise<any> {
-    switch (input.operation) {
+    let operation = input.operation;
+
+    // Smarter inference if operation is missing
+    if (!operation) {
+      if (input.sources && input.sources.length > 0) operation = 'summarize';
+      else if (input.facts && input.facts.length > 0) operation = 'compare';
+      else if (input.findings && input.findings.length > 0) operation = 'generate_report';
+      else operation = 'summarize';
+    }
+
+    switch (operation) {
       case 'summarize':
-        return this.summarize(input.sources, input.focus);
+        return this.summarize(input.sources || [], input.focus);
       case 'compare':
-        return this.compare(input.facts);
+        return this.compare(input.facts || []);
       case 'generate_report':
-        return this.generateReport(input.topic, input.findings, input.includeCitations);
+        return this.generateReport(input.topic || 'Research Report', input.findings || [], !!input.includeCitations);
       default:
-        throw new Error(`Unsupported operation: ${input.operation}`);
+        return this.summarize(input.sources || [], input.focus);
     }
   }
 
-  private summarize(sources: any[], focus?: string): any {
-    // In a real agent, this would call an LLM to summarize
-    // For now, we provide a structured template that the agent can fill
-    // const combinedContent = sources.map(s => s.content).join('\n\n');
+  private summarize(sources: any, focus?: string): any {
+    // Robustness: handle SearchTool output directly
+    let actualSources = Array.isArray(sources) ? sources : [];
+    if (sources && typeof sources === 'object' && !Array.isArray(sources)) {
+      if (Array.isArray(sources.results)) {
+        actualSources = sources.results;
+      }
+    }
+
+    // Map fields if they have different names (e.g., snippet -> content)
+    const normalizedSources = actualSources.map((s: any) => ({
+      content: s.content || s.snippet || JSON.stringify(s),
+      title: s.title || 'Untitled Source',
+      url: s.url || ''
+    }));
+
     return {
-      summary: `[SUMMARY OF SOURCES${focus ? ' FOCUSED ON ' + focus : ''}]`,
-      sourceCount: sources.length,
-      citations: sources.map(s => ({ title: s.title, url: s.url }))
+      summary: `[SUMMARY OF ${normalizedSources.length} SOURCES${focus ? ' FOCUSED ON ' + focus : ''}]`,
+      sourceCount: normalizedSources.length,
+      citations: normalizedSources.map(s => ({ title: s.title, url: s.url }))
     };
   }
 
-  private compare(facts: any[]): any {
+  private compare(facts: any): any {
+    // Robustness: handle SearchTool output directly
+    let actualFacts = Array.isArray(facts) ? facts : [];
+    if (facts && typeof facts === 'object' && !Array.isArray(facts)) {
+      if (Array.isArray(facts.results)) {
+        actualFacts = facts.results;
+      }
+    }
+
+    const normalizedFacts = actualFacts.map((f: any) => ({
+      claim: f.claim || f.snippet || f.content || JSON.stringify(f),
+      source: f.source || f.title || 'Unknown',
+      url: f.url || ''
+    }));
+
     return {
-      comparison: `[COMPARISON OF ${facts.length} CLAIMS]`,
-      factCount: facts.length,
+      comparison: `[COMPARISON OF ${normalizedFacts.length} CLAIMS]`,
+      factCount: normalizedFacts.length,
       similarities: [],
       contradictions: []
     };

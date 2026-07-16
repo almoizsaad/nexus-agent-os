@@ -39,24 +39,24 @@ export class AgentManager {
         inbox.push(message);
       });
       
+      const runtime = runtimeFactory(identity, channel);
+
       if (identity.role === 'coordinator') {
-        // Create a CoordinatorAgent with the registry
-        const baseRuntime = runtimeFactory(identity, channel);
-        
         return new CoordinatorAgent(
           eventBus,
           this.registry,
-          baseRuntime.planner || undefined,
-          baseRuntime.executor || undefined,
-          baseRuntime.monitor,
-          baseRuntime.improvementEngine,
-          baseRuntime.suggestions,
+          runtime.planner || undefined,
+          runtime.executor || undefined,
+          runtime.monitor,
+          runtime.improvementEngine,
+          runtime.suggestions,
           identity,
-          channel
+          channel,
+          runtime.knowledgeGraph
         );
       }
       
-      return runtimeFactory(identity, channel);
+      return runtime;
     };
 
     this.lifecycleManager = new AgentLifecycleManager(this.registry, eventBus, communicationRuntimeFactory);
@@ -64,8 +64,8 @@ export class AgentManager {
   }
 
   // Lifecycle Operations
-  public spawnAgent(name: string, role: AgentRole, capabilities: string[]): AgentRuntime {
-    return this.lifecycleManager.spawnAgent(name, role, capabilities);
+  public spawnAgent(name: string, role: AgentRole, capabilities: string[], metadata?: Record<string, unknown>): AgentRuntime {
+    return this.lifecycleManager.spawnAgent(name, role, capabilities, metadata);
   }
 
   public destroyAgent(agentId: string): void {

@@ -17,11 +17,13 @@ export class TaskDistributor {
     if (requiredRole) {
       candidates = candidates.filter(a => a.identity.role === requiredRole);
     } else {
-      // By default, don't assign to coordinators/orchestrators unless they are the only ones
-      // or if they are specifically requested (handled above)
-      const nonCoordinators = candidates.filter(a => a.identity.role !== 'coordinator' && a.identity.role !== 'orchestrator');
-      if (nonCoordinators.length > 0) {
-        candidates = nonCoordinators;
+      // By default, strictly assign to workers/specialists
+      const workers = candidates.filter(a => a.identity.role === 'worker' || a.identity.role === 'specialist');
+      if (workers.length > 0) {
+        candidates = workers;
+      } else {
+        // Fallback to non-coordinators
+        candidates = candidates.filter(a => a.identity.role !== 'coordinator' && a.identity.role !== 'orchestrator');
       }
     }
 

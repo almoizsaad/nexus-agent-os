@@ -19,6 +19,7 @@ export interface MissionStoreState {
   addReflection: (id: string, reflection: ReflectionResult) => void;
   addMemoryUpdate: (id: string, update: { key: string; value: unknown; timestamp: number }) => void;
   addKnowledgeUpdate: (id: string, update: { id: string; type: string; summary: string; timestamp: number }) => void;
+  updateTaskStatus: (missionId: string, planId: string, taskId: string, status: Task['status']) => void;
   setMissionOutcome: (id: string, outcome: MissionOutcome) => void;
   reset: () => void;
 }
@@ -46,6 +47,34 @@ export const useMissionStore = create<MissionStoreState>((set) => ({
     };
   }),
 
+  updateTaskStatus: (missionId, planId, taskId, status) => set((state) => {
+    const mission = state.missions[missionId];
+    if (!mission) return state;
+
+    const updatedPlans = mission.plans.map(plan => {
+      if (plan.id === planId) {
+        return {
+          ...plan,
+          tasks: plan.tasks.map(task => 
+            task.id === taskId ? { ...task, status } : task
+          )
+        };
+      }
+      return plan;
+    });
+
+    return {
+      missions: {
+        ...state.missions,
+        [missionId]: {
+          ...mission,
+          plans: updatedPlans,
+          updatedAt: Date.now()
+        }
+      }
+    };
+  }),
+
   addTimelineEntry: (id, entry) => set((state) => {
     const mission = state.missions[id];
     if (!mission) return state;
@@ -64,6 +93,21 @@ export const useMissionStore = create<MissionStoreState>((set) => ({
   addPlan: (id, plan) => set((state) => {
     const mission = state.missions[id];
     if (!mission) return state;
+    
+    // Prevent duplicate plans
+    if (mission.plans.some(p => p.id === plan.id)) {
+      return {
+        missions: {
+          ...state.missions,
+          [id]: {
+            ...mission,
+            plans: mission.plans.map(p => p.id === plan.id ? plan : p),
+            updatedAt: Date.now()
+          }
+        }
+      };
+    }
+
     return {
       missions: {
         ...state.missions,

@@ -19,12 +19,13 @@ export class AgentLifecycleManager {
     this.runtimeFactory = runtimeFactory;
   }
 
-  public spawnAgent(name: string, role: AgentRole, capabilities: string[]): AgentRuntime {
+  public spawnAgent(name: string, role: AgentRole, capabilities: string[], metadata?: Record<string, unknown>): AgentRuntime {
     const identity: AgentIdentity = {
       id: crypto.randomUUID(),
       name,
       role,
       capabilities,
+      metadata
     };
 
     const runtime = this.runtimeFactory(identity);

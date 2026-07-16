@@ -148,7 +148,20 @@ export class ToolRegistry {
 
     try {
       // 1. Validate Input Schema
-      const validatedInput = tool.inputSchema.parse(input);
+      let validatedInput;
+      try {
+        validatedInput = tool.inputSchema.parse(input);
+      } catch (validationError: any) {
+        const isZodError = validationError instanceof z.ZodError || validationError.name === 'ZodError';
+        if (isZodError) {
+          const issues = validationError.issues || validationError.errors || [];
+          console.error(`[ToolRegistry] Validation failed for tool "${name}". Input:`, JSON.stringify(input, null, 2));
+          console.error(`[ToolRegistry] Validation issues:`, JSON.stringify(issues, null, 2));
+          throw new Error(`Input validation failed for ${name}: ${issues.map((e: any) => `${e.path.join('.')}: ${e.message}`).join(', ')}`);
+        }
+        console.error(`[ToolRegistry] Unexpected error during validation for tool "${name}":`, validationError);
+        throw validationError;
+      }
 
       // 2. Check Permissions (Security Layer)
       await this.verifyPermissions(tool);

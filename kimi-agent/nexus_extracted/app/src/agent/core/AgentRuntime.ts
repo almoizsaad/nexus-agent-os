@@ -154,28 +154,22 @@ export class AgentRuntime {
   private async handleTaskAssignment(message: any): Promise<void> {
     const { taskId, planId, tool, metadata } = message.payload;
     
-    Logger.info(`[AgentRuntime] Received task assignment: ${taskId} for plan ${planId}`);
+    Logger.info(`[AgentRuntime] Executing task assignment: ${taskId} for plan ${planId}`, { tool, metadata });
     
-    if (!this._executor) {
-      Logger.error(`[AgentRuntime] No executor available to handle task ${taskId}`);
-      await this._channel?.reply(message, {
-        taskId,
-        planId,
-        error: 'No executor available'
-      });
-      return;
-    }
-
     this._state.status = 'executing';
     
     try {
-      const result = await this._executor.executeTask({
+      const taskObj = {
         id: taskId,
         description: message.payload.description,
-        status: 'pending',
+        status: 'pending' as const,
         tool,
         metadata: metadata || {}
-      }, {});
+      };
+      
+      console.log(`[AgentRuntime] [DEBUG] Executing Task:`, JSON.stringify(taskObj, null, 2));
+
+      const result = await this._executor.executeTask(taskObj, {});
 
       if (result.success) {
         await this._channel?.sendDirect(message.sender, 'TASK_COMPLETED', {

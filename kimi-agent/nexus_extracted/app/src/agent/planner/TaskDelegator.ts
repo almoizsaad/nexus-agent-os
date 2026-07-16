@@ -22,6 +22,7 @@ export class TaskDelegator {
     if (!channel) return false;
 
     try {
+      console.log(`[TaskDelegator] Sending TASK_ASSIGNMENT to agent ${task.assigneeId} for task ${task.id}`);
       await channel.sendDirect(task.assigneeId, 'TASK_ASSIGNMENT', {
         taskId: task.id,
         planId,
