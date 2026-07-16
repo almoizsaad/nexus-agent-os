@@ -8,7 +8,9 @@ import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
 import { KnowledgeDatabase } from '../knowledge/KnowledgeDatabase';
 import { EmbeddingStore } from '../knowledge/EmbeddingStore';
 import { VectorSearch } from '../knowledge/VectorSearch';
+import { GeminiLLMProvider } from '../providers/GeminiLLMProvider';
 import { MoonshotLLMProvider } from '../providers/MoonshotLLMProvider';
+import { MockLLMProvider } from '../providers/MockLLMProvider';
 import type { LLMProvider } from '../providers/LLMProvider';
 import { LLMPlanner } from '../planner/LLMPlanner';
 import { TaskExecutor } from '../executor/TaskExecutor';
@@ -85,7 +87,21 @@ export class DependencyRegistry {
     if (!container.has('Safety')) container.registerSingleton('Safety', new SafetyGuard());
 
     // Provider/Implementation mapping
-    if (!container.has('LLMProvider')) container.registerSingleton('LLMProvider', () => new MoonshotLLMProvider());
+    if (!container.has('LLMProvider')) {
+      container.registerSingleton('LLMProvider', () => {
+        const hasGeminiKey = !!(typeof import.meta.env !== 'undefined' ? import.meta.env.VITE_GEMINI_API_KEY : process.env.VITE_GEMINI_API_KEY);
+        const hasMoonshotKey = !!(typeof import.meta.env !== 'undefined' ? import.meta.env.VITE_API_KEY : process.env.VITE_API_KEY);
+
+        if (hasGeminiKey) {
+          return new GeminiLLMProvider();
+        } else if (hasMoonshotKey) {
+          return new MoonshotLLMProvider();
+        } else {
+          console.warn('[DependencyRegistry] No LLM API keys found. Falling back to MockLLMProvider.');
+          return new MockLLMProvider();
+        }
+      });
+    }
     
     if (!container.has('Planner')) {
       container.registerSingleton('Planner', (c) => {

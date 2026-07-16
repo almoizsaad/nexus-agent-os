@@ -183,11 +183,31 @@ export class LLMPlanner implements Planner {
       
       REQUIREMENTS:
       1. Every task MUST use one of the available tools.
-      2. Define clear dependencies (e.g., task B depends on task A).
-      3. Provide a brief reasoning for your plan.
-      4. Estimate your confidence in this plan (0-100).
-      5. OPTIONAL: Suggest a 'ui_component' and 'ui_props' if a task result should be visualized.
-      6. Return ONLY a valid JSON object matching the schema.
+      2. **CRITICAL**: You MUST provide all required input parameters for the chosen tool inside the 'metadata' field.
+         - Look at the 'Input' section for each tool below.
+         - Example: If a tool has Input '{ query (String) }', you MUST include '{ "metadata": { "query": "..." } }' in the task object.
+      3. Define clear dependencies (e.g., task B depends on task A).
+      4. Provide a brief reasoning for your plan.
+      5. Estimate your confidence in this plan (0-100).
+
+      **OUTPUT FORMAT**:
+      You MUST return ONLY a valid JSON object with the following EXACT structure:
+      {
+        "id": "unique-uuid",
+        "goal": "the original goal",
+        "reasoning": "your explanation",
+        "confidence": 95,
+        "tasks": [
+          {
+            "id": "task-1",
+            "description": "...",
+            "tool": "tool_name",
+            "dependencies": [],
+            "metadata": { "param1": "value1" },
+            "ui_component": "optional-ui-component"
+          }
+        ]
+      }
     `;
   }
 }

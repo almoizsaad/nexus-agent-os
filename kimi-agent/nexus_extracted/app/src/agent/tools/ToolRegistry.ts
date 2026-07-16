@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import type { Tool, ToolOutput, ToolExecutionOptions, ToolHealth } from './Tool';
 import { ToolMemory } from '../memory/ToolMemory';
 
@@ -52,13 +53,81 @@ export class ToolRegistry {
     }));
   }
 
-  /**
-   * Provides a detailed string description of all tools including schemas.
-   */
   public describeTools(): string {
-    return Array.from(this.tools.values()).map(tool => {
-      return `- ${tool.name} (v${tool.metadata.version}): ${tool.description}\n  Category: ${tool.metadata.category}\n  Input: ${JSON.stringify(tool.inputSchema)}`;
+    const description = Array.from(this.tools.values()).map(tool => {
+      let inputDesc = 'any';
+      
+      try {
+        inputDesc = this.describeZodSchema(tool.inputSchema);
+      } catch (e) {
+        inputDesc = 'Schema description unavailable';
+      }
+
+      return `- ${tool.name} (v${tool.metadata.version}): ${tool.description}\n  Category: ${tool.metadata.category}\n  Input: ${inputDesc}`;
     }).join('\n');
+
+    return description;
+  }
+
+  private describeZodSchema(schema: z.ZodType<any>): string {
+    if (!schema || !schema._def) return 'any';
+
+    // Use instanceof for reliable type checking if possible
+    if (schema instanceof z.ZodObject) {
+      const shape = schema.shape;
+      const fields = Object.keys(shape).map(key => {
+        const field = shape[key];
+        const isOptional = field instanceof z.ZodOptional || field instanceof z.ZodDefault;
+        return `${key}: ${this.describeZodSchema(field)}${isOptional ? '?' : ''}`;
+      });
+      return `{ ${fields.join(', ')} }`;
+    }
+
+    if (schema instanceof z.ZodDiscriminatedUnion) {
+      const options = (schema._def as any).options;
+      if (Array.isArray(options)) {
+        return `(${options.map((opt: any) => this.describeZodSchema(opt)).join(' | ')})`;
+      }
+      return 'union';
+    }
+
+    if (schema instanceof z.ZodUnion) {
+      const options = (schema._def as any).options;
+      if (Array.isArray(options)) {
+        return `(${options.map((opt: any) => this.describeZodSchema(opt)).join(' | ')})`;
+      }
+      return 'union';
+    }
+
+    if (schema instanceof z.ZodEnum) {
+      const values = (schema._def as any).values;
+      if (Array.isArray(values)) {
+        return values.map((v: any) => `'${v}'`).join(' | ');
+      }
+      return 'string';
+    }
+
+    if (schema instanceof z.ZodArray) {
+      const innerType = (schema._def as any).type;
+      return `${innerType ? this.describeZodSchema(innerType) : 'any'}[]`;
+    }
+
+    if (schema instanceof z.ZodOptional || schema instanceof z.ZodDefault) {
+      const innerType = (schema._def as any).innerType;
+      return innerType ? this.describeZodSchema(innerType) : 'any';
+    }
+
+    if (schema instanceof z.ZodString) return 'string';
+    if (schema instanceof z.ZodNumber) return 'number';
+    if (schema instanceof z.ZodBoolean) return 'boolean';
+
+    // Fallback to typeName if available
+    const typeName = (schema._def as any).typeName;
+    if (typeName) {
+      return typeName.replace('Zod', '').toLowerCase();
+    }
+
+    return 'any';
   }
 
   /**

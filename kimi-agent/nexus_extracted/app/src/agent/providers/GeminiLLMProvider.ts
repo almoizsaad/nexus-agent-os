@@ -35,7 +35,7 @@ export class GeminiLLMProvider implements LLMProvider {
             {
               parts: [
                 {
-                  text: `${prompt}\n\nIMPORTANT: You MUST respond ONLY with a valid JSON object matching this schema: ${JSON.stringify(schema)}. Do not include any other text, markdown formatting (like \`\`\`json), or explanation.`,
+                  text: prompt,
                 },
               ],
             },

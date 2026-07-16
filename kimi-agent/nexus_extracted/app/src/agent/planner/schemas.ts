@@ -45,9 +45,12 @@ export const PlanSchema = {
           },
           ui_component: { type: 'string', description: 'Optional UI component type to render for this task result' },
           ui_props: { type: 'object', description: 'Optional props for the UI component' },
-          metadata: { type: 'object' }
+          metadata: { 
+            type: 'object', 
+            description: 'Critical: This object MUST contain all input parameters for the tool as specified in the "Input" section of the tool description (e.g., { "query": "..." } for search).'
+          }
         },
-        required: ['id', 'description', 'tool', 'dependencies']
+        required: ['id', 'description', 'tool', 'dependencies', 'metadata']
       }
     }
   },

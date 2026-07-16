@@ -873,3 +873,3025 @@ Generated at: 2026-07-15T22:44:26.506Z
 
 ---
 
+# MISSION EXECUTION TRACE: Test Mission
+
+Generated at: 2026-07-16T11:06:11.481Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T11:06:11.093Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"733d9ec4-8914-49b6-ae03-25b0ce5bbb0d","title":"Test Mission","goal":{"description" |
+| 2026-07-16T11:06:11.095Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"733d9ec4-8914-49b6-ae03-25b0ce5bbb0d","status":"running","mission":{"id":"733d9ec4-891 |
+| 2026-07-16T11:06:11.095Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Test Mission |
+| 2026-07-16T11:06:11.096Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Test Mission |
+| 2026-07-16T11:06:11.096Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Just say hi. Success criteria: Completed |
+| 2026-07-16T11:06:11.097Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Just say hi. Success criteria: Completed |
+| 2026-07-16T11:06:11.097Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:06:11.097Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:06:11.102Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:06:11.103Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:06:11.392Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"733d9ec4-8914-49b6-ae03-25b0ce5bbb0d","status":"idle","mission":{"id":"733d9ec4-8914-4 |
+| 2026-07-16T11:06:11.393Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"733d9ec4-8914-49b6-ae03-25b0ce5bbb0d","status":"running","mission":{"id":"733d9ec4-891 |
+| 2026-07-16T11:06:11.393Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Test Mission |
+| 2026-07-16T11:06:11.393Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Test Mission |
+| 2026-07-16T11:06:11.393Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Just say hi. Success criteria: Completed |
+| 2026-07-16T11:06:11.393Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Just say hi. Success criteria: Completed |
+| 2026-07-16T11:06:11.393Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:06:11.393Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:06:11.394Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_FAILED |
+| 2026-07-16T11:06:11.402Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:06:11.402Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:06:11.409Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"733d9ec4-8914-49b6-ae03-25b0ce5bbb0d","status":"failed","mission":{"id":"733d9ec4-8914 |
+| 2026-07-16T11:06:11.410Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"733d9ec4-8914-49b6-ae03-25b0ce5bbb0d","status":"idle","mission":{"id":"733d9ec4-8914-4 |
+| 2026-07-16T11:06:11.412Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"733d9ec4-8914-49b6-ae03-25b0ce5bbb0d","status":"running","mission":{"id":"733d9ec4-891 |
+| 2026-07-16T11:06:11.412Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Test Mission |
+| 2026-07-16T11:06:11.412Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Test Mission |
+| 2026-07-16T11:06:11.412Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Just say hi. Success criteria: Completed |
+| 2026-07-16T11:06:11.412Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Just say hi. Success criteria: Completed |
+| 2026-07-16T11:06:11.412Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:06:11.412Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:06:11.414Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_FAILED |
+| 2026-07-16T11:06:11.418Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:06:11.418Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:06:11.424Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Test Mission |
+| 2026-07-16T11:06:11.476Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"733d9ec4-8914-49b6-ae03-25b0ce5bbb0d","status":"failed","mission":{"id":"733d9ec4-8914 |
+| 2026-07-16T11:06:11.480Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_FAILED |
+
+
+---
+
+# MISSION EXECUTION TRACE: Test Mission
+
+Generated at: 2026-07-16T11:06:24.497Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T11:06:23.896Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"4f0404b4-87a4-47d8-9120-2084ec55a519","title":"Test Mission","goal":{"description" |
+| 2026-07-16T11:06:23.897Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"4f0404b4-87a4-47d8-9120-2084ec55a519","status":"running","mission":{"id":"4f0404b4-87a |
+| 2026-07-16T11:06:23.897Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Test Mission |
+| 2026-07-16T11:06:23.898Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Test Mission |
+| 2026-07-16T11:06:23.898Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Just say hi. Success criteria: Completed |
+| 2026-07-16T11:06:23.898Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Just say hi. Success criteria: Completed |
+| 2026-07-16T11:06:23.899Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:06:23.899Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:06:23.922Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:06:23.922Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:06:23.924Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: Evaluating system health requires running tool diagnostics. |
+| 2026-07-16T11:06:23.924Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: Evaluating system health requires running tool diagnostics. |
+| 2026-07-16T11:06:23.927Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: 4f0404b4-87a4-47d8-9120-2084ec55a519 |
+| 2026-07-16T11:06:23.928Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: 4f0404b4-87a4-47d8-9120-2084ec55a519 |
+| 2026-07-16T11:06:23.930Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:06:23.931Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T11:06:23.933Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T11:06:23.933Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Test Mission |
+| 2026-07-16T11:06:24.491Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from 392113bd-3421-48f2-9f8f-d7c7780f104c |
+| 2026-07-16T11:06:24.493Z | THOUGHT | ThoughtBus | [observation] Task task_01 completed by agent 392113bd-3421-48f2-9f8f-d7c7780f104c |
+| 2026-07-16T11:06:24.493Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task_01 completed by agent 392113bd-3421-48f2-9f8f-d7c7780f104c |
+| 2026-07-16T11:06:24.495Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"4f0404b4-87a4-47d8-9120-2084ec55a519","status":"completed","mission":{"id":"4f0404b4-8 |
+| 2026-07-16T11:06:24.496Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_COMPLETED |
+
+
+---
+
+# MISSION EXECUTION TRACE: Live API Test
+
+Generated at: 2026-07-16T11:17:23.205Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T11:17:18.824Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"65ca5c72-f352-42b9-b4a4-03a91834e3c8","title":"Live API Test","goal":{"description |
+| 2026-07-16T11:17:18.826Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"65ca5c72-f352-42b9-b4a4-03a91834e3c8","status":"running","mission":{"id":"65ca5c72-f35 |
+| 2026-07-16T11:17:18.827Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test |
+| 2026-07-16T11:17:18.829Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test |
+| 2026-07-16T11:17:18.830Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:17:18.830Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:17:18.830Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:17:18.830Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:17:18.839Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:17:18.839Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:17:20.466Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: To provide accurate and interesting facts, I will use the search tool to retrieve information about the Eiffel Tower, then synthesize the findings into a concise list. |
+| 2026-07-16T11:17:20.469Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: To provide accurate and interesting facts, I will use the search tool to retrieve information about the Eiffel Tower, then synthesize the findings into a concise list. |
+| 2026-07-16T11:17:20.474Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: 65ca5c72-f352-42b9-b4a4-03a91834e3c8 |
+| 2026-07-16T11:17:20.474Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: 65ca5c72-f352-42b9-b4a4-03a91834e3c8 |
+| 2026-07-16T11:17:20.476Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:17:20.478Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T11:17:20.480Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T11:17:20.481Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Live API Test |
+| 2026-07-16T11:17:20.487Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 4b8d0d0c-7cf2-4b6a-89a2-3467b6da58f4 |
+| 2026-07-16T11:17:20.488Z | THOUGHT | ThoughtBus | [error] Task search_facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:17:20.488Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search_facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:17:20.489Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:17:20.491Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 4b8d0d0c-7cf2-4b6a-89a2-3467b6da58f4 |
+| 2026-07-16T11:17:20.494Z | THOUGHT | ThoughtBus | [error] Task search_facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:17:20.494Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search_facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:17:20.494Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:17:20.498Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 4b8d0d0c-7cf2-4b6a-89a2-3467b6da58f4 |
+| 2026-07-16T11:17:20.500Z | THOUGHT | ThoughtBus | [error] Task search_facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:17:20.500Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search_facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:17:20.500Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:17:20.505Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 4b8d0d0c-7cf2-4b6a-89a2-3467b6da58f4 |
+| 2026-07-16T11:17:20.507Z | THOUGHT | ThoughtBus | [error] Task search_facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:17:20.507Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search_facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:17:20.508Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Recover from failure in task search_facts: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Provide a list of 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:17:20.508Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Recover from failure in task search_facts: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Provide a list of 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:17:20.508Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:17:20.508Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:17:20.513Z | THOUGHT | ThoughtBus | [observation] Found 3 relevant knowledge entries. |
+| 2026-07-16T11:17:20.513Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 3 relevant knowledge entries. |
+| 2026-07-16T11:17:20.524Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:17:20.524Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:17:21.818Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The previous attempt failed because the 'search_facts' task did not provide a valid string input for the 'query' parameter. This plan re-executes the search with a properly formatted string and then proceeds to synthesize the results. |
+| 2026-07-16T11:17:21.818Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The previous attempt failed because the 'search_facts' task did not provide a valid string input for the 'query' parameter. This plan re-executes the search with a properly formatted string and then proceeds to synthesize the results. |
+| 2026-07-16T11:17:21.821Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:17:21.827Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from 4b8d0d0c-7cf2-4b6a-89a2-3467b6da58f4 |
+| 2026-07-16T11:17:21.828Z | THOUGHT | ThoughtBus | [observation] Task search_facts_retry completed by agent 4b8d0d0c-7cf2-4b6a-89a2-3467b6da58f4 |
+| 2026-07-16T11:17:21.828Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search_facts_retry completed by agent 4b8d0d0c-7cf2-4b6a-89a2-3467b6da58f4 |
+| 2026-07-16T11:17:21.829Z | THOUGHT | ThoughtBus | [reasoning] Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T11:17:21.829Z | ACTION | ActionBus | **AGENT_UPDATE**: Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T11:17:21.829Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:17:21.833Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 4b8d0d0c-7cf2-4b6a-89a2-3467b6da58f4 |
+| 2026-07-16T11:17:21.834Z | THOUGHT | ThoughtBus | [error] Task synthesize_facts failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:17:21.834Z | ACTION | ActionBus | **AGENT_UPDATE**: Task synthesize_facts failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:17:21.834Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:17:21.836Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 4b8d0d0c-7cf2-4b6a-89a2-3467b6da58f4 |
+| 2026-07-16T11:17:21.837Z | THOUGHT | ThoughtBus | [error] Task synthesize_facts failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:17:21.838Z | ACTION | ActionBus | **AGENT_UPDATE**: Task synthesize_facts failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:17:21.838Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:17:21.840Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 4b8d0d0c-7cf2-4b6a-89a2-3467b6da58f4 |
+| 2026-07-16T11:17:21.841Z | THOUGHT | ThoughtBus | [error] Task synthesize_facts failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:17:21.841Z | ACTION | ActionBus | **AGENT_UPDATE**: Task synthesize_facts failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:17:21.842Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:17:21.844Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 4b8d0d0c-7cf2-4b6a-89a2-3467b6da58f4 |
+| 2026-07-16T11:17:21.846Z | THOUGHT | ThoughtBus | [error] Task synthesize_facts failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:17:21.846Z | ACTION | ActionBus | **AGENT_UPDATE**: Task synthesize_facts failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:17:21.846Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Recover from failure in task synthesize_facts: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+]. Original goal: Recover from failure in task search_facts by correctly executing the search tool with a valid string query. |
+| 2026-07-16T11:17:21.846Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Recover from failure in task synthesize_facts: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+]. Original goal: Recover from failure in task search_facts by correctly executing the search tool with a valid string query. |
+| 2026-07-16T11:17:21.846Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:17:21.846Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:17:21.849Z | THOUGHT | ThoughtBus | [observation] Found 5 relevant knowledge entries. |
+| 2026-07-16T11:17:21.849Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 5 relevant knowledge entries. |
+| 2026-07-16T11:17:21.852Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:17:21.852Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:17:23.165Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The previous attempt failed due to an invalid discriminator in the research_synthesis tool. I will first search for the facts, then use the correct 'summarize' operation in the research_synthesis tool to synthesize them. |
+| 2026-07-16T11:17:23.165Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The previous attempt failed due to an invalid discriminator in the research_synthesis tool. I will first search for the facts, then use the correct 'summarize' operation in the research_synthesis tool to synthesize them. |
+| 2026-07-16T11:17:23.169Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:17:23.170Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 4b8d0d0c-7cf2-4b6a-89a2-3467b6da58f4 |
+| 2026-07-16T11:17:23.171Z | THOUGHT | ThoughtBus | [error] Task search_facts_retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:17:23.171Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search_facts_retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:17:23.172Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:17:23.175Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 4b8d0d0c-7cf2-4b6a-89a2-3467b6da58f4 |
+| 2026-07-16T11:17:23.177Z | THOUGHT | ThoughtBus | [error] Task search_facts_retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:17:23.177Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search_facts_retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:17:23.177Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:17:23.181Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 4b8d0d0c-7cf2-4b6a-89a2-3467b6da58f4 |
+| 2026-07-16T11:17:23.183Z | THOUGHT | ThoughtBus | [error] Task search_facts_retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:17:23.183Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search_facts_retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:17:23.183Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:17:23.187Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 4b8d0d0c-7cf2-4b6a-89a2-3467b6da58f4 |
+| 2026-07-16T11:17:23.189Z | THOUGHT | ThoughtBus | [error] Task search_facts_retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:17:23.189Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search_facts_retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:17:23.191Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"65ca5c72-f352-42b9-b4a4-03a91834e3c8","status":"idle","mission":{"id":"65ca5c72-f352-4 |
+| 2026-07-16T11:17:23.192Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"65ca5c72-f352-42b9-b4a4-03a91834e3c8","status":"running","mission":{"id":"65ca5c72-f35 |
+| 2026-07-16T11:17:23.192Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test |
+| 2026-07-16T11:17:23.192Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test |
+| 2026-07-16T11:17:23.192Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:17:23.193Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:17:23.193Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:17:23.193Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:17:23.193Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_FAILED |
+| 2026-07-16T11:17:23.198Z | THOUGHT | ThoughtBus | [observation] Found 7 relevant knowledge entries. |
+| 2026-07-16T11:17:23.198Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 7 relevant knowledge entries. |
+| 2026-07-16T11:17:23.202Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:17:23.202Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+
+
+---
+
+# MISSION EXECUTION TRACE: Live API Test 2
+
+Generated at: 2026-07-16T11:20:28.498Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T11:20:24.394Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"31be11c7-9ada-4812-ac38-57ae041a252c","title":"Live API Test 2","goal":{"descripti |
+| 2026-07-16T11:20:24.395Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"31be11c7-9ada-4812-ac38-57ae041a252c","status":"running","mission":{"id":"31be11c7-9ad |
+| 2026-07-16T11:20:24.395Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 2 |
+| 2026-07-16T11:20:24.396Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 2 |
+| 2026-07-16T11:20:24.397Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:20:24.397Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:20:24.397Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:20:24.397Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:20:24.400Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:20:24.401Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:20:25.910Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: To provide accurate and interesting facts, I will first search for information about the Eiffel Tower using the search tool, then synthesize the findings into a concise list. |
+| 2026-07-16T11:20:25.911Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: To provide accurate and interesting facts, I will first search for information about the Eiffel Tower using the search tool, then synthesize the findings into a concise list. |
+| 2026-07-16T11:20:25.915Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: 31be11c7-9ada-4812-ac38-57ae041a252c |
+| 2026-07-16T11:20:25.916Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: 31be11c7-9ada-4812-ac38-57ae041a252c |
+| 2026-07-16T11:20:25.919Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:20:25.922Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T11:20:25.924Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T11:20:25.925Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Live API Test 2 |
+| 2026-07-16T11:20:25.939Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 398d0aea-c907-4075-bf95-ee6e0926c469 |
+| 2026-07-16T11:20:25.941Z | THOUGHT | ThoughtBus | [error] Task task-search-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:25.941Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-search-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:25.942Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:20:25.945Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 398d0aea-c907-4075-bf95-ee6e0926c469 |
+| 2026-07-16T11:20:25.946Z | THOUGHT | ThoughtBus | [error] Task task-search-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:25.947Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-search-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:25.947Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:20:25.951Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 398d0aea-c907-4075-bf95-ee6e0926c469 |
+| 2026-07-16T11:20:25.952Z | THOUGHT | ThoughtBus | [error] Task task-search-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:25.952Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-search-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:25.952Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:20:25.956Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 398d0aea-c907-4075-bf95-ee6e0926c469 |
+| 2026-07-16T11:20:25.959Z | THOUGHT | ThoughtBus | [error] Task task-search-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:25.959Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-search-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:25.960Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Recover from failure in task task-search-facts: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Provide a list of 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:20:25.960Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Recover from failure in task task-search-facts: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Provide a list of 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:20:25.960Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:20:25.960Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:20:25.964Z | THOUGHT | ThoughtBus | [observation] Found 3 relevant knowledge entries. |
+| 2026-07-16T11:20:25.964Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 3 relevant knowledge entries. |
+| 2026-07-16T11:20:25.965Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:20:25.968Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:20:27.161Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The previous task failed because the 'query' parameter was missing or undefined. I will re-execute the search task with a valid string query, then proceed to synthesize the results as originally planned. |
+| 2026-07-16T11:20:27.161Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The previous task failed because the 'query' parameter was missing or undefined. I will re-execute the search task with a valid string query, then proceed to synthesize the results as originally planned. |
+| 2026-07-16T11:20:27.163Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:20:27.165Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 398d0aea-c907-4075-bf95-ee6e0926c469 |
+| 2026-07-16T11:20:27.166Z | THOUGHT | ThoughtBus | [error] Task task-search-facts-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:27.166Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-search-facts-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:27.166Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:20:27.168Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 398d0aea-c907-4075-bf95-ee6e0926c469 |
+| 2026-07-16T11:20:27.169Z | THOUGHT | ThoughtBus | [error] Task task-search-facts-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:27.169Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-search-facts-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:27.169Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:20:27.171Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 398d0aea-c907-4075-bf95-ee6e0926c469 |
+| 2026-07-16T11:20:27.173Z | THOUGHT | ThoughtBus | [error] Task task-search-facts-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:27.173Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-search-facts-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:27.173Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:20:27.175Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 398d0aea-c907-4075-bf95-ee6e0926c469 |
+| 2026-07-16T11:20:27.176Z | THOUGHT | ThoughtBus | [error] Task task-search-facts-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:27.176Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-search-facts-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:27.177Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Recover from failure in task task-search-facts-retry: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Recover from failure in task task-search-facts and provide 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:20:27.177Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Recover from failure in task task-search-facts-retry: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Recover from failure in task task-search-facts and provide 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:20:27.177Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:20:27.177Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:20:27.178Z | THOUGHT | ThoughtBus | [observation] Found 6 relevant knowledge entries. |
+| 2026-07-16T11:20:27.179Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 6 relevant knowledge entries. |
+| 2026-07-16T11:20:27.179Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:20:27.179Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:20:28.465Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The previous attempt failed due to an invalid input type (undefined instead of string) for the search query. I will now explicitly provide a valid string query to the search tool to retrieve the required information, followed by a synthesis task. |
+| 2026-07-16T11:20:28.465Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The previous attempt failed due to an invalid input type (undefined instead of string) for the search query. I will now explicitly provide a valid string query to the search tool to retrieve the required information, followed by a synthesis task. |
+| 2026-07-16T11:20:28.467Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:20:28.470Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 398d0aea-c907-4075-bf95-ee6e0926c469 |
+| 2026-07-16T11:20:28.471Z | THOUGHT | ThoughtBus | [error] Task task-search-facts-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:28.471Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-search-facts-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:28.471Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:20:28.475Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 398d0aea-c907-4075-bf95-ee6e0926c469 |
+| 2026-07-16T11:20:28.477Z | THOUGHT | ThoughtBus | [error] Task task-search-facts-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:28.477Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-search-facts-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:28.477Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:20:28.480Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 398d0aea-c907-4075-bf95-ee6e0926c469 |
+| 2026-07-16T11:20:28.482Z | THOUGHT | ThoughtBus | [error] Task task-search-facts-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:28.482Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-search-facts-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:28.482Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:20:28.485Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 398d0aea-c907-4075-bf95-ee6e0926c469 |
+| 2026-07-16T11:20:28.487Z | THOUGHT | ThoughtBus | [error] Task task-search-facts-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:28.487Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-search-facts-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:20:28.488Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"31be11c7-9ada-4812-ac38-57ae041a252c","status":"idle","mission":{"id":"31be11c7-9ada-4 |
+| 2026-07-16T11:20:28.489Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"31be11c7-9ada-4812-ac38-57ae041a252c","status":"running","mission":{"id":"31be11c7-9ad |
+| 2026-07-16T11:20:28.489Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 2 |
+| 2026-07-16T11:20:28.489Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 2 |
+| 2026-07-16T11:20:28.489Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:20:28.490Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:20:28.490Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:20:28.490Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:20:28.491Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_FAILED |
+| 2026-07-16T11:20:28.494Z | THOUGHT | ThoughtBus | [observation] Found 9 relevant knowledge entries. |
+| 2026-07-16T11:20:28.494Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 9 relevant knowledge entries. |
+| 2026-07-16T11:20:28.496Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:20:28.496Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+
+
+---
+
+# MISSION EXECUTION TRACE: Live API Test 3
+
+Generated at: 2026-07-16T11:20:59.591Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T11:20:58.267Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"51b5b973-5bde-4b62-bf35-ac9b9f37967a","title":"Live API Test 3","goal":{"descripti |
+| 2026-07-16T11:20:58.272Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"51b5b973-5bde-4b62-bf35-ac9b9f37967a","status":"running","mission":{"id":"51b5b973-5bd |
+| 2026-07-16T11:20:58.273Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 3 |
+| 2026-07-16T11:20:58.274Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 3 |
+| 2026-07-16T11:20:58.274Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Tell me the current time and date.. Success criteria: Completed |
+| 2026-07-16T11:20:58.274Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Tell me the current time and date.. Success criteria: Completed |
+| 2026-07-16T11:20:58.274Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:20:58.275Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:20:58.277Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:20:58.278Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:20:59.449Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: To provide the current time and date, I need to use the clock tool which is specifically designed to retrieve system time and date information. |
+| 2026-07-16T11:20:59.452Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: To provide the current time and date, I need to use the clock tool which is specifically designed to retrieve system time and date information. |
+| 2026-07-16T11:20:59.455Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: 51b5b973-5bde-4b62-bf35-ac9b9f37967a |
+| 2026-07-16T11:20:59.455Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: 51b5b973-5bde-4b62-bf35-ac9b9f37967a |
+| 2026-07-16T11:20:59.457Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:20:59.459Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T11:20:59.461Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T11:20:59.462Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Live API Test 3 |
+| 2026-07-16T11:20:59.561Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from 999cf1e0-0350-4176-a91c-248c453c0525 |
+| 2026-07-16T11:20:59.567Z | THOUGHT | ThoughtBus | [observation] Task get-current-time completed by agent 999cf1e0-0350-4176-a91c-248c453c0525 |
+| 2026-07-16T11:20:59.567Z | ACTION | ActionBus | **AGENT_UPDATE**: Task get-current-time completed by agent 999cf1e0-0350-4176-a91c-248c453c0525 |
+| 2026-07-16T11:20:59.578Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"51b5b973-5bde-4b62-bf35-ac9b9f37967a","status":"completed","mission":{"id":"51b5b973-5 |
+| 2026-07-16T11:20:59.580Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_COMPLETED |
+
+
+---
+
+# MISSION EXECUTION TRACE: Live API Test 4
+
+Generated at: 2026-07-16T11:21:11.054Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T11:21:06.707Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"9dbef982-c6fa-4b8b-bae4-faeec9f72fa4","title":"Live API Test 4","goal":{"descripti |
+| 2026-07-16T11:21:06.708Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"9dbef982-c6fa-4b8b-bae4-faeec9f72fa4","status":"running","mission":{"id":"9dbef982-c6f |
+| 2026-07-16T11:21:06.709Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 4 |
+| 2026-07-16T11:21:06.709Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 4 |
+| 2026-07-16T11:21:06.710Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:21:06.710Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:21:06.710Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:21:06.710Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:21:06.713Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:21:06.713Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:21:08.308Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: To provide accurate and interesting facts, I will first search the web for information about the Eiffel Tower, then synthesize the findings into a concise list of three facts. |
+| 2026-07-16T11:21:08.312Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: To provide accurate and interesting facts, I will first search the web for information about the Eiffel Tower, then synthesize the findings into a concise list of three facts. |
+| 2026-07-16T11:21:08.317Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: 9dbef982-c6fa-4b8b-bae4-faeec9f72fa4 |
+| 2026-07-16T11:21:08.317Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: 9dbef982-c6fa-4b8b-bae4-faeec9f72fa4 |
+| 2026-07-16T11:21:08.321Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:08.323Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T11:21:08.326Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T11:21:08.328Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Live API Test 4 |
+| 2026-07-16T11:21:08.345Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 9c5b973f-7482-49d0-9096-683af17c1194 |
+| 2026-07-16T11:21:08.345Z | THOUGHT | ThoughtBus | [error] Task search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:08.346Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:08.346Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:08.353Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 9c5b973f-7482-49d0-9096-683af17c1194 |
+| 2026-07-16T11:21:08.354Z | THOUGHT | ThoughtBus | [error] Task search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:08.354Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:08.354Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:08.357Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 9c5b973f-7482-49d0-9096-683af17c1194 |
+| 2026-07-16T11:21:08.360Z | THOUGHT | ThoughtBus | [error] Task search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:08.360Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:08.360Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:08.364Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 9c5b973f-7482-49d0-9096-683af17c1194 |
+| 2026-07-16T11:21:08.367Z | THOUGHT | ThoughtBus | [error] Task search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:08.367Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:08.370Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Recover from failure in task search-eiffel-tower-facts: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Provide a list of 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:21:08.371Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Recover from failure in task search-eiffel-tower-facts: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Provide a list of 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:21:08.371Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:21:08.371Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:21:08.375Z | THOUGHT | ThoughtBus | [observation] Found 3 relevant knowledge entries. |
+| 2026-07-16T11:21:08.375Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 3 relevant knowledge entries. |
+| 2026-07-16T11:21:08.376Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:21:08.376Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:21:09.661Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The previous attempt failed because the 'query' parameter was undefined. I will explicitly provide a valid string query to the search tool to retrieve the required information, then proceed to synthesize the facts. |
+| 2026-07-16T11:21:09.661Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The previous attempt failed because the 'query' parameter was undefined. I will explicitly provide a valid string query to the search tool to retrieve the required information, then proceed to synthesize the facts. |
+| 2026-07-16T11:21:09.663Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:09.665Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 9c5b973f-7482-49d0-9096-683af17c1194 |
+| 2026-07-16T11:21:09.666Z | THOUGHT | ThoughtBus | [error] Task retry-search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:09.666Z | ACTION | ActionBus | **AGENT_UPDATE**: Task retry-search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:09.666Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:09.668Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 9c5b973f-7482-49d0-9096-683af17c1194 |
+| 2026-07-16T11:21:09.670Z | THOUGHT | ThoughtBus | [error] Task retry-search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:09.670Z | ACTION | ActionBus | **AGENT_UPDATE**: Task retry-search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:09.670Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:09.672Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 9c5b973f-7482-49d0-9096-683af17c1194 |
+| 2026-07-16T11:21:09.673Z | THOUGHT | ThoughtBus | [error] Task retry-search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:09.673Z | ACTION | ActionBus | **AGENT_UPDATE**: Task retry-search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:09.674Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:09.676Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 9c5b973f-7482-49d0-9096-683af17c1194 |
+| 2026-07-16T11:21:09.677Z | THOUGHT | ThoughtBus | [error] Task retry-search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:09.677Z | ACTION | ActionBus | **AGENT_UPDATE**: Task retry-search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:09.677Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Recover from failure in task retry-search-eiffel-tower-facts: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Recover from failure in task search-eiffel-tower-facts by correctly executing the search with a valid query string. |
+| 2026-07-16T11:21:09.678Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Recover from failure in task retry-search-eiffel-tower-facts: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Recover from failure in task search-eiffel-tower-facts by correctly executing the search with a valid query string. |
+| 2026-07-16T11:21:09.678Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:21:09.678Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:21:09.679Z | THOUGHT | ThoughtBus | [observation] Found 5 relevant knowledge entries. |
+| 2026-07-16T11:21:09.680Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 5 relevant knowledge entries. |
+| 2026-07-16T11:21:09.681Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:21:09.681Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:21:11.024Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The previous attempt failed because the 'query' parameter was undefined. I will explicitly provide a valid string query to the search tool to retrieve the required information, then synthesize the results. |
+| 2026-07-16T11:21:11.024Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The previous attempt failed because the 'query' parameter was undefined. I will explicitly provide a valid string query to the search tool to retrieve the required information, then synthesize the results. |
+| 2026-07-16T11:21:11.027Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:11.029Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 9c5b973f-7482-49d0-9096-683af17c1194 |
+| 2026-07-16T11:21:11.031Z | THOUGHT | ThoughtBus | [error] Task retry-search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:11.031Z | ACTION | ActionBus | **AGENT_UPDATE**: Task retry-search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:11.031Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:11.034Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 9c5b973f-7482-49d0-9096-683af17c1194 |
+| 2026-07-16T11:21:11.035Z | THOUGHT | ThoughtBus | [error] Task retry-search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:11.035Z | ACTION | ActionBus | **AGENT_UPDATE**: Task retry-search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:11.036Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:11.038Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 9c5b973f-7482-49d0-9096-683af17c1194 |
+| 2026-07-16T11:21:11.039Z | THOUGHT | ThoughtBus | [error] Task retry-search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:11.040Z | ACTION | ActionBus | **AGENT_UPDATE**: Task retry-search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:11.040Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:11.043Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 9c5b973f-7482-49d0-9096-683af17c1194 |
+| 2026-07-16T11:21:11.044Z | THOUGHT | ThoughtBus | [error] Task retry-search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:11.044Z | ACTION | ActionBus | **AGENT_UPDATE**: Task retry-search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:11.046Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"9dbef982-c6fa-4b8b-bae4-faeec9f72fa4","status":"idle","mission":{"id":"9dbef982-c6fa-4 |
+| 2026-07-16T11:21:11.047Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"9dbef982-c6fa-4b8b-bae4-faeec9f72fa4","status":"running","mission":{"id":"9dbef982-c6f |
+| 2026-07-16T11:21:11.047Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 4 |
+| 2026-07-16T11:21:11.047Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 4 |
+| 2026-07-16T11:21:11.047Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:21:11.048Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:21:11.048Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:21:11.048Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:21:11.048Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_FAILED |
+| 2026-07-16T11:21:11.051Z | THOUGHT | ThoughtBus | [observation] Found 9 relevant knowledge entries. |
+| 2026-07-16T11:21:11.051Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 9 relevant knowledge entries. |
+| 2026-07-16T11:21:11.052Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:21:11.052Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+
+
+---
+
+# MISSION EXECUTION TRACE: Live API Test 5
+
+Generated at: 2026-07-16T11:21:49.118Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T11:21:44.894Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"b7c5996d-7e63-49bb-b9bc-ad9f3780bd05","title":"Live API Test 5","goal":{"descripti |
+| 2026-07-16T11:21:44.895Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"b7c5996d-7e63-49bb-b9bc-ad9f3780bd05","status":"running","mission":{"id":"b7c5996d-7e6 |
+| 2026-07-16T11:21:44.896Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 5 |
+| 2026-07-16T11:21:44.897Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 5 |
+| 2026-07-16T11:21:44.897Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:21:44.897Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:21:44.897Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:21:44.898Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:21:44.900Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:21:44.900Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:21:46.490Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: To provide accurate and interesting facts, I will first search for information about the Eiffel Tower using a search engine, then synthesize the retrieved information into a concise list of three facts. |
+| 2026-07-16T11:21:46.490Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: To provide accurate and interesting facts, I will first search for information about the Eiffel Tower using a search engine, then synthesize the retrieved information into a concise list of three facts. |
+| 2026-07-16T11:21:46.493Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: b7c5996d-7e63-49bb-b9bc-ad9f3780bd05 |
+| 2026-07-16T11:21:46.494Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: b7c5996d-7e63-49bb-b9bc-ad9f3780bd05 |
+| 2026-07-16T11:21:46.496Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:46.502Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T11:21:46.509Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T11:21:46.510Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Live API Test 5 |
+| 2026-07-16T11:21:46.519Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 3ccd0f8d-0a47-439c-ad0b-c62f3d967eb4 |
+| 2026-07-16T11:21:46.521Z | THOUGHT | ThoughtBus | [error] Task task-001 failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:46.521Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-001 failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:46.522Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:46.523Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 3ccd0f8d-0a47-439c-ad0b-c62f3d967eb4 |
+| 2026-07-16T11:21:46.526Z | THOUGHT | ThoughtBus | [error] Task task-001 failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:46.526Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-001 failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:46.526Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:46.531Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 3ccd0f8d-0a47-439c-ad0b-c62f3d967eb4 |
+| 2026-07-16T11:21:46.532Z | THOUGHT | ThoughtBus | [error] Task task-001 failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:46.533Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-001 failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:46.533Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:46.539Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 3ccd0f8d-0a47-439c-ad0b-c62f3d967eb4 |
+| 2026-07-16T11:21:46.540Z | THOUGHT | ThoughtBus | [error] Task task-001 failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:46.541Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-001 failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:46.541Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Recover from failure in task task-001: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Provide a list of 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:21:46.541Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Recover from failure in task task-001: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Provide a list of 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:21:46.541Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:21:46.542Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:21:46.543Z | THOUGHT | ThoughtBus | [observation] Found 3 relevant knowledge entries. |
+| 2026-07-16T11:21:46.547Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 3 relevant knowledge entries. |
+| 2026-07-16T11:21:46.548Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:21:46.551Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:21:47.719Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The previous attempt failed because the 'query' parameter was undefined. I will re-execute the search task with a valid string query to ensure the search tool receives the required input. |
+| 2026-07-16T11:21:47.719Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The previous attempt failed because the 'query' parameter was undefined. I will re-execute the search task with a valid string query to ensure the search tool receives the required input. |
+| 2026-07-16T11:21:47.721Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:47.723Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 3ccd0f8d-0a47-439c-ad0b-c62f3d967eb4 |
+| 2026-07-16T11:21:47.724Z | THOUGHT | ThoughtBus | [error] Task task-001-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:47.724Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-001-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:47.724Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:47.727Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 3ccd0f8d-0a47-439c-ad0b-c62f3d967eb4 |
+| 2026-07-16T11:21:47.728Z | THOUGHT | ThoughtBus | [error] Task task-001-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:47.728Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-001-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:47.729Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:47.731Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 3ccd0f8d-0a47-439c-ad0b-c62f3d967eb4 |
+| 2026-07-16T11:21:47.733Z | THOUGHT | ThoughtBus | [error] Task task-001-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:47.733Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-001-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:47.733Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:47.736Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 3ccd0f8d-0a47-439c-ad0b-c62f3d967eb4 |
+| 2026-07-16T11:21:47.737Z | THOUGHT | ThoughtBus | [error] Task task-001-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:47.737Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-001-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:47.737Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Recover from failure in task task-001-retry: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Recover from failure in task task-001 by correctly executing the search for interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:21:47.737Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Recover from failure in task task-001-retry: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Recover from failure in task task-001 by correctly executing the search for interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:21:47.737Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:21:47.737Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:21:47.739Z | THOUGHT | ThoughtBus | [observation] Found 6 relevant knowledge entries. |
+| 2026-07-16T11:21:47.740Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 6 relevant knowledge entries. |
+| 2026-07-16T11:21:47.741Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:21:47.741Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:21:49.080Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The previous attempt failed due to an invalid input type (undefined) for the search query. This plan corrects the input by explicitly providing a string query to the search tool, followed by synthesizing the results. |
+| 2026-07-16T11:21:49.080Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The previous attempt failed due to an invalid input type (undefined) for the search query. This plan corrects the input by explicitly providing a string query to the search tool, followed by synthesizing the results. |
+| 2026-07-16T11:21:49.088Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:49.094Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 3ccd0f8d-0a47-439c-ad0b-c62f3d967eb4 |
+| 2026-07-16T11:21:49.095Z | THOUGHT | ThoughtBus | [error] Task task-001-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:49.095Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-001-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:49.096Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:49.099Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 3ccd0f8d-0a47-439c-ad0b-c62f3d967eb4 |
+| 2026-07-16T11:21:49.101Z | THOUGHT | ThoughtBus | [error] Task task-001-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:49.101Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-001-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:49.101Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:49.104Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 3ccd0f8d-0a47-439c-ad0b-c62f3d967eb4 |
+| 2026-07-16T11:21:49.105Z | THOUGHT | ThoughtBus | [error] Task task-001-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:49.105Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-001-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:49.105Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:21:49.108Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 3ccd0f8d-0a47-439c-ad0b-c62f3d967eb4 |
+| 2026-07-16T11:21:49.109Z | THOUGHT | ThoughtBus | [error] Task task-001-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:49.109Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-001-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:21:49.111Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"b7c5996d-7e63-49bb-b9bc-ad9f3780bd05","status":"idle","mission":{"id":"b7c5996d-7e63-4 |
+| 2026-07-16T11:21:49.111Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"b7c5996d-7e63-49bb-b9bc-ad9f3780bd05","status":"running","mission":{"id":"b7c5996d-7e6 |
+| 2026-07-16T11:21:49.111Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 5 |
+| 2026-07-16T11:21:49.111Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 5 |
+| 2026-07-16T11:21:49.112Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:21:49.112Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:21:49.112Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:21:49.112Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:21:49.113Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_FAILED |
+| 2026-07-16T11:21:49.115Z | THOUGHT | ThoughtBus | [observation] Found 9 relevant knowledge entries. |
+| 2026-07-16T11:21:49.115Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 9 relevant knowledge entries. |
+| 2026-07-16T11:21:49.116Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:21:49.116Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+
+
+---
+
+# MISSION EXECUTION TRACE: Live API Test 6
+
+Generated at: 2026-07-16T11:22:40.909Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T11:22:36.814Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"bde8a2b9-3d01-442f-9bf6-7a8171fbf7b6","title":"Live API Test 6","goal":{"descripti |
+| 2026-07-16T11:22:36.815Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"bde8a2b9-3d01-442f-9bf6-7a8171fbf7b6","status":"running","mission":{"id":"bde8a2b9-3d0 |
+| 2026-07-16T11:22:36.815Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 6 |
+| 2026-07-16T11:22:36.816Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 6 |
+| 2026-07-16T11:22:36.817Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:22:36.817Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:22:36.817Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:22:36.817Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:22:36.820Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:22:36.820Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:22:38.301Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: To provide accurate and interesting facts, I will first search for information about the Eiffel Tower using a search engine, then synthesize the retrieved information into a concise list of three facts. |
+| 2026-07-16T11:22:38.301Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: To provide accurate and interesting facts, I will first search for information about the Eiffel Tower using a search engine, then synthesize the retrieved information into a concise list of three facts. |
+| 2026-07-16T11:22:38.306Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: bde8a2b9-3d01-442f-9bf6-7a8171fbf7b6 |
+| 2026-07-16T11:22:38.306Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: bde8a2b9-3d01-442f-9bf6-7a8171fbf7b6 |
+| 2026-07-16T11:22:38.309Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:22:38.311Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T11:22:38.314Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T11:22:38.315Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Live API Test 6 |
+| 2026-07-16T11:22:38.323Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from f37381bd-1316-4553-aeb4-c0f0aeff3b96 |
+| 2026-07-16T11:22:38.325Z | THOUGHT | ThoughtBus | [error] Task search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:38.325Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:38.326Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:22:38.328Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from f37381bd-1316-4553-aeb4-c0f0aeff3b96 |
+| 2026-07-16T11:22:38.330Z | THOUGHT | ThoughtBus | [error] Task search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:38.331Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:38.332Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:22:38.336Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from f37381bd-1316-4553-aeb4-c0f0aeff3b96 |
+| 2026-07-16T11:22:38.337Z | THOUGHT | ThoughtBus | [error] Task search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:38.337Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:38.337Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:22:38.340Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from f37381bd-1316-4553-aeb4-c0f0aeff3b96 |
+| 2026-07-16T11:22:38.342Z | THOUGHT | ThoughtBus | [error] Task search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:38.343Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search-eiffel-tower-facts failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:38.343Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Recover from failure in task search-eiffel-tower-facts: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Provide a list of 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:22:38.343Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Recover from failure in task search-eiffel-tower-facts: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Provide a list of 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:22:38.343Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:22:38.343Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:22:38.347Z | THOUGHT | ThoughtBus | [observation] Found 3 relevant knowledge entries. |
+| 2026-07-16T11:22:38.349Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 3 relevant knowledge entries. |
+| 2026-07-16T11:22:38.351Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:22:38.351Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:22:39.641Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The previous attempt failed because the 'query' parameter was missing or undefined. I will re-execute the search task with a valid string query, then synthesize the results. |
+| 2026-07-16T11:22:39.642Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The previous attempt failed because the 'query' parameter was missing or undefined. I will re-execute the search task with a valid string query, then synthesize the results. |
+| 2026-07-16T11:22:39.643Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:22:39.645Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from f37381bd-1316-4553-aeb4-c0f0aeff3b96 |
+| 2026-07-16T11:22:39.646Z | THOUGHT | ThoughtBus | [error] Task search-eiffel-tower-facts-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:39.646Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search-eiffel-tower-facts-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:39.646Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:22:39.649Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from f37381bd-1316-4553-aeb4-c0f0aeff3b96 |
+| 2026-07-16T11:22:39.650Z | THOUGHT | ThoughtBus | [error] Task search-eiffel-tower-facts-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:39.650Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search-eiffel-tower-facts-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:39.651Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:22:39.653Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from f37381bd-1316-4553-aeb4-c0f0aeff3b96 |
+| 2026-07-16T11:22:39.654Z | THOUGHT | ThoughtBus | [error] Task search-eiffel-tower-facts-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:39.654Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search-eiffel-tower-facts-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:39.655Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:22:39.657Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from f37381bd-1316-4553-aeb4-c0f0aeff3b96 |
+| 2026-07-16T11:22:39.659Z | THOUGHT | ThoughtBus | [error] Task search-eiffel-tower-facts-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:39.659Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search-eiffel-tower-facts-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:39.659Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Recover from failure in task search-eiffel-tower-facts-retry: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Recover from failure in task search-eiffel-tower-facts and provide 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:22:39.659Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Recover from failure in task search-eiffel-tower-facts-retry: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Recover from failure in task search-eiffel-tower-facts and provide 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:22:39.659Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:22:39.659Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:22:39.661Z | THOUGHT | ThoughtBus | [observation] Found 6 relevant knowledge entries. |
+| 2026-07-16T11:22:39.662Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 6 relevant knowledge entries. |
+| 2026-07-16T11:22:39.663Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:22:39.663Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:22:40.882Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The previous attempt failed due to an invalid query parameter. I will execute a corrected search with a valid string query, then synthesize the results into the requested 3 facts. |
+| 2026-07-16T11:22:40.882Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The previous attempt failed due to an invalid query parameter. I will execute a corrected search with a valid string query, then synthesize the results into the requested 3 facts. |
+| 2026-07-16T11:22:40.884Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:22:40.886Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from f37381bd-1316-4553-aeb4-c0f0aeff3b96 |
+| 2026-07-16T11:22:40.888Z | THOUGHT | ThoughtBus | [error] Task search-eiffel-tower-facts-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:40.888Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search-eiffel-tower-facts-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:40.888Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:22:40.891Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from f37381bd-1316-4553-aeb4-c0f0aeff3b96 |
+| 2026-07-16T11:22:40.892Z | THOUGHT | ThoughtBus | [error] Task search-eiffel-tower-facts-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:40.892Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search-eiffel-tower-facts-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:40.892Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:22:40.895Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from f37381bd-1316-4553-aeb4-c0f0aeff3b96 |
+| 2026-07-16T11:22:40.896Z | THOUGHT | ThoughtBus | [error] Task search-eiffel-tower-facts-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:40.896Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search-eiffel-tower-facts-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:40.896Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:22:40.899Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from f37381bd-1316-4553-aeb4-c0f0aeff3b96 |
+| 2026-07-16T11:22:40.900Z | THOUGHT | ThoughtBus | [error] Task search-eiffel-tower-facts-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:40.901Z | ACTION | ActionBus | **AGENT_UPDATE**: Task search-eiffel-tower-facts-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:22:40.902Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"bde8a2b9-3d01-442f-9bf6-7a8171fbf7b6","status":"idle","mission":{"id":"bde8a2b9-3d01-4 |
+| 2026-07-16T11:22:40.903Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"bde8a2b9-3d01-442f-9bf6-7a8171fbf7b6","status":"running","mission":{"id":"bde8a2b9-3d0 |
+| 2026-07-16T11:22:40.903Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 6 |
+| 2026-07-16T11:22:40.903Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 6 |
+| 2026-07-16T11:22:40.903Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:22:40.903Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:22:40.903Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:22:40.903Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:22:40.904Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_FAILED |
+| 2026-07-16T11:22:40.906Z | THOUGHT | ThoughtBus | [observation] Found 9 relevant knowledge entries. |
+| 2026-07-16T11:22:40.906Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 9 relevant knowledge entries. |
+| 2026-07-16T11:22:40.907Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:22:40.907Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+
+
+---
+
+# MISSION EXECUTION TRACE: Live API Test 7
+
+Generated at: 2026-07-16T11:23:04.880Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T11:23:04.378Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"d17780f2-cb72-4033-a1b8-6041b06c698d","title":"Live API Test 7","goal":{"descripti |
+| 2026-07-16T11:23:04.387Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"d17780f2-cb72-4033-a1b8-6041b06c698d","status":"running","mission":{"id":"d17780f2-cb7 |
+| 2026-07-16T11:23:04.388Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 7 |
+| 2026-07-16T11:23:04.388Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 7 |
+| 2026-07-16T11:23:04.389Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:23:04.389Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:23:04.389Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:23:04.389Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:23:04.392Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:23:04.392Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:23:04.734Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"d17780f2-cb72-4033-a1b8-6041b06c698d","status":"idle","mission":{"id":"d17780f2-cb72-4 |
+| 2026-07-16T11:23:04.737Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"d17780f2-cb72-4033-a1b8-6041b06c698d","status":"running","mission":{"id":"d17780f2-cb7 |
+| 2026-07-16T11:23:04.737Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 7 |
+| 2026-07-16T11:23:04.746Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 7 |
+| 2026-07-16T11:23:04.746Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:23:04.746Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:23:04.746Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:23:04.747Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:23:04.747Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_FAILED |
+| 2026-07-16T11:23:04.753Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:23:04.754Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:23:04.773Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"d17780f2-cb72-4033-a1b8-6041b06c698d","status":"failed","mission":{"id":"d17780f2-cb72 |
+| 2026-07-16T11:23:04.777Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"d17780f2-cb72-4033-a1b8-6041b06c698d","status":"idle","mission":{"id":"d17780f2-cb72-4 |
+| 2026-07-16T11:23:04.783Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"d17780f2-cb72-4033-a1b8-6041b06c698d","status":"running","mission":{"id":"d17780f2-cb7 |
+| 2026-07-16T11:23:04.783Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 7 |
+| 2026-07-16T11:23:04.783Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 7 |
+| 2026-07-16T11:23:04.783Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:23:04.783Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:23:04.783Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:23:04.783Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:23:04.787Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_FAILED |
+| 2026-07-16T11:23:04.789Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:23:04.795Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:23:04.808Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Live API Test 7 |
+| 2026-07-16T11:23:04.873Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"d17780f2-cb72-4033-a1b8-6041b06c698d","status":"failed","mission":{"id":"d17780f2-cb72 |
+| 2026-07-16T11:23:04.878Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_FAILED |
+
+
+---
+
+# MISSION EXECUTION TRACE: Live API Test 8
+
+Generated at: 2026-07-16T11:23:42.945Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T11:23:38.594Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"764283d5-e24e-4d55-ad8e-d77b0a3ba90a","title":"Live API Test 8","goal":{"descripti |
+| 2026-07-16T11:23:38.596Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"764283d5-e24e-4d55-ad8e-d77b0a3ba90a","status":"running","mission":{"id":"764283d5-e24 |
+| 2026-07-16T11:23:38.597Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 8 |
+| 2026-07-16T11:23:38.598Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 8 |
+| 2026-07-16T11:23:38.598Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:23:38.599Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:23:38.599Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:23:38.599Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:23:38.601Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:23:38.602Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:23:40.388Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: To provide accurate and interesting facts, I will first search for information about the Eiffel Tower using a search engine, then synthesize the retrieved data into a concise list of three facts. |
+| 2026-07-16T11:23:40.388Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: To provide accurate and interesting facts, I will first search for information about the Eiffel Tower using a search engine, then synthesize the retrieved data into a concise list of three facts. |
+| 2026-07-16T11:23:40.394Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: 764283d5-e24e-4d55-ad8e-d77b0a3ba90a |
+| 2026-07-16T11:23:40.395Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: 764283d5-e24e-4d55-ad8e-d77b0a3ba90a |
+| 2026-07-16T11:23:40.397Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:23:40.399Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T11:23:40.401Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T11:23:40.402Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Live API Test 8 |
+| 2026-07-16T11:23:40.410Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from a30088dd-3a9e-4e21-ab37-fd33c4ff2c85 |
+| 2026-07-16T11:23:40.410Z | THOUGHT | ThoughtBus | [error] Task task-1 failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:40.410Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:40.411Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:23:40.412Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from a30088dd-3a9e-4e21-ab37-fd33c4ff2c85 |
+| 2026-07-16T11:23:40.413Z | THOUGHT | ThoughtBus | [error] Task task-1 failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:40.413Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:40.413Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:23:40.415Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from a30088dd-3a9e-4e21-ab37-fd33c4ff2c85 |
+| 2026-07-16T11:23:40.416Z | THOUGHT | ThoughtBus | [error] Task task-1 failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:40.417Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:40.417Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:23:40.421Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from a30088dd-3a9e-4e21-ab37-fd33c4ff2c85 |
+| 2026-07-16T11:23:40.423Z | THOUGHT | ThoughtBus | [error] Task task-1 failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:40.423Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:40.424Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Recover from failure in task task-1: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Provide a list of 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:23:40.424Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Recover from failure in task task-1: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Provide a list of 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:23:40.424Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:23:40.424Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:23:40.426Z | THOUGHT | ThoughtBus | [observation] Found 3 relevant knowledge entries. |
+| 2026-07-16T11:23:40.427Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 3 relevant knowledge entries. |
+| 2026-07-16T11:23:40.429Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:23:40.429Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:23:41.677Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The previous attempt failed because the 'query' parameter was missing or undefined. I will re-execute the search task with the required 'query' parameter properly populated, followed by the original synthesis task. |
+| 2026-07-16T11:23:41.677Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The previous attempt failed because the 'query' parameter was missing or undefined. I will re-execute the search task with the required 'query' parameter properly populated, followed by the original synthesis task. |
+| 2026-07-16T11:23:41.688Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:23:41.694Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from a30088dd-3a9e-4e21-ab37-fd33c4ff2c85 |
+| 2026-07-16T11:23:41.698Z | THOUGHT | ThoughtBus | [error] Task task-1-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:41.698Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:41.698Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:23:41.705Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from a30088dd-3a9e-4e21-ab37-fd33c4ff2c85 |
+| 2026-07-16T11:23:41.709Z | THOUGHT | ThoughtBus | [error] Task task-1-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:41.709Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:41.709Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:23:41.717Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from a30088dd-3a9e-4e21-ab37-fd33c4ff2c85 |
+| 2026-07-16T11:23:41.722Z | THOUGHT | ThoughtBus | [error] Task task-1-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:41.722Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:41.722Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:23:41.729Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from a30088dd-3a9e-4e21-ab37-fd33c4ff2c85 |
+| 2026-07-16T11:23:41.735Z | THOUGHT | ThoughtBus | [error] Task task-1-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:41.735Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1-retry failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:41.735Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Recover from failure in task task-1-retry: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Recover from failure in task task-1 by correctly executing the search for Eiffel Tower facts. |
+| 2026-07-16T11:23:41.735Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Recover from failure in task task-1-retry: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]. Original goal: Recover from failure in task task-1 by correctly executing the search for Eiffel Tower facts. |
+| 2026-07-16T11:23:41.735Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:23:41.735Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:23:41.747Z | THOUGHT | ThoughtBus | [observation] Found 6 relevant knowledge entries. |
+| 2026-07-16T11:23:41.747Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 6 relevant knowledge entries. |
+| 2026-07-16T11:23:41.749Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:23:41.749Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:23:42.902Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The previous attempt failed because the 'query' parameter was undefined. I will explicitly provide a valid string query to the search tool to resolve the validation error and then proceed to synthesize the results. |
+| 2026-07-16T11:23:42.902Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The previous attempt failed because the 'query' parameter was undefined. I will explicitly provide a valid string query to the search tool to resolve the validation error and then proceed to synthesize the results. |
+| 2026-07-16T11:23:42.906Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:23:42.909Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from a30088dd-3a9e-4e21-ab37-fd33c4ff2c85 |
+| 2026-07-16T11:23:42.910Z | THOUGHT | ThoughtBus | [error] Task task-1-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:42.910Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:42.910Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:23:42.914Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from a30088dd-3a9e-4e21-ab37-fd33c4ff2c85 |
+| 2026-07-16T11:23:42.916Z | THOUGHT | ThoughtBus | [error] Task task-1-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:42.916Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:42.916Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:23:42.919Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from a30088dd-3a9e-4e21-ab37-fd33c4ff2c85 |
+| 2026-07-16T11:23:42.920Z | THOUGHT | ThoughtBus | [error] Task task-1-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:42.920Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:42.920Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:23:42.924Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from a30088dd-3a9e-4e21-ab37-fd33c4ff2c85 |
+| 2026-07-16T11:23:42.925Z | THOUGHT | ThoughtBus | [error] Task task-1-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:42.925Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1-retry-fixed failed: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "query"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+] |
+| 2026-07-16T11:23:42.927Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"764283d5-e24e-4d55-ad8e-d77b0a3ba90a","status":"idle","mission":{"id":"764283d5-e24e-4 |
+| 2026-07-16T11:23:42.928Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"764283d5-e24e-4d55-ad8e-d77b0a3ba90a","status":"running","mission":{"id":"764283d5-e24 |
+| 2026-07-16T11:23:42.928Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 8 |
+| 2026-07-16T11:23:42.929Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 8 |
+| 2026-07-16T11:23:42.929Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:23:42.929Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:23:42.929Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:23:42.930Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:23:42.933Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_FAILED |
+| 2026-07-16T11:23:42.942Z | THOUGHT | ThoughtBus | [observation] Found 9 relevant knowledge entries. |
+| 2026-07-16T11:23:42.942Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 9 relevant knowledge entries. |
+| 2026-07-16T11:23:42.943Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:23:42.943Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+
+
+---
+
+# MISSION EXECUTION TRACE: Live API Test 9
+
+Generated at: 2026-07-16T11:24:06.896Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T11:24:04.173Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"c9a786bf-022f-4211-bf32-52a6241a82a5","title":"Live API Test 9","goal":{"descripti |
+| 2026-07-16T11:24:04.175Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"c9a786bf-022f-4211-bf32-52a6241a82a5","status":"running","mission":{"id":"c9a786bf-022 |
+| 2026-07-16T11:24:04.175Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 9 |
+| 2026-07-16T11:24:04.176Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 9 |
+| 2026-07-16T11:24:04.177Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:24:04.177Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:24:04.177Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:24:04.177Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:24:04.180Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:24:04.180Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:24:05.743Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The plan uses the search tool to gather information about the Eiffel Tower and then uses the research_synthesis tool to process that information into the requested format. |
+| 2026-07-16T11:24:05.743Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The plan uses the search tool to gather information about the Eiffel Tower and then uses the research_synthesis tool to process that information into the requested format. |
+| 2026-07-16T11:24:05.764Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"c9a786bf-022f-4211-bf32-52a6241a82a5","status":"idle","mission":{"id":"c9a786bf-022f-4 |
+| 2026-07-16T11:24:05.764Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"c9a786bf-022f-4211-bf32-52a6241a82a5","status":"running","mission":{"id":"c9a786bf-022 |
+| 2026-07-16T11:24:05.765Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 9 |
+| 2026-07-16T11:24:05.767Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 9 |
+| 2026-07-16T11:24:05.767Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:24:05.767Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:24:05.767Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:24:05.767Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:24:05.767Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_FAILED |
+| 2026-07-16T11:24:05.771Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:24:05.772Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:24:05.783Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"c9a786bf-022f-4211-bf32-52a6241a82a5","status":"failed","mission":{"id":"c9a786bf-022f |
+| 2026-07-16T11:24:05.787Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"c9a786bf-022f-4211-bf32-52a6241a82a5","status":"idle","mission":{"id":"c9a786bf-022f-4 |
+| 2026-07-16T11:24:05.791Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"c9a786bf-022f-4211-bf32-52a6241a82a5","status":"running","mission":{"id":"c9a786bf-022 |
+| 2026-07-16T11:24:05.791Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 9 |
+| 2026-07-16T11:24:05.791Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 9 |
+| 2026-07-16T11:24:05.791Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:24:05.791Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:24:05.791Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:24:05.791Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:24:05.792Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_FAILED |
+| 2026-07-16T11:24:05.796Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:24:05.799Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:24:05.807Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Live API Test 9 |
+| 2026-07-16T11:24:06.884Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: To provide 3 interesting facts about the Eiffel Tower, I will first search for information using the search tool, then synthesize the findings into a list, and finally present the result. |
+| 2026-07-16T11:24:06.884Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: To provide 3 interesting facts about the Eiffel Tower, I will first search for information using the search tool, then synthesize the findings into a list, and finally present the result. |
+| 2026-07-16T11:24:06.885Z | THOUGHT | ThoughtBus | [reflection] Plan validation failed. Re-evaluating strategy. |
+| 2026-07-16T11:24:06.885Z | ACTION | ActionBus | **AGENT_UPDATE**: Plan validation failed. Re-evaluating strategy. |
+| 2026-07-16T11:24:06.893Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"c9a786bf-022f-4211-bf32-52a6241a82a5","status":"failed","mission":{"id":"c9a786bf-022f |
+| 2026-07-16T11:24:06.895Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_FAILED |
+
+
+---
+
+# MISSION EXECUTION TRACE: Live API Test 11
+
+Generated at: 2026-07-16T11:25:01.501Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T11:24:57.224Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"3095959f-7e6f-4265-9dca-8a45fe77760b","title":"Live API Test 11","goal":{"descript |
+| 2026-07-16T11:24:57.225Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"3095959f-7e6f-4265-9dca-8a45fe77760b","status":"running","mission":{"id":"3095959f-7e6 |
+| 2026-07-16T11:24:57.226Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 11 |
+| 2026-07-16T11:24:57.227Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 11 |
+| 2026-07-16T11:24:57.227Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:24:57.227Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:24:57.227Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:24:57.227Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:24:57.229Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:24:57.230Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:24:58.761Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: To fulfill the request, I will search for interesting facts about the Eiffel Tower using the search tool, then synthesize the findings into a clear list for the user. |
+| 2026-07-16T11:24:58.764Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: To fulfill the request, I will search for interesting facts about the Eiffel Tower using the search tool, then synthesize the findings into a clear list for the user. |
+| 2026-07-16T11:24:58.776Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: 3095959f-7e6f-4265-9dca-8a45fe77760b |
+| 2026-07-16T11:24:58.778Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: 3095959f-7e6f-4265-9dca-8a45fe77760b |
+| 2026-07-16T11:24:58.780Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:24:58.782Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T11:24:58.784Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T11:24:58.784Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Live API Test 11 |
+| 2026-07-16T11:24:58.793Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:24:58.795Z | THOUGHT | ThoughtBus | [observation] Task task-1 completed by agent adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:24:58.795Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 completed by agent adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:24:58.796Z | THOUGHT | ThoughtBus | [reasoning] Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T11:24:58.796Z | ACTION | ActionBus | **AGENT_UPDATE**: Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T11:24:58.796Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:24:58.802Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:24:58.803Z | THOUGHT | ThoughtBus | [error] Task task-2 failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:24:58.804Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:24:58.805Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:24:58.807Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:24:58.809Z | THOUGHT | ThoughtBus | [error] Task task-2 failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:24:58.809Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:24:58.809Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:24:58.814Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:24:58.815Z | THOUGHT | ThoughtBus | [error] Task task-2 failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:24:58.815Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:24:58.816Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:24:58.823Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:24:58.824Z | THOUGHT | ThoughtBus | [error] Task task-2 failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:24:58.824Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:24:58.825Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Recover from failure in task task-2: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+]. Original goal: Provide a list of 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:24:58.825Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Recover from failure in task task-2: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+]. Original goal: Provide a list of 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:24:58.825Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:24:58.826Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:24:58.827Z | THOUGHT | ThoughtBus | [observation] Found 3 relevant knowledge entries. |
+| 2026-07-16T11:24:58.831Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 3 relevant knowledge entries. |
+| 2026-07-16T11:24:58.832Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:24:58.835Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:25:00.035Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The previous attempt failed because the 'research_synthesis' tool was called with an invalid 'operation' parameter. I am correcting the task to use the 'summarize' operation, which is a valid discriminator value for the tool, to process the facts retrieved in task-1. |
+| 2026-07-16T11:25:00.035Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The previous attempt failed because the 'research_synthesis' tool was called with an invalid 'operation' parameter. I am correcting the task to use the 'summarize' operation, which is a valid discriminator value for the tool, to process the facts retrieved in task-1. |
+| 2026-07-16T11:25:00.037Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:25:00.040Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:25:00.041Z | THOUGHT | ThoughtBus | [observation] Task task-1 completed by agent adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:25:00.041Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 completed by agent adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:25:00.041Z | THOUGHT | ThoughtBus | [reasoning] Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T11:25:00.041Z | ACTION | ActionBus | **AGENT_UPDATE**: Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T11:25:00.041Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:25:00.049Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:25:00.050Z | THOUGHT | ThoughtBus | [error] Task task-2 failed: [
+  {
+    "expected": "array",
+    "code": "invalid_type",
+    "path": [
+      "sources"
+    ],
+    "message": "Invalid input: expected array, received undefined"
+  }
+] |
+| 2026-07-16T11:25:00.050Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 failed: [
+  {
+    "expected": "array",
+    "code": "invalid_type",
+    "path": [
+      "sources"
+    ],
+    "message": "Invalid input: expected array, received undefined"
+  }
+] |
+| 2026-07-16T11:25:00.050Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:25:00.056Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:25:00.057Z | THOUGHT | ThoughtBus | [error] Task task-2 failed: [
+  {
+    "expected": "array",
+    "code": "invalid_type",
+    "path": [
+      "sources"
+    ],
+    "message": "Invalid input: expected array, received undefined"
+  }
+] |
+| 2026-07-16T11:25:00.058Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 failed: [
+  {
+    "expected": "array",
+    "code": "invalid_type",
+    "path": [
+      "sources"
+    ],
+    "message": "Invalid input: expected array, received undefined"
+  }
+] |
+| 2026-07-16T11:25:00.058Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:25:00.061Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:25:00.063Z | THOUGHT | ThoughtBus | [error] Task task-2 failed: [
+  {
+    "expected": "array",
+    "code": "invalid_type",
+    "path": [
+      "sources"
+    ],
+    "message": "Invalid input: expected array, received undefined"
+  }
+] |
+| 2026-07-16T11:25:00.063Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 failed: [
+  {
+    "expected": "array",
+    "code": "invalid_type",
+    "path": [
+      "sources"
+    ],
+    "message": "Invalid input: expected array, received undefined"
+  }
+] |
+| 2026-07-16T11:25:00.063Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:25:00.066Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:25:00.068Z | THOUGHT | ThoughtBus | [error] Task task-2 failed: [
+  {
+    "expected": "array",
+    "code": "invalid_type",
+    "path": [
+      "sources"
+    ],
+    "message": "Invalid input: expected array, received undefined"
+  }
+] |
+| 2026-07-16T11:25:00.068Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 failed: [
+  {
+    "expected": "array",
+    "code": "invalid_type",
+    "path": [
+      "sources"
+    ],
+    "message": "Invalid input: expected array, received undefined"
+  }
+] |
+| 2026-07-16T11:25:00.068Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Recover from failure in task task-2: [
+  {
+    "expected": "array",
+    "code": "invalid_type",
+    "path": [
+      "sources"
+    ],
+    "message": "Invalid input: expected array, received undefined"
+  }
+]. Original goal: Provide a list of 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:25:00.068Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Recover from failure in task task-2: [
+  {
+    "expected": "array",
+    "code": "invalid_type",
+    "path": [
+      "sources"
+    ],
+    "message": "Invalid input: expected array, received undefined"
+  }
+]. Original goal: Provide a list of 3 interesting facts about the Eiffel Tower. |
+| 2026-07-16T11:25:00.068Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:25:00.068Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:25:00.071Z | THOUGHT | ThoughtBus | [observation] Found 6 relevant knowledge entries. |
+| 2026-07-16T11:25:00.071Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 6 relevant knowledge entries. |
+| 2026-07-16T11:25:00.072Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:25:00.073Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:25:01.469Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The previous attempt failed because the 'research_synthesis' tool expected an array of sources but received undefined. I will first retrieve the search results using the search tool, then pass those results as an array to the research_synthesis tool to ensure the input schema is satisfied. |
+| 2026-07-16T11:25:01.469Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The previous attempt failed because the 'research_synthesis' tool expected an array of sources but received undefined. I will first retrieve the search results using the search tool, then pass those results as an array to the research_synthesis tool to ensure the input schema is satisfied. |
+| 2026-07-16T11:25:01.472Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:25:01.474Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:25:01.475Z | THOUGHT | ThoughtBus | [observation] Task task-1 completed by agent adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:25:01.475Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 completed by agent adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:25:01.475Z | THOUGHT | ThoughtBus | [reasoning] Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T11:25:01.476Z | ACTION | ActionBus | **AGENT_UPDATE**: Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T11:25:01.476Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:25:01.480Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:25:01.481Z | THOUGHT | ThoughtBus | [error] Task task-2 failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:25:01.481Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:25:01.481Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:25:01.484Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:25:01.485Z | THOUGHT | ThoughtBus | [error] Task task-2 failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:25:01.485Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:25:01.485Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:25:01.488Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:25:01.489Z | THOUGHT | ThoughtBus | [error] Task task-2 failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:25:01.489Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:25:01.489Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:25:01.492Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from adde5c5e-5380-4a7f-9fa1-97669f6ef772 |
+| 2026-07-16T11:25:01.493Z | THOUGHT | ThoughtBus | [error] Task task-2 failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:25:01.493Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 failed: [
+  {
+    "code": "invalid_union",
+    "errors": [],
+    "note": "No matching discriminator",
+    "discriminator": "operation",
+    "options": [
+      "summarize",
+      "compare",
+      "generate_report"
+    ],
+    "path": [
+      "operation"
+    ],
+    "message": "Invalid discriminator value. Expected 'summarize' \| 'compare' \| 'generate_report'"
+  }
+] |
+| 2026-07-16T11:25:01.495Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"3095959f-7e6f-4265-9dca-8a45fe77760b","status":"idle","mission":{"id":"3095959f-7e6f-4 |
+| 2026-07-16T11:25:01.495Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"3095959f-7e6f-4265-9dca-8a45fe77760b","status":"running","mission":{"id":"3095959f-7e6 |
+| 2026-07-16T11:25:01.495Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 11 |
+| 2026-07-16T11:25:01.496Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 11 |
+| 2026-07-16T11:25:01.496Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:25:01.496Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:25:01.496Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:25:01.496Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:25:01.496Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_FAILED |
+| 2026-07-16T11:25:01.499Z | THOUGHT | ThoughtBus | [observation] Found 9 relevant knowledge entries. |
+| 2026-07-16T11:25:01.499Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 9 relevant knowledge entries. |
+| 2026-07-16T11:25:01.499Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:25:01.499Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+
+
+---
+
+# MISSION EXECUTION TRACE: Live API Test 12
+
+Generated at: 2026-07-16T11:27:42.516Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T11:27:41.188Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"b4efd8a1-2178-4363-8252-3ce261605f69","title":"Live API Test 12","goal":{"descript |
+| 2026-07-16T11:27:41.190Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"b4efd8a1-2178-4363-8252-3ce261605f69","status":"running","mission":{"id":"b4efd8a1-217 |
+| 2026-07-16T11:27:41.191Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Live API Test 12 |
+| 2026-07-16T11:27:41.191Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Live API Test 12 |
+| 2026-07-16T11:27:41.192Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:27:41.192Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Provide a list of 3 interesting facts about the Eiffel Tower.. Success criteria: Completed |
+| 2026-07-16T11:27:41.192Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:27:41.192Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:27:41.196Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:27:41.196Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:27:42.410Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: I will use the search tool to retrieve interesting facts about the Eiffel Tower and then present them to the user. |
+| 2026-07-16T11:27:42.410Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: I will use the search tool to retrieve interesting facts about the Eiffel Tower and then present them to the user. |
+| 2026-07-16T11:27:42.415Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: b4efd8a1-2178-4363-8252-3ce261605f69 |
+| 2026-07-16T11:27:42.416Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: b4efd8a1-2178-4363-8252-3ce261605f69 |
+| 2026-07-16T11:27:42.420Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:27:42.423Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T11:27:42.425Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T11:27:42.427Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Live API Test 12 |
+| 2026-07-16T11:27:42.438Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from 4bab9a1a-ed27-486a-aeac-a79a14033a7f |
+| 2026-07-16T11:27:42.507Z | THOUGHT | ThoughtBus | [observation] Task task-1 completed by agent 4bab9a1a-ed27-486a-aeac-a79a14033a7f |
+| 2026-07-16T11:27:42.507Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 completed by agent 4bab9a1a-ed27-486a-aeac-a79a14033a7f |
+| 2026-07-16T11:27:42.512Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"b4efd8a1-2178-4363-8252-3ce261605f69","status":"completed","mission":{"id":"b4efd8a1-2 |
+| 2026-07-16T11:27:42.513Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_COMPLETED |
+
+
+---
+
+# MISSION EXECUTION TRACE: Complex Mission
+
+Generated at: 2026-07-16T11:28:17.627Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T11:28:16.053Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"faf01e78-3262-4eed-8085-789eb2272cc9","title":"Complex Mission","goal":{"descripti |
+| 2026-07-16T11:28:16.054Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"faf01e78-3262-4eed-8085-789eb2272cc9","status":"running","mission":{"id":"faf01e78-326 |
+| 2026-07-16T11:28:16.055Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Complex Mission |
+| 2026-07-16T11:28:16.056Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Complex Mission |
+| 2026-07-16T11:28:16.056Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Research the distance between Paris and Tokyo, then calculate how many hours it would take to fly there at 900km/h.. Success criteria: Completed |
+| 2026-07-16T11:28:16.056Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Research the distance between Paris and Tokyo, then calculate how many hours it would take to fly there at 900km/h.. Success criteria: Completed |
+| 2026-07-16T11:28:16.056Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:28:16.056Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T11:28:16.060Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:28:16.060Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T11:28:17.591Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: First, I will search for the flight distance between Paris and Tokyo. Then, I will use the calculator tool to divide that distance by the speed of 900km/h to determine the flight duration. |
+| 2026-07-16T11:28:17.591Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: First, I will search for the flight distance between Paris and Tokyo. Then, I will use the calculator tool to divide that distance by the speed of 900km/h to determine the flight duration. |
+| 2026-07-16T11:28:17.594Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: faf01e78-3262-4eed-8085-789eb2272cc9 |
+| 2026-07-16T11:28:17.594Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: faf01e78-3262-4eed-8085-789eb2272cc9 |
+| 2026-07-16T11:28:17.596Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:28:17.597Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T11:28:17.599Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T11:28:17.599Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Complex Mission |
+| 2026-07-16T11:28:17.607Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from dfda74fa-6e56-4105-8221-962ff4fc2435 |
+| 2026-07-16T11:28:17.610Z | THOUGHT | ThoughtBus | [observation] Task task-1 completed by agent dfda74fa-6e56-4105-8221-962ff4fc2435 |
+| 2026-07-16T11:28:17.610Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 completed by agent dfda74fa-6e56-4105-8221-962ff4fc2435 |
+| 2026-07-16T11:28:17.611Z | THOUGHT | ThoughtBus | [reasoning] Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T11:28:17.611Z | ACTION | ActionBus | **AGENT_UPDATE**: Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T11:28:17.611Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T11:28:17.619Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from dfda74fa-6e56-4105-8221-962ff4fc2435 |
+| 2026-07-16T11:28:17.620Z | THOUGHT | ThoughtBus | [observation] Task task-2 completed by agent dfda74fa-6e56-4105-8221-962ff4fc2435 |
+| 2026-07-16T11:28:17.620Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 completed by agent dfda74fa-6e56-4105-8221-962ff4fc2435 |
+| 2026-07-16T11:28:17.625Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"faf01e78-3262-4eed-8085-789eb2272cc9","status":"completed","mission":{"id":"faf01e78-3 |
+| 2026-07-16T11:28:17.626Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_COMPLETED |
+
+
+---
+

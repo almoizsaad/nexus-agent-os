@@ -43,15 +43,6 @@ export function bootstrapHeadlessRuntime() {
   // 1. Register all services in the container
   DependencyRegistry.registerCoreServices(globalContainer);
 
-  // 2. Use MockLLMProvider only if NO real provider keys are present
-  const hasMoonshotKey = !!process.env.VITE_API_KEY;
-  const hasGeminiKey = !!process.env.VITE_GEMINI_API_KEY;
-  
-  if (!hasMoonshotKey && !hasGeminiKey) {
-    console.warn('[HeadlessRuntime] No LLM API keys found. Using MockLLMProvider for planning.');
-    globalContainer.registerSingleton('LLMProvider', new MockLLMProvider());
-  }
-
   // 3. Initialize Registries
   initializeRegistry();
   
