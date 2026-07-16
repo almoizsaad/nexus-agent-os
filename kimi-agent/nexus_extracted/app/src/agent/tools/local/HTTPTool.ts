@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import type { Tool, ToolMetadata, ToolPermissions, ToolExecutionOptions, ToolHealth } from '../Tool';
 import { ConnectivityLayer } from '../../core/ConnectivityLayer';
+import { APIMetricsManager } from '../../core/APIMetricsManager';
+import { agent } from '../../bootstrap/createAgent';
 
 /**
  * Tool for performing HTTP requests.
@@ -25,6 +27,12 @@ export class HTTPTool implements Tool<any, any> {
     timeout: 30000
   };
 
+  private metrics?: APIMetricsManager;
+
+  constructor(metrics?: APIMetricsManager) {
+    this.metrics = metrics || (agent?.eventBus ? APIMetricsManager.getInstance(agent.eventBus) : undefined);
+  }
+
   public readonly inputSchema = z.object({
     url: z.string(),
     method: z.enum(['GET', 'POST', 'PUT', 'DELETE', 'PATCH']).default('GET'),
@@ -38,6 +46,8 @@ export class HTTPTool implements Tool<any, any> {
 
   public async execute(input: any, options?: ToolExecutionOptions): Promise<any> {
     const { url, method, headers, body, responseType, rateLimitKey } = input;
+    const start = Date.now();
+    const provider = new URL(url).hostname;
     
     // Apply rate limiting if a key is provided
     if (rateLimitKey) {
@@ -56,42 +66,69 @@ export class HTTPTool implements Tool<any, any> {
       fetchOptions.body = typeof body === 'string' ? body : JSON.stringify(body);
     }
 
-    return await ConnectivityLayer.withRetry(async () => {
-      const response = await fetch(url, fetchOptions);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
-      }
-
-      if (options?.streaming && options.onStream && response.body) {
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
+    try {
+      const result = await ConnectivityLayer.withRetry(async ({ signal }) => {
+        const response = await fetch(url, { ...fetchOptions, signal });
         
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          options.onStream(decoder.decode(value, { stream: true }));
+        if (!response.ok) {
+          throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
         }
-      }
 
-      switch (responseType) {
-        case 'json':
-          return await response.json();
-        case 'text':
-          return await response.text();
-        case 'blob':
-          return await response.blob();
-        default:
-          return await response.json();
-      }
-    });
+        if (options?.streaming && options.onStream && response.body) {
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            options.onStream(decoder.decode(value, { stream: true }));
+          }
+        }
+
+        let data;
+        switch (responseType) {
+          case 'json':
+            data = await response.json();
+            break;
+          case 'text':
+            data = await response.text();
+            break;
+          case 'blob':
+            data = await response.blob();
+            break;
+          default:
+            data = await response.json();
+        }
+
+        this.metrics?.recordMetric({
+          provider,
+          operation: method,
+          status: 'success',
+          latency: Date.now() - start
+        });
+
+        return data;
+      }, { timeout: options?.timeout || this.options.timeout });
+
+      return result;
+    } catch (error: any) {
+      this.metrics?.recordMetric({
+        provider,
+        operation: method,
+        status: 'failure',
+        latency: Date.now() - start
+      });
+      throw error;
+    }
   }
 
   public async checkHealth(): Promise<ToolHealth> {
     try {
-      // Basic connectivity check to a reliable endpoint
       const start = Date.now();
-      await fetch('https://www.google.com', { method: 'HEAD', mode: 'no-cors' });
+      // Test connectivity to a reliable DNS/API endpoint
+      const response = await fetch('https://1.1.1.1/cdn-cgi/trace', { method: 'GET', mode: 'cors' });
+      if (!response.ok) throw new Error('Cloudflare check failed');
+      
       return {
         status: 'healthy',
         lastChecked: new Date(),

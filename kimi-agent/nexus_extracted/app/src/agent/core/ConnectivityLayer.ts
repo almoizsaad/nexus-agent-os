@@ -19,22 +19,36 @@ export const DEFAULT_RETRY_OPTIONS: RetryOptions = {
   retryableStatuses: [408, 429, 500, 502, 503, 504],
 };
 
+export interface ExecutionOptions {
+  timeout?: number;
+  signal?: AbortSignal;
+}
+
 export class ConnectivityLayer {
   /**
-   * Executes an async function with exponential backoff retries.
+   * Executes an async function with exponential backoff retries and timeout support.
    */
   public static async withRetry<T>(
-    fn: () => Promise<T>,
-    options: Partial<RetryOptions> = {}
+    fn: (options: ExecutionOptions) => Promise<T>,
+    options: Partial<RetryOptions & ExecutionOptions> = {}
   ): Promise<T> {
     const opts = { ...DEFAULT_RETRY_OPTIONS, ...options };
     let lastError: any;
     let delay = opts.initialDelay;
 
     for (let attempt = 0; attempt <= opts.maxRetries; attempt++) {
+      const controller = new AbortController();
+      const timeoutId = opts.timeout ? setTimeout(() => controller.abort(), opts.timeout) : null;
+
       try {
-        return await fn();
+        const result = await fn({ 
+          timeout: opts.timeout, 
+          signal: opts.signal || controller.signal 
+        });
+        if (timeoutId) clearTimeout(timeoutId);
+        return result;
       } catch (error: any) {
+        if (timeoutId) clearTimeout(timeoutId);
         lastError = error;
         
         const isRetryable = this.isRetryableError(error, opts);
@@ -42,8 +56,9 @@ export class ConnectivityLayer {
           break;
         }
 
-        console.warn(`[ConnectivityLayer] Attempt ${attempt + 1} failed. Retrying in ${delay}ms...`, error.message);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        const currentDelay = delay * (0.8 + Math.random() * 0.4); // Add jitter
+        console.warn(`[ConnectivityLayer] Attempt ${attempt + 1} failed. Retrying in ${Math.round(currentDelay)}ms...`, error.message);
+        await new Promise(resolve => setTimeout(resolve, currentDelay));
         
         delay = Math.min(delay * opts.backoffFactor, opts.maxDelay);
       }
@@ -53,14 +68,19 @@ export class ConnectivityLayer {
   }
 
   private static isRetryableError(error: any, options: RetryOptions): boolean {
+    // Check for explicit timeout/abort
+    if (error.name === 'AbortError' || error.message?.includes('timeout') || error.message?.includes('deadline')) {
+      return true;
+    }
+
     // Check for network-level errors (e.g., fetch failure)
-    if (error.message?.includes('network') || error.message?.includes('failed to fetch') || error.message?.includes('timeout')) {
+    if (error.message?.includes('network') || error.message?.includes('failed to fetch') || error.message?.includes('DNS')) {
       return true;
     }
 
     // Check for HTTP status codes if available
-    const status = error.status || (error.message?.match(/HTTP Error: (\d+)/)?.[1]);
-    if (status && options.retryableStatuses?.includes(Number(status))) {
+    const status = error.status || Number(error.message?.match(/HTTP Error: (\d+)/)?.[1]);
+    if (status && options.retryableStatuses?.includes(status)) {
       return true;
     }
 

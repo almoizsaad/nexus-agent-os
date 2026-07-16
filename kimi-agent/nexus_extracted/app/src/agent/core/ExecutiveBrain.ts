@@ -38,6 +38,10 @@ export class ExecutiveBrain {
       }
     });
 
+    this.eventBus.subscribe('system:shutdown', async () => {
+      await this.scheduler.shutdown();
+    });
+
     this.setupEventListeners();
   }
 

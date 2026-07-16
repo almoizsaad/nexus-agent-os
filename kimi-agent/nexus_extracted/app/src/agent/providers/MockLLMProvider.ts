@@ -16,14 +16,14 @@ export class MockLLMProvider implements LLMProvider {
     }
 
     // Default heuristics based on prompt keywords if no mock set
-    if (prompt.toLowerCase().includes('trip') || prompt.toLowerCase().includes('tokyo')) {
+    if (prompt.toLowerCase().includes('trip') || prompt.toLowerCase().includes('tokyo') || prompt.toLowerCase().includes('china')) {
       return {
         id: 'mock-plan-trip',
         goal: 'Plan a trip',
-        reasoning: 'Planning a trip requires flights and hotels.',
+        reasoning: 'Planning a trip requires searching for flights and hotels.',
         tasks: [
-          { id: 'task_01', description: 'Search flights', tool: 'search_flights', dependencies: [] },
-          { id: 'task_02', description: 'Find hotels', tool: 'find_hotels', dependencies: ['task_01'] }
+          { id: 'task_01', description: 'Search flights and hotels', tool: 'search', metadata: { query: 'flights and hotels' }, dependencies: [] },
+          { id: 'task_02', description: 'Read travel guide', tool: 'search', metadata: { query: 'travel guide' }, dependencies: ['task_01'] }
         ]
       } as any as T;
     }
@@ -55,10 +55,10 @@ export class MockLLMProvider implements LLMProvider {
       return {
         id: 'mock-plan-coding',
         goal: 'Implement feature',
-        reasoning: 'Coding requires writing and testing.',
+        reasoning: 'Coding requires writing files and verifying with terminal.',
         tasks: [
-          { id: 'task_01', description: 'Write Auth', tool: 'write_code', metadata: { feature: 'Auth' }, dependencies: [] },
-          { id: 'task_02', description: 'Run tests', tool: 'run_tests', dependencies: ['task_01'] }
+          { id: 'task_01', description: 'Write source code', tool: 'filesystem', metadata: { operation: 'write', path: 'src/feature.ts', content: '// Implementation' }, dependencies: [] },
+          { id: 'task_02', description: 'Verify build', tool: 'terminal', metadata: { command: 'npm run build' }, dependencies: ['task_01'] }
         ]
       } as any as T;
     }

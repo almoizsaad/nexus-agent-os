@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { Tool, ToolMetadata, ToolPermissions, ToolExecutionOptions, ToolHealth } from '../Tool';
+import { ConnectivityLayer } from '../../core/ConnectivityLayer';
 
 /**
  * Tool for web browsing and content extraction.
@@ -9,9 +10,9 @@ export class BrowserTool implements Tool<any, any> {
   public readonly description = 'Browse the web, read page content, extract data, and take screenshots.';
   
   public readonly metadata: ToolMetadata = {
-    version: '1.0.0',
+    version: '1.1.0',
     category: 'browser',
-    tags: ['web', 'browse', 'scrape', 'html'],
+    tags: ['web', 'browse', 'scrape', 'html', 'resilient'],
     author: 'Nexus OS'
   };
 
@@ -31,11 +32,13 @@ export class BrowserTool implements Tool<any, any> {
     }).passthrough(),
     z.object({
       operation: z.literal('read_page'),
-      url: z.string()
+      url: z.string(),
+      useProxy: z.boolean().default(true)
     }).passthrough(),
     z.object({
       operation: z.literal('extract_links'),
-      url: z.string()
+      url: z.string(),
+      useProxy: z.boolean().default(true)
     }).passthrough(),
     z.object({
       operation: z.literal('screenshot'),
@@ -44,51 +47,57 @@ export class BrowserTool implements Tool<any, any> {
     z.object({
       operation: z.literal('extract_dom'),
       url: z.string(),
-      selector: z.string().optional()
+      selector: z.string().optional(),
+      useProxy: z.boolean().default(true)
     }).passthrough()
   ]);
   
   public readonly outputSchema = z.any();
 
-  public async execute(input: any): Promise<any> {
-    switch (input.operation) {
+  public async execute(input: any, options?: ToolExecutionOptions): Promise<any> {
+    const parsed = this.inputSchema.parse(input);
+    const timeout = options?.timeout || this.options.timeout;
+    
+    switch (parsed.operation) {
       case 'read_page':
-        return await this.readPage(input.url);
+        return await this.readPage(parsed.url, (parsed as any).useProxy, timeout);
       case 'extract_links':
-        return await this.extractLinks(input.url);
+        return await this.extractLinks(parsed.url, (parsed as any).useProxy, timeout);
       case 'screenshot':
-        return await this.takeScreenshot(input.url);
+        return await this.takeScreenshot(parsed.url);
       case 'extract_dom':
-        return await this.extractDOM(input.url, input.selector);
+        return await this.extractDOM(parsed.url, (parsed as any).selector, (parsed as any).useProxy, timeout);
       case 'navigate':
-        // In a real browser-based agent, this might actually navigate a controlled tab/iframe
-        return { success: true, url: input.url };
+        return { success: true, url: parsed.url };
       default:
-        throw new Error(`Unsupported operation: ${input.operation}`);
+        throw new Error(`Unsupported operation`);
     }
   }
 
-  private async readPage(url: string): Promise<{ title: string; content: string }> {
-    try {
-      console.info(`[BrowserTool] Navigating to: ${url}`);
+  private getProxyUrl(url: string): string {
+    const proxyBase = (typeof import.meta.env !== 'undefined' ? import.meta.env.VITE_BROWSER_PROXY : process.env.VITE_BROWSER_PROXY) 
+      || 'https://cors-anywhere.herokuapp.com/'; // Fallback to public proxy if not configured
+    return `${proxyBase}${url}`;
+  }
+
+  private async fetchPage(url: string, useProxy: boolean, signal?: AbortSignal): Promise<Response> {
+    const targetUrl = useProxy ? this.getProxyUrl(url) : url;
+    const response = await fetch(targetUrl, { signal });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+    }
+    
+    return response;
+  }
+
+  private async readPage(url: string, useProxy: boolean, timeout?: number): Promise<{ title: string; content: string }> {
+    return await ConnectivityLayer.withRetry(async ({ signal }) => {
+      console.info(`[BrowserTool] Navigating to: ${url} (Proxy: ${useProxy})`);
       
-      // Attempt real fetch
-      const response = await fetch(url).catch(e => {
-        console.warn(`[BrowserTool] Fetch failed for ${url}, using simulated content.`, e);
-        return null;
-      });
-
-      if (!response || !response.ok) {
-        // Fallback to simulated content for development/demo purposes
-        return {
-          title: `Simulated Page: ${url}`,
-          content: `This is simulated content for ${url}. In a production environment with proper network permissions and proxy configuration, this tool would return the actual text content of the page.`
-        };
-      }
-
+      const response = await this.fetchPage(url, useProxy, signal);
       const html = await response.text();
       
-      // In a Node.js environment, DOMParser might not be global
       let title = url;
       let content = '';
 
@@ -97,13 +106,11 @@ export class BrowserTool implements Tool<any, any> {
         const doc = parser.parseFromString(html, 'text/html');
         title = doc.title;
         
-        // Clean content: remove scripts, styles, etc.
         const scripts = doc.querySelectorAll('script, style, iframe, noscript, svg, path');
         scripts.forEach(s => s.remove());
         
         content = doc.body.innerText.replace(/\s+/g, ' ').trim();
       } else {
-        // Simple regex fallback for title and text if no DOMParser
         const titleMatch = html.match(/<title>(.*?)<\/title>/i);
         title = titleMatch ? titleMatch[1] : url;
         content = html.replace(/<script[\s\S]*?<\/script>/gi, '')
@@ -113,20 +120,13 @@ export class BrowserTool implements Tool<any, any> {
                       .trim();
       }
       
-      return { title, content: content.slice(0, 10000) }; // Limit content size
-    } catch (error: any) {
-      console.error(`[BrowserTool] Failed to read page: ${error.message}`);
-      throw new Error(`Failed to read page: ${error.message}`);
-    }
+      return { title, content: content.slice(0, 10000) };
+    }, { timeout });
   }
 
-  private async extractLinks(url: string): Promise<{ links: Array<{ text: string; href: string }> }> {
-    try {
-      const response = await fetch(url).catch(() => null);
-      if (!response || !response.ok) {
-        return { links: [] };
-      }
-
+  private async extractLinks(url: string, useProxy: boolean, timeout?: number): Promise<{ links: Array<{ text: string; href: string }> }> {
+    return await ConnectivityLayer.withRetry(async ({ signal }) => {
+      const response = await this.fetchPage(url, useProxy, signal);
       const html = await response.text();
       const links: Array<{ text: string; href: string }> = [];
 
@@ -149,36 +149,35 @@ export class BrowserTool implements Tool<any, any> {
         }
       }
       
-      return { links: links.slice(0, 50) }; // Limit number of links
-    } catch (error: any) {
-      return { links: [] };
-    }
+      return { links: links.slice(0, 50) };
+    }, { timeout });
   }
 
   private async takeScreenshot(url: string): Promise<{ screenshotUrl: string }> {
-    // This requires a backend with Playwright/Puppeteer
-    // Placeholder for now
     return {
       screenshotUrl: `https://api.screenshot.com/v1/capture?url=${encodeURIComponent(url)}`
     };
   }
 
-  private async extractDOM(url: string, selector?: string): Promise<{ html: string }> {
-    try {
-      const response = await fetch(url);
+  private async extractDOM(url: string, selector: string | undefined, useProxy: boolean, timeout?: number): Promise<{ html: string }> {
+    return await ConnectivityLayer.withRetry(async ({ signal }) => {
+      const response = await this.fetchPage(url, useProxy, signal);
       const html = await response.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
       
-      if (selector) {
-        const element = doc.querySelector(selector);
-        return { html: element ? element.outerHTML : '' };
+      if (typeof DOMParser !== 'undefined') {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        if (selector) {
+          const element = doc.querySelector(selector);
+          return { html: element ? element.outerHTML : '' };
+        }
+        
+        return { html: doc.documentElement.outerHTML };
+      } else {
+        return { html }; // Fallback to raw HTML
       }
-      
-      return { html: doc.documentElement.outerHTML };
-    } catch (error: any) {
-      throw new Error(`Failed to extract DOM: ${error.message}`);
-    }
+    }, { timeout });
   }
 
   public async checkHealth(): Promise<ToolHealth> {

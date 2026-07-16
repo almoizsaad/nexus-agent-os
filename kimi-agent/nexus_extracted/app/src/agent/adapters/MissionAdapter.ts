@@ -17,8 +17,6 @@ export class MissionAdapter {
   }
 
   private setupSubscriptions() {
-    const missionStore = useMissionStore.getState();
-
     // 1. Mission Lifecycle Events
     const unsubMissions = this.eventBus.subscribe<AgentProtocolEvent>('agent:events', (event) => {
       const missionStore = useMissionStore.getState();
@@ -186,7 +184,7 @@ export class MissionAdapter {
               type: 'knowledge',
               title: 'Deliverable Generated',
               description: `Task ${taskId} produced new content.`,
-              data: result
+              data: { ...(result as object), taskId }
             });
           }
 

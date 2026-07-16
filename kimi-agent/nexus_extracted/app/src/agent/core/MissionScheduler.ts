@@ -175,4 +175,13 @@ export class MissionScheduler {
       });
     }
   }
+
+  public async shutdown(): Promise<void> {
+    const runningMissions = this.goalManager.getAllMissions().filter(m => m.status === 'running');
+    console.warn(`[MissionScheduler] Emergency shutdown: Cancelling ${runningMissions.length} running missions.`);
+    
+    for (const mission of runningMissions) {
+      await this.cancelMission(mission.id);
+    }
+  }
 }

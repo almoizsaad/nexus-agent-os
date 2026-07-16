@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { Mission, MissionStatus, MissionTimelineEntry, MissionOutcome } from '@/agent/types/mission';
-import type { Plan, AgentIdentity, Thought } from '@/agent/types/agent';
+import type { Plan, AgentIdentity, Thought, Task } from '@/agent/types/agent';
 import type { ReflectionResult } from '@/agent/types/reflection';
 
 export interface MissionStoreState {

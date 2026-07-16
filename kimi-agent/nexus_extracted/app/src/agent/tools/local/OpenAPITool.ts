@@ -35,7 +35,7 @@ export class OpenAPITool implements Tool<any, any> {
   
   public readonly outputSchema = z.any();
 
-  public async execute(input: any): Promise<any> {
+  public async execute(input: any, options?: ToolExecutionOptions): Promise<any> {
     const { specUrl, operationId, parameters, body, baseUrl: baseUrlOverride } = input;
 
     // 1. Fetch Spec
@@ -56,14 +56,15 @@ export class OpenAPITool implements Tool<any, any> {
     const { url, method } = this.buildRequest(baseUrl, operation.path, operation.method, parameters);
 
     // 4. Execute with Resilience
-    return await ConnectivityLayer.withRetry(async () => {
+    return await ConnectivityLayer.withRetry(async ({ signal }) => {
       const response = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
           ...(parameters?.headers || {})
         },
-        body: body ? JSON.stringify(body) : undefined
+        body: body ? JSON.stringify(body) : undefined,
+        signal
       });
 
       if (!response.ok) {
@@ -71,7 +72,7 @@ export class OpenAPITool implements Tool<any, any> {
       }
 
       return await response.json();
-    });
+    }, { timeout: options?.timeout || this.options.timeout });
   }
 
   private findOperation(spec: any, operationId: string): { path: string; method: string; op: any } | null {

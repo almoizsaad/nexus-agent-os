@@ -33,6 +33,11 @@ export class JSONTool implements Tool<any, any> {
       operation: z.literal('format'),
       data: z.any(),
       space: z.number().default(2)
+    }).passthrough(),
+    z.object({
+      operation: z.literal('stringify'),
+      data: z.any(),
+      space: z.number().default(2)
     }).passthrough()
   ]);
   
@@ -47,7 +52,8 @@ export class JSONTool implements Tool<any, any> {
         }
         return JSON.parse(input.text);
       case 'format':
-        return JSON.stringify(input.data, null, input.space);
+      case 'stringify':
+        return JSON.stringify(input.data, null, input.space || 2);
       default:
         throw new Error(`Unsupported operation: ${input.operation}`);
     }

@@ -12,6 +12,7 @@ import { ImprovementEngine } from '../improvement/ImprovementEngine';
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
 import { AgentRuntime } from '../core/AgentRuntime';
 import { ExecutiveBrain } from '../core/ExecutiveBrain';
+import { APIMetricsManager } from '../core/APIMetricsManager';
 import type { LLMProvider } from '../providers/LLMProvider';
 
 /**
@@ -27,15 +28,15 @@ export function createAgent(container: ServiceContainer = new ServiceContainer()
   const toolRegistry = container.resolve(ToolRegistry);
   const knowledgeDb = container.resolve(KnowledgeDatabase);
   const llmProvider = container.resolve<LLMProvider>('LLMProvider');
+  const apiMetrics = container.resolve(APIMetricsManager);
 
   // Register default production tools
-  registerDefaultTools(toolRegistry, knowledgeDb, llmProvider);
+  registerDefaultTools(toolRegistry, knowledgeDb, llmProvider, apiMetrics);
 
   const monitor = container.resolve(PerformanceMonitor);
   const improvementEngine = container.resolve(ImprovementEngine);
   const suggestions = container.resolve(OptimizationSuggestions);
   const knowledgeGraph = container.resolve(KnowledgeGraph);
-  const factory = container.resolve(AgentFactory);
   const manager = container.resolve(AgentManager);
 
   // Get or create default runtime instance

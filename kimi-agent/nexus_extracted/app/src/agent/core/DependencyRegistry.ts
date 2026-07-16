@@ -50,10 +50,13 @@ import { MissionIntelligence } from './MissionIntelligence';
 import { MissionNotifications } from './MissionNotifications';
 import { MissionInbox } from './MissionInbox';
 
+import { APIMetricsManager } from './APIMetricsManager';
+
 export class DependencyRegistry {
   public static registerCoreServices(container: ServiceContainer): void {
     // Singletons - only if not already registered
     if (!container.has(EventBus)) container.registerSingleton(EventBus, new EventBus());
+    if (!container.has(APIMetricsManager)) container.registerSingleton(APIMetricsManager, (c) => APIMetricsManager.getInstance(c.resolve(EventBus)));
     if (!container.has(AgentMessageBus)) container.registerSingleton(AgentMessageBus, (c) => new AgentMessageBus(c.resolve(EventBus)));
     if (!container.has(AgentStream)) container.registerSingleton(AgentStream, (c) => new AgentStream(c.resolve(EventBus)));
     if (!container.has(ToolRegistry)) container.registerSingleton(ToolRegistry, new ToolRegistry());
@@ -88,12 +91,13 @@ export class DependencyRegistry {
 
     // Provider/Implementation mapping
     if (!container.has('LLMProvider')) {
-      container.registerSingleton('LLMProvider', () => {
+      container.registerSingleton('LLMProvider', (c) => {
         const hasGeminiKey = !!(typeof import.meta.env !== 'undefined' ? import.meta.env.VITE_GEMINI_API_KEY : process.env.VITE_GEMINI_API_KEY);
         const hasMoonshotKey = !!(typeof import.meta.env !== 'undefined' ? import.meta.env.VITE_API_KEY : process.env.VITE_API_KEY);
+        const metrics = c.resolve(APIMetricsManager);
 
         if (hasGeminiKey) {
-          return new GeminiLLMProvider();
+          return new GeminiLLMProvider(undefined, undefined, undefined, metrics);
         } else if (hasMoonshotKey) {
           return new MoonshotLLMProvider();
         } else {

@@ -50,6 +50,21 @@ export class AutonomousMonitoring {
     this.eventBus.subscribe('system:heartbeat', () => {
       this.publishHealth();
     });
+
+    this.eventBus.subscribe('system:shutdown', () => {
+      this.resetStats();
+    });
+  }
+
+  private resetStats(): void {
+    this.stats = {
+      completed: 0,
+      failed: 0,
+      totalLatency: 0,
+      count: 0
+    };
+    this.startTime = Date.now();
+    console.info('[AutonomousMonitoring] System statistics reset due to shutdown/recovery.');
   }
 
   private publishHealth(): void {

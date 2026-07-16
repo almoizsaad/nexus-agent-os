@@ -1,18 +1,23 @@
 import type { LLMProvider } from './LLMProvider';
+import { ConnectivityLayer } from '../core/ConnectivityLayer';
+import { APIMetricsManager } from '../core/APIMetricsManager';
 
 export class MoonshotLLMProvider implements LLMProvider {
   private apiKey: string;
   private apiBase: string;
   private model: string;
+  private metrics?: APIMetricsManager;
 
   constructor(
     apiKey: string = (typeof import.meta.env !== 'undefined' ? import.meta.env.VITE_API_KEY : process.env.VITE_API_KEY) || '',
     apiBase: string = (typeof import.meta.env !== 'undefined' ? import.meta.env.VITE_API_BASE_URL : process.env.VITE_API_BASE_URL) || 'https://api.moonshot.cn/v1',
-    model: string = 'moonshot-v1-8k'
+    model: string = 'moonshot-v1-8k',
+    metrics?: APIMetricsManager
   ) {
     this.apiKey = apiKey;
     this.apiBase = apiBase;
     this.model = model;
+    this.metrics = metrics;
 
     if (!this.apiKey) {
       console.warn('[MoonshotLLMProvider] API key not configured. Calls will fail.');
@@ -24,43 +29,63 @@ export class MoonshotLLMProvider implements LLMProvider {
       throw new Error('[MoonshotLLMProvider] API key not configured.');
     }
 
+    const start = Date.now();
     try {
-      const response = await fetch(`${this.apiBase}/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
-        },
-        body: JSON.stringify({
-          model: this.model,
-          messages: [
-            {
-              role: 'system',
-              content: `You are an expert AI assistant that provides structured JSON responses. 
-              Always respond with a valid JSON object matching this schema: ${JSON.stringify(schema)}.
-              Do not include any other text or explanation.`,
-            },
-            {
-              role: 'user',
-              content: prompt,
-            },
-          ],
-          response_format: { type: 'json_object' },
-        }),
+      return await ConnectivityLayer.withRetry(async ({ signal }) => {
+        const response = await fetch(`${this.apiBase}/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.apiKey}`,
+          },
+          signal,
+          body: JSON.stringify({
+            model: this.model,
+            messages: [
+              {
+                role: 'system',
+                content: `You are an expert AI assistant that provides structured JSON responses. 
+                Always respond with a valid JSON object matching this schema: ${JSON.stringify(schema)}.
+                Do not include any other text or explanation.`,
+              },
+              {
+                role: 'user',
+                content: prompt,
+              },
+            ],
+            response_format: { type: 'json_object' },
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`[MoonshotLLMProvider] API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const content = data.choices?.[0]?.message?.content;
+        if (!content) {
+          throw new Error('[MoonshotLLMProvider] No content returned from API');
+        }
+
+        const tokens = data.usage?.total_tokens || 0;
+        this.metrics?.recordMetric({
+          provider: 'moonshot',
+          operation: 'generateStructuredOutput',
+          status: 'success',
+          latency: Date.now() - start,
+          tokens,
+          cost: (tokens / 1000) * 0.012 // Rough estimate: $0.012 per 1k tokens
+        });
+
+        return JSON.parse(content) as T;
+      }, { timeout: 30000 });
+    } catch (error: any) {
+      this.metrics?.recordMetric({
+        provider: 'moonshot',
+        operation: 'generateStructuredOutput',
+        status: 'failure',
+        latency: Date.now() - start
       });
-
-      if (!response.ok) {
-        throw new Error(`[MoonshotLLMProvider] API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const content = data.choices?.[0]?.message?.content;
-      if (!content) {
-        throw new Error('[MoonshotLLMProvider] No content returned from API');
-      }
-
-      return JSON.parse(content) as T;
-    } catch (error) {
       console.error('[MoonshotLLMProvider] Error generating structured output:', error);
       throw error;
     }

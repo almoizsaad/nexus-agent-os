@@ -27,7 +27,13 @@ export class KnowledgeTool implements Tool<any, any> {
 
   public readonly inputSchema = z.discriminatedUnion('operation', [
     z.object({
-      operation: z.enum(['search', 'query']),
+      operation: z.literal('search'),
+      query: z.string(),
+      limit: z.number().default(5),
+      threshold: z.number().default(0.5)
+    }).passthrough(),
+    z.object({
+      operation: z.literal('query'),
       query: z.string(),
       limit: z.number().default(5),
       threshold: z.number().default(0.5)

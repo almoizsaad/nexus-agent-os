@@ -138,6 +138,7 @@ export class CoordinatorAgent extends AgentRuntime {
           agentId: message.sender,
           taskId,
           planId,
+          result
         },
         timestamp: Date.now()
       });
@@ -151,7 +152,7 @@ export class CoordinatorAgent extends AgentRuntime {
           if (task.status === 'pending') {
             await this.coordinator.delegateTask(task, plan.id, plan);
             
-            if (task.status === 'failed') {
+            if ((task.status as string) === 'failed') {
               const error = (task.metadata?.error as string) || 'Delegation failed';
               this._stream.thought(`Task ${task.id} delegation failed: ${error}`, 'error', { planId, taskId: task.id });
               await this.handleTaskFailure(plan, task.id, error);

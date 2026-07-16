@@ -24,10 +24,17 @@ import type { IKnowledgeDatabase } from '../types/knowledge';
 import type { Tool } from './Tool';
 import type { LLMProvider } from '../providers/LLMProvider';
 
+import { APIMetricsManager } from '../core/APIMetricsManager';
+
 /**
  * Registers all production-grade local tools into the registry.
  */
-export function registerDefaultTools(registry: ToolRegistry, knowledgeDb?: IKnowledgeDatabase, llmProvider?: LLMProvider): void {
+export function registerDefaultTools(
+  registry: ToolRegistry, 
+  knowledgeDb?: IKnowledgeDatabase, 
+  llmProvider?: LLMProvider,
+  metrics?: APIMetricsManager
+): void {
   const tools: Tool<any, any>[] = [
     new ClockTool(),
     new UUIDTool(),
@@ -36,8 +43,8 @@ export function registerDefaultTools(registry: ToolRegistry, knowledgeDb?: IKnow
     new GitTool(),
     new CalculatorTool(),
     new BrowserTool(),
-    new SearchTool(),
-    new HTTPTool(),
+    new SearchTool(metrics),
+    new HTTPTool(metrics),
     new JSONTool(),
     new MarkdownTool(),
     new CSVTool(),

@@ -180,6 +180,10 @@ export class AgentRuntime {
       
       console.log(`[AgentRuntime] [DEBUG] Executing Task:`, JSON.stringify(taskObj, null, 2));
 
+      if (!this._executor) {
+        throw new Error('Agent executor not initialized');
+      }
+
       const result = await this._executor.executeTask(taskObj, {});
 
       if (result.success) {

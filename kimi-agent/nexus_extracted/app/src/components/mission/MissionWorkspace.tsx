@@ -39,7 +39,7 @@ export const MissionWorkspace: React.FC = () => {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,102,255,0.05),transparent_70%)] pointer-events-none" />
 
       {/* Sidebar - Mission Explorer */}
-      <aside className="w-80 flex flex-col border-r border-white/5 bg-background/50 backdrop-blur-2xl z-20">
+      <aside className="w-80 hidden md:flex flex-col border-r border-white/5 bg-background/50 backdrop-blur-2xl z-20 min-h-0">
         <div className="p-6 border-b border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
@@ -62,7 +62,7 @@ export const MissionWorkspace: React.FC = () => {
           </Button>
         </div>
 
-        <ScrollArea className="flex-1">
+        <ScrollArea className="flex-1 min-h-0">
           <div className="p-4 space-y-4">
             <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
               <Activity className="w-3 h-3" />
@@ -93,39 +93,41 @@ export const MissionWorkspace: React.FC = () => {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col relative z-10">
+      <main className="flex-1 flex flex-col relative z-10 overflow-hidden min-h-0">
         {activeMission ? (
           <div className="flex-1 p-6 overflow-hidden">
             <MissionPanel mission={activeMission} />
           </div>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center p-6 text-center space-y-8 max-w-2xl mx-auto">
-            <div className="relative">
-              <div className="absolute inset-0 bg-primary blur-[100px] opacity-20" />
-              <Target className="w-20 h-20 text-primary animate-pulse relative z-10" />
+          <ScrollArea className="flex-1">
+            <div className="flex flex-col items-center justify-center p-12 text-center space-y-8 max-w-2xl mx-auto min-h-full">
+              <div className="relative">
+                <div className="absolute inset-0 bg-primary blur-[100px] opacity-20" />
+                <Target className="w-20 h-20 text-primary animate-pulse relative z-10" />
+              </div>
+              
+              <div className="space-y-4">
+                <h1 className="text-4xl font-black tracking-tighter">SELECT AN OPERATION</h1>
+                <p className="text-muted-foreground leading-relaxed">
+                  Welcome to the Nexus Command Center. Select an existing mission from the explorer or 
+                  initiate a new autonomous sequence to begin.
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 w-full">
+                <Card className="p-6 bg-white/5 border-white/5 hover:bg-white/10 transition-colors cursor-pointer group">
+                  <History className="w-8 h-8 text-blue-500 mb-4 group-hover:scale-110 transition-transform" />
+                  <h3 className="font-bold mb-1">Operational History</h3>
+                  <p className="text-[10px] text-muted-foreground uppercase font-mono">Review past successes and failures</p>
+                </Card>
+                <Card className="p-6 bg-white/5 border-white/5 hover:bg-white/10 transition-colors cursor-pointer group">
+                  <Cpu className="w-8 h-8 text-purple-500 mb-4 group-hover:scale-110 transition-transform" />
+                  <h3 className="font-bold mb-1">System Status</h3>
+                  <p className="text-[10px] text-muted-foreground uppercase font-mono">Monitor all active kernel processes</p>
+                </Card>
+              </div>
             </div>
-            
-            <div className="space-y-4">
-              <h1 className="text-4xl font-black tracking-tighter">SELECT AN OPERATION</h1>
-              <p className="text-muted-foreground leading-relaxed">
-                Welcome to the Nexus Command Center. Select an existing mission from the explorer or 
-                initiate a new autonomous sequence to begin.
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4 w-full">
-              <Card className="p-6 bg-white/5 border-white/5 hover:bg-white/10 transition-colors cursor-pointer group">
-                <History className="w-8 h-8 text-blue-500 mb-4 group-hover:scale-110 transition-transform" />
-                <h3 className="font-bold mb-1">Operational History</h3>
-                <p className="text-[10px] text-muted-foreground uppercase font-mono">Review past successes and failures</p>
-              </Card>
-              <Card className="p-6 bg-white/5 border-white/5 hover:bg-white/10 transition-colors cursor-pointer group">
-                <Cpu className="w-8 h-8 text-purple-500 mb-4 group-hover:scale-110 transition-transform" />
-                <h3 className="font-bold mb-1">System Status</h3>
-                <p className="text-[10px] text-muted-foreground uppercase font-mono">Monitor all active kernel processes</p>
-              </Card>
-            </div>
-          </div>
+          </ScrollArea>
         )}
       </main>
     </div>

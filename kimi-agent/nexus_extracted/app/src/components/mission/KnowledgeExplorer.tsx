@@ -30,7 +30,7 @@ export const KnowledgeExplorer: React.FC<KnowledgeExplorerProps> = ({ mission })
   const types = Array.from(new Set(mission.knowledgeUpdates.map(u => u.type)));
 
   return (
-    <div className="flex flex-col h-[600px] border border-white/5 rounded-xl bg-black/20 overflow-hidden">
+    <div className="flex flex-col h-full border border-white/5 rounded-xl bg-black/20 overflow-hidden">
       {/* Header / Search */}
       <div className="p-4 border-b border-white/5 bg-background/50 flex items-center gap-4">
         <div className="relative flex-1">
