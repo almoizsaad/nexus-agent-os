@@ -5,6 +5,7 @@ import {
   Cpu, Activity, TrendingUp, Zap, Brain, Database,
   Wifi, Server, Globe, Clock, Shield
 } from 'lucide-react';
+import { useShallow } from 'zustand/react/shallow';
 import { useSystemStore } from '../stores/systemStore';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -19,7 +20,7 @@ export default function NeuralDatastream() {
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
   const telemetry = useSystemStore(state => state.telemetry);
-  const agents = useSystemStore(state => Object.values(state.agents));
+  const agents = useSystemStore(useShallow(state => Object.values(state.agents)));
 
   const METRICS = [
     { label: 'Tokens/sec', value: telemetry.tokensPerSec, max: 1000, icon: Zap },

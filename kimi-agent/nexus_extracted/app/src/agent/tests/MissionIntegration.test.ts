@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { createAgent } from '../bootstrap/createAgent';
 import { useMissionStore } from '../../stores/missionStore';
 import { MissionAdapter } from '../adapters/MissionAdapter';
-import { GeminiLLMProvider } from '../providers/GeminiLLMProvider';
+import { MockLLMProvider } from '../providers/MockLLMProvider';
 import { ServiceContainer } from '../core/ServiceContainer';
 
 describe('Mission Integration', () => {
@@ -12,7 +12,7 @@ describe('Mission Integration', () => {
 
   it('should synchronize mission creation from ExecutiveBrain to missionStore', async () => {
     const container = new ServiceContainer();
-    container.registerSingleton('LLMProvider', new GeminiLLMProvider());
+    container.registerSingleton('LLMProvider', new MockLLMProvider());
     
     const { executiveBrain, eventBus } = createAgent(container);
     
@@ -33,7 +33,7 @@ describe('Mission Integration', () => {
 
   it('should synchronize mission status updates', async () => {
     const container = new ServiceContainer();
-    container.registerSingleton('LLMProvider', new GeminiLLMProvider());
+    container.registerSingleton('LLMProvider', new MockLLMProvider());
     
     const { executiveBrain, eventBus } = createAgent(container);
     new MissionAdapter(eventBus);

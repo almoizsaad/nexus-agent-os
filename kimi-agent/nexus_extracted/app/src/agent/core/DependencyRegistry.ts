@@ -8,7 +8,7 @@ import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
 import { KnowledgeDatabase } from '../knowledge/KnowledgeDatabase';
 import { EmbeddingStore } from '../knowledge/EmbeddingStore';
 import { VectorSearch } from '../knowledge/VectorSearch';
-import { GeminiLLMProvider } from '../providers/GeminiLLMProvider';
+import { MoonshotLLMProvider } from '../providers/MoonshotLLMProvider';
 import type { LLMProvider } from '../providers/LLMProvider';
 import { LLMPlanner } from '../planner/LLMPlanner';
 import { TaskExecutor } from '../executor/TaskExecutor';
@@ -20,6 +20,8 @@ import { AgentChannel } from './AgentChannel';
 import { AgentStream } from '../events/AgentStream';
 import { MemoryManager } from '../memory/MemoryManager';
 import { GoalManager } from './GoalManager';
+import { PriorityManager } from './PriorityManager';
+import { MissionScheduler } from './MissionScheduler';
 
 // Phase 8 additions
 import { ExecutiveBrain } from './ExecutiveBrain';
@@ -83,7 +85,7 @@ export class DependencyRegistry {
     if (!container.has('Safety')) container.registerSingleton('Safety', new SafetyGuard());
 
     // Provider/Implementation mapping
-    if (!container.has('LLMProvider')) container.registerSingleton('LLMProvider', () => new GeminiLLMProvider());
+    if (!container.has('LLMProvider')) container.registerSingleton('LLMProvider', () => new MoonshotLLMProvider());
     
     if (!container.has('Planner')) {
       container.registerSingleton('Planner', (c) => {
@@ -184,9 +186,33 @@ export class DependencyRegistry {
       });
     }
 
+    if (!container.has(GoalManager)) {
+      container.registerSingleton(GoalManager, (c) => new GoalManager(c.resolve(EventBus)));
+    }
+
+    if (!container.has(PriorityManager)) {
+      container.registerSingleton(PriorityManager, new PriorityManager());
+    }
+
+    if (!container.has(MissionScheduler)) {
+      container.registerSingleton(MissionScheduler, (c) => {
+        return new MissionScheduler(
+          c.resolve(GoalManager),
+          c.resolve(PriorityManager),
+          c.resolve(EventBus)
+        );
+      });
+    }
+
     if (!container.has(ExecutiveBrain)) {
       container.registerSingleton(ExecutiveBrain, (c) => {
-        return new ExecutiveBrain(c.resolve(EventBus), c.resolve(CoordinatorAgent));
+        return new ExecutiveBrain(
+          c.resolve(EventBus),
+          c.resolve(CoordinatorAgent),
+          c.resolve(GoalManager),
+          c.resolve(PriorityManager),
+          c.resolve(MissionScheduler)
+        );
       });
     }
 
