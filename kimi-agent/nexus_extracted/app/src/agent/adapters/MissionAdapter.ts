@@ -21,6 +21,7 @@ export class MissionAdapter {
 
     // 1. Mission Lifecycle Events
     const unsubMissions = this.eventBus.subscribe<AgentProtocolEvent>('agent:events', (event) => {
+      const missionStore = useMissionStore.getState();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const payload = event.payload as any;
       switch (event.type as string) {
@@ -32,6 +33,13 @@ export class MissionAdapter {
         case AgentEventType.MISSION_STATUS_UPDATED:
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           missionStore.updateMissionStatus(payload.missionId as string, payload.status as any);
+          missionStore.addTimelineEntry(payload.missionId as string, {
+            id: crypto.randomUUID(),
+            timestamp: Date.now(),
+            type: 'event',
+            title: 'Mission Update',
+            description: `Mission status updated to ${payload.status}`,
+          });
           break;
 
         case AgentEventType.AGENT_UPDATE: {
@@ -81,18 +89,40 @@ export class MissionAdapter {
 
     // 1.1 Plan Updates
     const unsubPlan = this.eventBus.subscribe<any>('agent:actions', (action) => {
+      const missionStore = useMissionStore.getState();
       if (action.type === 'UPDATE_PLAN') {
         const { planId, tasks } = action.payload;
         // Search all missions for this planId
-        const state = useMissionStore.getState();
-        const missionId = Object.keys(state.missions).find(id => 
-          state.missions[id].plans.some(p => p.id === planId)
-        ) || (state.activeMissionId === planId ? planId : null);
+        const missionId = Object.keys(missionStore.missions).find(id => 
+          missionStore.missions[id].plans.some(p => p.id === planId)
+        ) || (missionStore.activeMissionId === planId ? planId : null);
 
         if (missionId) {
           tasks.forEach((task: any) => {
             missionStore.updateTaskStatus(missionId, planId, task.id, task.status);
           });
+        }
+      } else if (action.type === 'AGENT_UPDATE') {
+        const { status, message, data } = action.payload;
+        const missionId = (data?.missionId as string) || (data?.planId as string) || missionStore.activeMissionId;
+
+        if (missionId) {
+          if (status === 'PLAN_STARTED' && data?.plan) {
+            missionStore.addPlan(missionId, data.plan);
+          }
+          
+          missionStore.updateMissionStatus(missionId, status as any);
+          
+          if (message) {
+            missionStore.addTimelineEntry(missionId, {
+              id: crypto.randomUUID(),
+              timestamp: Date.now(),
+              type: 'event',
+              title: 'Agent Status',
+              description: message,
+              data
+            });
+          }
         }
       }
     });
@@ -100,8 +130,9 @@ export class MissionAdapter {
 
     // 2. Thoughts
     const unsubThoughts = this.eventBus.subscribe<any>('agent:thoughts', (event) => {
+      const missionStore = useMissionStore.getState();
       const { thought } = event.payload;
-      const missionId = (thought.metadata?.missionId as string) || (thought.workflowId as string) || missionStore.activeMissionId;
+      const missionId = (thought.metadata?.missionId as string) || (thought.workflowId as string) || (thought as any).missionId || missionStore.activeMissionId;
       
       if (missionId) {
         missionStore.addThought(missionId, thought);
@@ -120,12 +151,12 @@ export class MissionAdapter {
     // 2. System Telemetry (Tasks)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const unsubTelemetry = this.eventBus.subscribe<any>('system:telemetry', (event) => {
+      const missionStore = useMissionStore.getState();
       if (event.type === SystemTelemetryType.TASK_ASSIGNED) {
         const { planId, taskId, agentId } = event.payload;
         if (planId) {
-          const state = useMissionStore.getState();
-          const missionId = Object.keys(state.missions).find(id => 
-            state.missions[id].plans.some(p => p.id === planId)
+          const missionId = Object.keys(missionStore.missions).find(id => 
+            missionStore.missions[id].plans.some(p => p.id === planId)
           ) || planId;
 
           missionStore.updateTaskStatus(missionId, planId, taskId, 'running');
@@ -139,14 +170,26 @@ export class MissionAdapter {
           });
         }
       } else if (event.type === SystemTelemetryType.TASK_COMPLETED) {
-        const { planId, taskId, agentId } = event.payload;
+        const { planId, taskId, agentId, result } = event.payload;
         if (planId) {
-          const state = useMissionStore.getState();
-          const missionId = Object.keys(state.missions).find(id => 
-            state.missions[id].plans.some(p => p.id === planId)
+          const missionId = Object.keys(missionStore.missions).find(id => 
+            missionStore.missions[id].plans.some(p => p.id === planId)
           ) || planId;
 
           missionStore.updateTaskStatus(missionId, planId, taskId, 'completed');
+
+          // Capture as deliverable if it looks like useful data
+          if (result && typeof result === 'object') {
+            missionStore.addTimelineEntry(missionId, {
+              id: crypto.randomUUID(),
+              timestamp: Date.now(),
+              type: 'knowledge',
+              title: 'Deliverable Generated',
+              description: `Task ${taskId} produced new content.`,
+              data: result
+            });
+          }
+
           missionStore.addTimelineEntry(missionId, {
             id: crypto.randomUUID(),
             timestamp: Date.now(),
@@ -160,8 +203,21 @@ export class MissionAdapter {
     });
     this.unsubscribers.push(unsubTelemetry);
 
+    // 2.1 Mission Outcome
+    const unsubOutcome = this.eventBus.subscribe<any>('agent:events', (event) => {
+      if (event.type === 'MISSION_COMPLETED' || (event.type === AgentEventType.AGENT_UPDATE && event.payload.status === 'PLAN_COMPLETED')) {
+        const missionStore = useMissionStore.getState();
+        const missionId = event.payload.missionId || missionStore.activeMissionId;
+        if (missionId && event.payload.outcome) {
+          missionStore.setMissionOutcome(missionId, event.payload.outcome);
+        }
+      }
+    });
+    this.unsubscribers.push(unsubOutcome);
+
     // 3. Agent Lifecycle (Running Agents)
     const unsubLifecycle = this.eventBus.subscribe<AgentLifecycleEvent>('agent:lifecycle', (event) => {
+      const missionStore = useMissionStore.getState();
       const { agentId, action, identity } = event.payload;
       const missionId = (identity?.metadata?.missionId as string) || missionStore.activeMissionId;
       if (!missionId) return;

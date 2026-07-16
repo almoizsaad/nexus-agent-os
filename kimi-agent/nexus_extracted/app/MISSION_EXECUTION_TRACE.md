@@ -4221,3 +4221,489 @@ Generated at: 2026-07-16T15:02:27.176Z
 
 ---
 
+# MISSION EXECUTION TRACE: UAE Travel Plan
+
+Generated at: 2026-07-16T15:46:43.635Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T15:46:40.682Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"e4571367-093f-4dc1-967c-da0ab955f8d7","title":"UAE Travel Plan","goal":{"descripti |
+| 2026-07-16T15:46:40.684Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"e4571367-093f-4dc1-967c-da0ab955f8d7","status":"running","mission":{"id":"e4571367-093 |
+| 2026-07-16T15:46:40.684Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: UAE Travel Plan |
+| 2026-07-16T15:46:40.685Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: UAE Travel Plan |
+| 2026-07-16T15:46:40.685Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Generate a detailed day-by-day 5-day itinerary for a trip to UAE, covering Dubai and Abu Dhabi. Save it to uae_travel_plan.md.. Success criteria: Completed |
+| 2026-07-16T15:46:40.685Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Generate a detailed day-by-day 5-day itinerary for a trip to UAE, covering Dubai and Abu Dhabi. Save it to uae_travel_plan.md.. Success criteria: Completed |
+| 2026-07-16T15:46:40.686Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T15:46:40.686Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T15:46:40.690Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T15:46:40.690Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T15:46:42.649Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The plan involves researching top attractions in Dubai and Abu Dhabi, synthesizing this information into a structured 5-day itinerary, and finally writing the content to a markdown file. |
+| 2026-07-16T15:46:42.650Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The plan involves researching top attractions in Dubai and Abu Dhabi, synthesizing this information into a structured 5-day itinerary, and finally writing the content to a markdown file. |
+| 2026-07-16T15:46:42.653Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T15:46:42.654Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: e4571367-093f-4dc1-967c-da0ab955f8d7 |
+| 2026-07-16T15:46:42.654Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: e4571367-093f-4dc1-967c-da0ab955f8d7 |
+| 2026-07-16T15:46:42.654Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T15:46:42.654Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T15:46:42.654Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T15:46:42.657Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T15:46:42.661Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T15:46:42.662Z | DECISION | ExecutiveBrain | **DECISION**: createMission - UAE Travel Plan |
+| 2026-07-16T15:46:42.670Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from 79a5cb32-33ac-479a-afe8-bdf3a5ac62b3 |
+| 2026-07-16T15:46:42.673Z | THOUGHT | ThoughtBus | [observation] Task task-1 completed by agent 79a5cb32-33ac-479a-afe8-bdf3a5ac62b3 |
+| 2026-07-16T15:46:42.673Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 completed by agent 79a5cb32-33ac-479a-afe8-bdf3a5ac62b3 |
+| 2026-07-16T15:46:42.673Z | THOUGHT | ThoughtBus | [reasoning] Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T15:46:42.674Z | ACTION | ActionBus | **AGENT_UPDATE**: Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T15:46:42.674Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T15:46:43.616Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from 79a5cb32-33ac-479a-afe8-bdf3a5ac62b3 |
+| 2026-07-16T15:46:43.617Z | THOUGHT | ThoughtBus | [observation] Task task-2 completed by agent 79a5cb32-33ac-479a-afe8-bdf3a5ac62b3 |
+| 2026-07-16T15:46:43.618Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 completed by agent 79a5cb32-33ac-479a-afe8-bdf3a5ac62b3 |
+| 2026-07-16T15:46:43.618Z | THOUGHT | ThoughtBus | [reasoning] Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T15:46:43.618Z | ACTION | ActionBus | **AGENT_UPDATE**: Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T15:46:43.619Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T15:46:43.625Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from 79a5cb32-33ac-479a-afe8-bdf3a5ac62b3 |
+| 2026-07-16T15:46:43.626Z | THOUGHT | ThoughtBus | [observation] Task task-3 completed by agent 79a5cb32-33ac-479a-afe8-bdf3a5ac62b3 |
+| 2026-07-16T15:46:43.626Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-3 completed by agent 79a5cb32-33ac-479a-afe8-bdf3a5ac62b3 |
+| 2026-07-16T15:46:43.628Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"e4571367-093f-4dc1-967c-da0ab955f8d7","status":"completed","mission":{"id":"e4571367-0 |
+| 2026-07-16T15:46:43.631Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_COMPLETED |
+
+
+---
+
+# MISSION EXECUTION TRACE: Audit Performance Test
+
+Generated at: 2026-07-16T16:42:51.137Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T16:42:49.749Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"6e4a6b1d-2d8b-45be-9f74-1a1ce7169afa","title":"Audit Performance Test","goal":{"de |
+| 2026-07-16T16:42:49.751Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"6e4a6b1d-2d8b-45be-9f74-1a1ce7169afa","status":"running","mission":{"id":"6e4a6b1d-2d8 |
+| 2026-07-16T16:42:49.751Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Audit Performance Test |
+| 2026-07-16T16:42:49.752Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Audit Performance Test |
+| 2026-07-16T16:42:49.752Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Calculate 2+2 and get the current time.. Success criteria: Completed |
+| 2026-07-16T16:42:49.753Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Calculate 2+2 and get the current time.. Success criteria: Completed |
+| 2026-07-16T16:42:49.753Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:42:49.753Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:42:49.756Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:42:49.756Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:42:51.060Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: I will use the calculator tool to perform the arithmetic operation and the clock tool to retrieve the current system time. These tasks are independent and can be executed in parallel. |
+| 2026-07-16T16:42:51.062Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: I will use the calculator tool to perform the arithmetic operation and the clock tool to retrieve the current system time. These tasks are independent and can be executed in parallel. |
+| 2026-07-16T16:42:51.065Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T16:42:51.066Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: 6e4a6b1d-2d8b-45be-9f74-1a1ce7169afa |
+| 2026-07-16T16:42:51.066Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: 6e4a6b1d-2d8b-45be-9f74-1a1ce7169afa |
+| 2026-07-16T16:42:51.066Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T16:42:51.066Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T16:42:51.069Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:42:51.071Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:42:51.072Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T16:42:51.073Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Audit Performance Test |
+| 2026-07-16T16:42:51.079Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from 0b243a30-50eb-41ae-93ef-81248b26f931 |
+| 2026-07-16T16:42:51.126Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from 0b243a30-50eb-41ae-93ef-81248b26f931 |
+| 2026-07-16T16:42:51.126Z | THOUGHT | ThoughtBus | [observation] Task task-1 completed by agent 0b243a30-50eb-41ae-93ef-81248b26f931 |
+| 2026-07-16T16:42:51.127Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 completed by agent 0b243a30-50eb-41ae-93ef-81248b26f931 |
+| 2026-07-16T16:42:51.128Z | THOUGHT | ThoughtBus | [observation] Task task-2 completed by agent 0b243a30-50eb-41ae-93ef-81248b26f931 |
+| 2026-07-16T16:42:51.128Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 completed by agent 0b243a30-50eb-41ae-93ef-81248b26f931 |
+| 2026-07-16T16:42:51.130Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"6e4a6b1d-2d8b-45be-9f74-1a1ce7169afa","status":"completed","mission":{"id":"6e4a6b1d-2 |
+| 2026-07-16T16:42:51.132Z | EVENT | AgentEventBus | **MISSION_COMPLETED**: {"missionId":"6e4a6b1d-2d8b-45be-9f74-1a1ce7169afa","outcome":{"success":true,"summary":"Mission \"A |
+| 2026-07-16T16:42:51.134Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_COMPLETED |
+
+
+---
+
+# MISSION EXECUTION TRACE: Market Research
+
+Generated at: 2026-07-16T16:43:39.803Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T16:43:37.075Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"aca13a66-ae0b-40b6-a22e-6e9c1741a9ad","title":"Market Research","goal":{"descripti |
+| 2026-07-16T16:43:37.076Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"aca13a66-ae0b-40b6-a22e-6e9c1741a9ad","status":"running","mission":{"id":"aca13a66-ae0 |
+| 2026-07-16T16:43:37.077Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Market Research |
+| 2026-07-16T16:43:37.077Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Market Research |
+| 2026-07-16T16:43:37.078Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Search for top 3 AI trends in 2026 and synthesize a report.. Success criteria: Completed |
+| 2026-07-16T16:43:37.078Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Search for top 3 AI trends in 2026 and synthesize a report.. Success criteria: Completed |
+| 2026-07-16T16:43:37.078Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:43:37.078Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:43:37.082Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:43:37.082Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:43:38.744Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The plan involves searching for current projections and trends regarding AI in 2026, followed by synthesizing these findings into a structured report using the research_synthesis tool. |
+| 2026-07-16T16:43:38.744Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The plan involves searching for current projections and trends regarding AI in 2026, followed by synthesizing these findings into a structured report using the research_synthesis tool. |
+| 2026-07-16T16:43:38.752Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T16:43:38.753Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: aca13a66-ae0b-40b6-a22e-6e9c1741a9ad |
+| 2026-07-16T16:43:38.753Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: aca13a66-ae0b-40b6-a22e-6e9c1741a9ad |
+| 2026-07-16T16:43:38.753Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T16:43:38.753Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T16:43:38.756Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T16:43:38.759Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:43:38.771Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T16:43:38.772Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Market Research |
+| 2026-07-16T16:43:38.820Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from b8ba736b-6581-4265-a3c9-63f46f4a6632 |
+| 2026-07-16T16:43:38.823Z | THOUGHT | ThoughtBus | [observation] Task task-1 completed by agent b8ba736b-6581-4265-a3c9-63f46f4a6632 |
+| 2026-07-16T16:43:38.823Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 completed by agent b8ba736b-6581-4265-a3c9-63f46f4a6632 |
+| 2026-07-16T16:43:38.826Z | THOUGHT | ThoughtBus | [reasoning] Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T16:43:38.826Z | ACTION | ActionBus | **AGENT_UPDATE**: Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T16:43:38.826Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:43:39.771Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from b8ba736b-6581-4265-a3c9-63f46f4a6632 |
+| 2026-07-16T16:43:39.771Z | THOUGHT | ThoughtBus | [observation] Task task-2 completed by agent b8ba736b-6581-4265-a3c9-63f46f4a6632 |
+| 2026-07-16T16:43:39.771Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 completed by agent b8ba736b-6581-4265-a3c9-63f46f4a6632 |
+| 2026-07-16T16:43:39.772Z | THOUGHT | ThoughtBus | [reasoning] Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T16:43:39.772Z | ACTION | ActionBus | **AGENT_UPDATE**: Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T16:43:39.772Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:43:39.788Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from b8ba736b-6581-4265-a3c9-63f46f4a6632 |
+| 2026-07-16T16:43:39.789Z | THOUGHT | ThoughtBus | [observation] Task task-3 completed by agent b8ba736b-6581-4265-a3c9-63f46f4a6632 |
+| 2026-07-16T16:43:39.790Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-3 completed by agent b8ba736b-6581-4265-a3c9-63f46f4a6632 |
+| 2026-07-16T16:43:39.792Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"aca13a66-ae0b-40b6-a22e-6e9c1741a9ad","status":"completed","mission":{"id":"aca13a66-a |
+| 2026-07-16T16:43:39.794Z | EVENT | AgentEventBus | **MISSION_COMPLETED**: {"missionId":"aca13a66-ae0b-40b6-a22e-6e9c1741a9ad","outcome":{"success":true,"summary":"Mission \"M |
+| 2026-07-16T16:43:39.799Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_COMPLETED |
+
+
+---
+
+# MISSION EXECUTION TRACE: Programming
+
+Generated at: 2026-07-16T16:43:45.107Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T16:43:43.646Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"70aef77b-0214-4e0f-8485-e3fb49674603","title":"Programming","goal":{"description": |
+| 2026-07-16T16:43:43.647Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"70aef77b-0214-4e0f-8485-e3fb49674603","status":"running","mission":{"id":"70aef77b-021 |
+| 2026-07-16T16:43:43.647Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Programming |
+| 2026-07-16T16:43:43.648Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Programming |
+| 2026-07-16T16:43:43.648Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Write a Python script to calculate Fibonacci sequence and save it to fib.py.. Success criteria: Completed |
+| 2026-07-16T16:43:43.649Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Write a Python script to calculate Fibonacci sequence and save it to fib.py.. Success criteria: Completed |
+| 2026-07-16T16:43:43.649Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:43:43.649Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:43:43.652Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:43:43.652Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:43:45.061Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The plan involves creating a Python script content that calculates the Fibonacci sequence and then using the filesystem tool to write that content to a file named fib.py. |
+| 2026-07-16T16:43:45.064Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The plan involves creating a Python script content that calculates the Fibonacci sequence and then using the filesystem tool to write that content to a file named fib.py. |
+| 2026-07-16T16:43:45.072Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T16:43:45.072Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: 70aef77b-0214-4e0f-8485-e3fb49674603 |
+| 2026-07-16T16:43:45.072Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: 70aef77b-0214-4e0f-8485-e3fb49674603 |
+| 2026-07-16T16:43:45.073Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T16:43:45.075Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:43:45.078Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T16:43:45.080Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Programming |
+| 2026-07-16T16:43:45.094Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from eb0d2a38-381f-4606-8520-944d4db2dc6e |
+| 2026-07-16T16:43:45.096Z | THOUGHT | ThoughtBus | [observation] Task task-1 completed by agent eb0d2a38-381f-4606-8520-944d4db2dc6e |
+| 2026-07-16T16:43:45.096Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 completed by agent eb0d2a38-381f-4606-8520-944d4db2dc6e |
+| 2026-07-16T16:43:45.101Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"70aef77b-0214-4e0f-8485-e3fb49674603","status":"completed","mission":{"id":"70aef77b-0 |
+| 2026-07-16T16:43:45.104Z | EVENT | AgentEventBus | **MISSION_COMPLETED**: {"missionId":"70aef77b-0214-4e0f-8485-e3fb49674603","outcome":{"success":true,"summary":"Mission \"P |
+| 2026-07-16T16:43:45.105Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_COMPLETED |
+
+
+---
+
+# MISSION EXECUTION TRACE: Architecture
+
+Generated at: 2026-07-16T16:44:17.521Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T16:43:48.923Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"1a14fa8a-154c-436d-9edb-2b0d01a00103","title":"Architecture","goal":{"description" |
+| 2026-07-16T16:43:48.924Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"1a14fa8a-154c-436d-9edb-2b0d01a00103","status":"running","mission":{"id":"1a14fa8a-154 |
+| 2026-07-16T16:43:48.925Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Architecture |
+| 2026-07-16T16:43:48.925Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Architecture |
+| 2026-07-16T16:43:48.926Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Design a high-level architecture for a decentralized social network. Save to architecture.md.. Success criteria: Completed |
+| 2026-07-16T16:43:48.926Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Design a high-level architecture for a decentralized social network. Save to architecture.md.. Success criteria: Completed |
+| 2026-07-16T16:43:48.926Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:43:48.926Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:43:48.931Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:43:48.932Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:43:50.893Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The plan involves researching existing decentralized social network architectures (like ActivityPub, Nostr, or Lens), synthesizing these findings into a coherent design, and finally writing the document to the filesystem. |
+| 2026-07-16T16:43:50.895Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The plan involves researching existing decentralized social network architectures (like ActivityPub, Nostr, or Lens), synthesizing these findings into a coherent design, and finally writing the document to the filesystem. |
+| 2026-07-16T16:43:50.903Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T16:43:50.905Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: 1a14fa8a-154c-436d-9edb-2b0d01a00103 |
+| 2026-07-16T16:43:50.905Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: 1a14fa8a-154c-436d-9edb-2b0d01a00103 |
+| 2026-07-16T16:43:50.905Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T16:43:50.906Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T16:43:50.906Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T16:43:50.913Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:43:50.918Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T16:43:50.921Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Architecture |
+| 2026-07-16T16:43:50.966Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from facb7667-7948-42aa-9136-3a8ad0d08b52 |
+| 2026-07-16T16:43:50.992Z | THOUGHT | ThoughtBus | [error] Task task-1 failed: Input validation failed for search: provider: Invalid option: expected one of "tavily"\|"brave"\|"serpapi"\|"google"\|"duckduckgo" |
+| 2026-07-16T16:43:50.999Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 failed: Input validation failed for search: provider: Invalid option: expected one of "tavily"\|"brave"\|"serpapi"\|"google"\|"duckduckgo" |
+| 2026-07-16T16:43:50.999Z | THOUGHT | ThoughtBus | [error] Retrying task task-1 (Attempt 1/3). Error: Input validation failed for search: provider: Invalid option: expected one of "tavily"\|"brave"\|"serpapi"\|"google"\|"duckduckgo" |
+| 2026-07-16T16:43:50.999Z | ACTION | ActionBus | **AGENT_UPDATE**: Retrying task task-1 (Attempt 1/3). Error: Input validation failed for search: provider: Invalid option: expected one of "tavily"\|"brave"\|"serpapi"\|"google"\|"duckduckgo" |
+| 2026-07-16T16:43:51.000Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:43:51.021Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from facb7667-7948-42aa-9136-3a8ad0d08b52 |
+| 2026-07-16T16:43:51.026Z | THOUGHT | ThoughtBus | [error] Task task-1 failed: Input validation failed for search: provider: Invalid option: expected one of "tavily"\|"brave"\|"serpapi"\|"google"\|"duckduckgo" |
+| 2026-07-16T16:43:51.026Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 failed: Input validation failed for search: provider: Invalid option: expected one of "tavily"\|"brave"\|"serpapi"\|"google"\|"duckduckgo" |
+| 2026-07-16T16:43:51.027Z | THOUGHT | ThoughtBus | [error] Retrying task task-1 (Attempt 2/3). Error: Input validation failed for search: provider: Invalid option: expected one of "tavily"\|"brave"\|"serpapi"\|"google"\|"duckduckgo" |
+| 2026-07-16T16:43:51.027Z | ACTION | ActionBus | **AGENT_UPDATE**: Retrying task task-1 (Attempt 2/3). Error: Input validation failed for search: provider: Invalid option: expected one of "tavily"\|"brave"\|"serpapi"\|"google"\|"duckduckgo" |
+| 2026-07-16T16:43:51.027Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:43:51.044Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from facb7667-7948-42aa-9136-3a8ad0d08b52 |
+| 2026-07-16T16:43:51.049Z | THOUGHT | ThoughtBus | [error] Task task-1 failed: Input validation failed for search: provider: Invalid option: expected one of "tavily"\|"brave"\|"serpapi"\|"google"\|"duckduckgo" |
+| 2026-07-16T16:43:51.049Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 failed: Input validation failed for search: provider: Invalid option: expected one of "tavily"\|"brave"\|"serpapi"\|"google"\|"duckduckgo" |
+| 2026-07-16T16:43:51.049Z | THOUGHT | ThoughtBus | [error] Retrying task task-1 (Attempt 3/3). Error: Input validation failed for search: provider: Invalid option: expected one of "tavily"\|"brave"\|"serpapi"\|"google"\|"duckduckgo" |
+| 2026-07-16T16:43:51.049Z | ACTION | ActionBus | **AGENT_UPDATE**: Retrying task task-1 (Attempt 3/3). Error: Input validation failed for search: provider: Invalid option: expected one of "tavily"\|"brave"\|"serpapi"\|"google"\|"duckduckgo" |
+| 2026-07-16T16:43:51.049Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:43:51.069Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from facb7667-7948-42aa-9136-3a8ad0d08b52 |
+| 2026-07-16T16:43:51.071Z | THOUGHT | ThoughtBus | [error] Task task-1 failed: Input validation failed for search: provider: Invalid option: expected one of "tavily"\|"brave"\|"serpapi"\|"google"\|"duckduckgo" |
+| 2026-07-16T16:43:51.071Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 failed: Input validation failed for search: provider: Invalid option: expected one of "tavily"\|"brave"\|"serpapi"\|"google"\|"duckduckgo" |
+| 2026-07-16T16:43:51.071Z | THOUGHT | ThoughtBus | [error] Task task-1 failed critically after 3 retries. Initiating autonomous recovery/replan. |
+| 2026-07-16T16:43:51.071Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 failed critically after 3 retries. Initiating autonomous recovery/replan. |
+| 2026-07-16T16:43:51.073Z | THOUGHT | ThoughtBus | [plan] Autonomous recovery sequence initiated. Synthesizing new operational strategy to bypass failure in task-1. |
+| 2026-07-16T16:43:51.073Z | ACTION | ActionBus | **AGENT_UPDATE**: Autonomous recovery sequence initiated. Synthesizing new operational strategy to bypass failure in task-1. |
+| 2026-07-16T16:43:51.073Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Recover from failure in task task-1: Input validation failed for search: provider: Invalid option: expected one of "tavily"\|"brave"\|"serpapi"\|"google"\|"duckduckgo". Original goal: Design a high-level architecture for a decentralized social network. Save to architecture.md. Success criteria: Completed |
+| 2026-07-16T16:43:51.075Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Recover from failure in task task-1: Input validation failed for search: provider: Invalid option: expected one of "tavily"\|"brave"\|"serpapi"\|"google"\|"duckduckgo". Original goal: Design a high-level architecture for a decentralized social network. Save to architecture.md. Success criteria: Completed |
+| 2026-07-16T16:43:51.075Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:43:51.075Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:43:51.080Z | THOUGHT | ThoughtBus | [observation] Found 4 relevant knowledge entries. |
+| 2026-07-16T16:43:51.080Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 4 relevant knowledge entries. |
+| 2026-07-16T16:43:51.081Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:43:51.082Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:43:52.640Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The previous attempt failed due to an invalid provider name ('Tavily' vs 'tavily'). I have corrected the provider to 'tavily' (lowercase) to match the tool's strict validation requirements. The rest of the pipeline remains logically sound: research, synthesize, and save. |
+| 2026-07-16T16:43:52.640Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The previous attempt failed due to an invalid provider name ('Tavily' vs 'tavily'). I have corrected the provider to 'tavily' (lowercase) to match the tool's strict validation requirements. The rest of the pipeline remains logically sound: research, synthesize, and save. |
+| 2026-07-16T16:43:52.643Z | THOUGHT | ThoughtBus | [observation] New recovery plan formulated with 3 tasks. Resuming mission execution. |
+| 2026-07-16T16:43:52.643Z | ACTION | ActionBus | **AGENT_UPDATE**: New recovery plan formulated with 3 tasks. Resuming mission execution. |
+| 2026-07-16T16:43:52.643Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:43:52.649Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from facb7667-7948-42aa-9136-3a8ad0d08b52 |
+| 2026-07-16T16:43:52.650Z | THOUGHT | ThoughtBus | [observation] Task task-1 completed by agent facb7667-7948-42aa-9136-3a8ad0d08b52 |
+| 2026-07-16T16:43:52.651Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 completed by agent facb7667-7948-42aa-9136-3a8ad0d08b52 |
+| 2026-07-16T16:43:52.651Z | THOUGHT | ThoughtBus | [reasoning] Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T16:43:52.651Z | ACTION | ActionBus | **AGENT_UPDATE**: Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T16:43:52.651Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:44:17.480Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from facb7667-7948-42aa-9136-3a8ad0d08b52 |
+| 2026-07-16T16:44:17.481Z | THOUGHT | ThoughtBus | [observation] Task task-2 completed by agent facb7667-7948-42aa-9136-3a8ad0d08b52 |
+| 2026-07-16T16:44:17.482Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 completed by agent facb7667-7948-42aa-9136-3a8ad0d08b52 |
+| 2026-07-16T16:44:17.482Z | THOUGHT | ThoughtBus | [reasoning] Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T16:44:17.482Z | ACTION | ActionBus | **AGENT_UPDATE**: Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T16:44:17.483Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:44:17.501Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from facb7667-7948-42aa-9136-3a8ad0d08b52 |
+| 2026-07-16T16:44:17.502Z | THOUGHT | ThoughtBus | [observation] Task task-3 completed by agent facb7667-7948-42aa-9136-3a8ad0d08b52 |
+| 2026-07-16T16:44:17.502Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-3 completed by agent facb7667-7948-42aa-9136-3a8ad0d08b52 |
+| 2026-07-16T16:44:17.506Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"1a14fa8a-154c-436d-9edb-2b0d01a00103","status":"completed","mission":{"id":"1a14fa8a-1 |
+| 2026-07-16T16:44:17.510Z | EVENT | AgentEventBus | **MISSION_COMPLETED**: {"missionId":"1a14fa8a-154c-436d-9edb-2b0d01a00103","outcome":{"success":true,"summary":"Mission \"A |
+| 2026-07-16T16:44:17.513Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_COMPLETED |
+
+
+---
+
+# MISSION EXECUTION TRACE: Financial Analysis
+
+Generated at: 2026-07-16T16:44:25.573Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T16:44:22.727Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"15ef21c3-360b-47f1-a4e2-e46302ac54f0","title":"Financial Analysis","goal":{"descri |
+| 2026-07-16T16:44:22.728Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"15ef21c3-360b-47f1-a4e2-e46302ac54f0","status":"running","mission":{"id":"15ef21c3-360 |
+| 2026-07-16T16:44:22.729Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Financial Analysis |
+| 2026-07-16T16:44:22.730Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Financial Analysis |
+| 2026-07-16T16:44:22.730Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Check the latest price of Bitcoin and compare it with Ethereum. Synthesize a brief summary.. Success criteria: Completed |
+| 2026-07-16T16:44:22.730Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Check the latest price of Bitcoin and compare it with Ethereum. Synthesize a brief summary.. Success criteria: Completed |
+| 2026-07-16T16:44:22.730Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:44:22.731Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:44:22.735Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:44:22.735Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:44:24.465Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: I will use the search tool to fetch the current market prices for Bitcoin and Ethereum, then use the research_synthesis tool to compare the data and generate a concise summary. |
+| 2026-07-16T16:44:24.469Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: I will use the search tool to fetch the current market prices for Bitcoin and Ethereum, then use the research_synthesis tool to compare the data and generate a concise summary. |
+| 2026-07-16T16:44:24.476Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T16:44:24.477Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: 15ef21c3-360b-47f1-a4e2-e46302ac54f0 |
+| 2026-07-16T16:44:24.477Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: 15ef21c3-360b-47f1-a4e2-e46302ac54f0 |
+| 2026-07-16T16:44:24.481Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T16:44:24.481Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T16:44:24.486Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:44:24.493Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T16:44:24.494Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Financial Analysis |
+| 2026-07-16T16:44:24.533Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from e603b3a0-4b67-4d48-bd19-0d3dbb342f85 |
+| 2026-07-16T16:44:24.535Z | THOUGHT | ThoughtBus | [observation] Task task-1 completed by agent e603b3a0-4b67-4d48-bd19-0d3dbb342f85 |
+| 2026-07-16T16:44:24.535Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 completed by agent e603b3a0-4b67-4d48-bd19-0d3dbb342f85 |
+| 2026-07-16T16:44:24.535Z | THOUGHT | ThoughtBus | [reasoning] Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T16:44:24.536Z | ACTION | ActionBus | **AGENT_UPDATE**: Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T16:44:24.536Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:44:25.566Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from e603b3a0-4b67-4d48-bd19-0d3dbb342f85 |
+| 2026-07-16T16:44:25.567Z | THOUGHT | ThoughtBus | [observation] Task task-2 completed by agent e603b3a0-4b67-4d48-bd19-0d3dbb342f85 |
+| 2026-07-16T16:44:25.567Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 completed by agent e603b3a0-4b67-4d48-bd19-0d3dbb342f85 |
+| 2026-07-16T16:44:25.569Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"15ef21c3-360b-47f1-a4e2-e46302ac54f0","status":"completed","mission":{"id":"15ef21c3-3 |
+| 2026-07-16T16:44:25.570Z | EVENT | AgentEventBus | **MISSION_COMPLETED**: {"missionId":"15ef21c3-360b-47f1-a4e2-e46302ac54f0","outcome":{"success":true,"summary":"Mission \"F |
+| 2026-07-16T16:44:25.571Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_COMPLETED |
+
+
+---
+
+# MISSION EXECUTION TRACE: Knowledge Extraction
+
+Generated at: 2026-07-16T16:44:33.252Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T16:44:29.382Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"301aabec-309b-4b37-b468-b6efed69cf1f","title":"Knowledge Extraction","goal":{"desc |
+| 2026-07-16T16:44:29.383Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"301aabec-309b-4b37-b468-b6efed69cf1f","status":"running","mission":{"id":"301aabec-309 |
+| 2026-07-16T16:44:29.384Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Knowledge Extraction |
+| 2026-07-16T16:44:29.384Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Knowledge Extraction |
+| 2026-07-16T16:44:29.385Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Index the current project repository and search for all classes related to 'Registry'.. Success criteria: Completed |
+| 2026-07-16T16:44:29.385Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Index the current project repository and search for all classes related to 'Registry'.. Success criteria: Completed |
+| 2026-07-16T16:44:29.385Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:44:29.385Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:44:29.389Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:44:29.389Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:44:31.421Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The plan involves first indexing the local repository to make it searchable, then querying the indexed knowledge base specifically for classes containing 'Registry' to fulfill the user's request. |
+| 2026-07-16T16:44:31.425Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The plan involves first indexing the local repository to make it searchable, then querying the indexed knowledge base specifically for classes containing 'Registry' to fulfill the user's request. |
+| 2026-07-16T16:44:31.433Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T16:44:31.434Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: 301aabec-309b-4b37-b468-b6efed69cf1f |
+| 2026-07-16T16:44:31.434Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: 301aabec-309b-4b37-b468-b6efed69cf1f |
+| 2026-07-16T16:44:31.434Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T16:44:31.435Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T16:44:31.439Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:44:31.443Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T16:44:31.444Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Knowledge Extraction |
+| 2026-07-16T16:44:31.478Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from 19b4bd04-8210-42c9-b165-666d944317f7 |
+| 2026-07-16T16:44:31.481Z | THOUGHT | ThoughtBus | [observation] Task task-1 completed by agent 19b4bd04-8210-42c9-b165-666d944317f7 |
+| 2026-07-16T16:44:31.486Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 completed by agent 19b4bd04-8210-42c9-b165-666d944317f7 |
+| 2026-07-16T16:44:31.486Z | THOUGHT | ThoughtBus | [reasoning] Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T16:44:31.486Z | ACTION | ActionBus | **AGENT_UPDATE**: Decomposition revealed 1 new tasks ready for delegation. |
+| 2026-07-16T16:44:31.487Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:44:31.511Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 19b4bd04-8210-42c9-b165-666d944317f7 |
+| 2026-07-16T16:44:31.518Z | THOUGHT | ThoughtBus | [error] Task task-2 failed: Input validation failed for knowledge: operation: Invalid discriminator value. Expected 'search' \| 'get' \| 'list_tags' |
+| 2026-07-16T16:44:31.518Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 failed: Input validation failed for knowledge: operation: Invalid discriminator value. Expected 'search' \| 'get' \| 'list_tags' |
+| 2026-07-16T16:44:31.519Z | THOUGHT | ThoughtBus | [error] Retrying task task-2 (Attempt 1/3). Error: Input validation failed for knowledge: operation: Invalid discriminator value. Expected 'search' \| 'get' \| 'list_tags' |
+| 2026-07-16T16:44:31.524Z | ACTION | ActionBus | **AGENT_UPDATE**: Retrying task task-2 (Attempt 1/3). Error: Input validation failed for knowledge: operation: Invalid discriminator value. Expected 'search' \| 'get' \| 'list_tags' |
+| 2026-07-16T16:44:31.524Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:44:31.540Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 19b4bd04-8210-42c9-b165-666d944317f7 |
+| 2026-07-16T16:44:31.545Z | THOUGHT | ThoughtBus | [error] Task task-2 failed: Input validation failed for knowledge: operation: Invalid discriminator value. Expected 'search' \| 'get' \| 'list_tags' |
+| 2026-07-16T16:44:31.545Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 failed: Input validation failed for knowledge: operation: Invalid discriminator value. Expected 'search' \| 'get' \| 'list_tags' |
+| 2026-07-16T16:44:31.545Z | THOUGHT | ThoughtBus | [error] Retrying task task-2 (Attempt 2/3). Error: Input validation failed for knowledge: operation: Invalid discriminator value. Expected 'search' \| 'get' \| 'list_tags' |
+| 2026-07-16T16:44:31.545Z | ACTION | ActionBus | **AGENT_UPDATE**: Retrying task task-2 (Attempt 2/3). Error: Input validation failed for knowledge: operation: Invalid discriminator value. Expected 'search' \| 'get' \| 'list_tags' |
+| 2026-07-16T16:44:31.545Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:44:31.560Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 19b4bd04-8210-42c9-b165-666d944317f7 |
+| 2026-07-16T16:44:31.582Z | THOUGHT | ThoughtBus | [error] Task task-2 failed: Input validation failed for knowledge: operation: Invalid discriminator value. Expected 'search' \| 'get' \| 'list_tags' |
+| 2026-07-16T16:44:31.582Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 failed: Input validation failed for knowledge: operation: Invalid discriminator value. Expected 'search' \| 'get' \| 'list_tags' |
+| 2026-07-16T16:44:31.585Z | THOUGHT | ThoughtBus | [error] Retrying task task-2 (Attempt 3/3). Error: Input validation failed for knowledge: operation: Invalid discriminator value. Expected 'search' \| 'get' \| 'list_tags' |
+| 2026-07-16T16:44:31.585Z | ACTION | ActionBus | **AGENT_UPDATE**: Retrying task task-2 (Attempt 3/3). Error: Input validation failed for knowledge: operation: Invalid discriminator value. Expected 'search' \| 'get' \| 'list_tags' |
+| 2026-07-16T16:44:31.585Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:44:31.602Z | COMMUNICATION | CommBus | MSG: TASK_FAILED from 19b4bd04-8210-42c9-b165-666d944317f7 |
+| 2026-07-16T16:44:31.602Z | THOUGHT | ThoughtBus | [error] Task task-2 failed: Input validation failed for knowledge: operation: Invalid discriminator value. Expected 'search' \| 'get' \| 'list_tags' |
+| 2026-07-16T16:44:31.603Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 failed: Input validation failed for knowledge: operation: Invalid discriminator value. Expected 'search' \| 'get' \| 'list_tags' |
+| 2026-07-16T16:44:31.603Z | THOUGHT | ThoughtBus | [error] Task task-2 failed critically after 3 retries. Initiating autonomous recovery/replan. |
+| 2026-07-16T16:44:31.603Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2 failed critically after 3 retries. Initiating autonomous recovery/replan. |
+| 2026-07-16T16:44:31.606Z | THOUGHT | ThoughtBus | [plan] Autonomous recovery sequence initiated. Synthesizing new operational strategy to bypass failure in task-2. |
+| 2026-07-16T16:44:31.606Z | ACTION | ActionBus | **AGENT_UPDATE**: Autonomous recovery sequence initiated. Synthesizing new operational strategy to bypass failure in task-2. |
+| 2026-07-16T16:44:31.606Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Recover from failure in task task-2: Input validation failed for knowledge: operation: Invalid discriminator value. Expected 'search' \| 'get' \| 'list_tags'. Original goal: Index the current project repository and search for all classes related to 'Registry'. |
+| 2026-07-16T16:44:31.606Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Recover from failure in task task-2: Input validation failed for knowledge: operation: Invalid discriminator value. Expected 'search' \| 'get' \| 'list_tags'. Original goal: Index the current project repository and search for all classes related to 'Registry'. |
+| 2026-07-16T16:44:31.606Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:44:31.606Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:44:31.611Z | THOUGHT | ThoughtBus | [observation] Found 3 relevant knowledge entries. |
+| 2026-07-16T16:44:31.611Z | ACTION | ActionBus | **AGENT_UPDATE**: Found 3 relevant knowledge entries. |
+| 2026-07-16T16:44:31.614Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:44:31.614Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:44:32.811Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: The previous attempt failed due to an invalid discriminator value in the 'knowledge' tool call. I will correct the operation to 'search' as required by the tool definition to successfully query the indexed repository for 'Registry' classes. |
+| 2026-07-16T16:44:32.811Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: The previous attempt failed due to an invalid discriminator value in the 'knowledge' tool call. I will correct the operation to 'search' as required by the tool definition to successfully query the indexed repository for 'Registry' classes. |
+| 2026-07-16T16:44:32.813Z | THOUGHT | ThoughtBus | [observation] New recovery plan formulated with 1 tasks. Resuming mission execution. |
+| 2026-07-16T16:44:32.813Z | ACTION | ActionBus | **AGENT_UPDATE**: New recovery plan formulated with 1 tasks. Resuming mission execution. |
+| 2026-07-16T16:44:32.814Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:44:33.236Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from 19b4bd04-8210-42c9-b165-666d944317f7 |
+| 2026-07-16T16:44:33.237Z | THOUGHT | ThoughtBus | [observation] Task task-2-retry completed by agent 19b4bd04-8210-42c9-b165-666d944317f7 |
+| 2026-07-16T16:44:33.238Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-2-retry completed by agent 19b4bd04-8210-42c9-b165-666d944317f7 |
+| 2026-07-16T16:44:33.240Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"301aabec-309b-4b37-b468-b6efed69cf1f","status":"completed","mission":{"id":"301aabec-3 |
+| 2026-07-16T16:44:33.243Z | EVENT | AgentEventBus | **MISSION_COMPLETED**: {"missionId":"301aabec-309b-4b37-b468-b6efed69cf1f","outcome":{"success":true,"summary":"Mission \"K |
+| 2026-07-16T16:44:33.245Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_COMPLETED |
+
+
+---
+
+# MISSION EXECUTION TRACE: Parallel 2
+
+Generated at: 2026-07-16T16:48:01.436Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T16:47:59.228Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"c02e39fe-1828-440c-8c39-f256af0fb0c4","title":"Parallel 2","goal":{"description":" |
+| 2026-07-16T16:47:59.231Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"c02e39fe-1828-440c-8c39-f256af0fb0c4","status":"running","mission":{"id":"c02e39fe-182 |
+| 2026-07-16T16:47:59.232Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Parallel 2 |
+| 2026-07-16T16:47:59.235Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Parallel 2 |
+| 2026-07-16T16:47:59.237Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Calculate the square root of 123456789.. Success criteria: Completed |
+| 2026-07-16T16:47:59.240Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Calculate the square root of 123456789.. Success criteria: Completed |
+| 2026-07-16T16:47:59.241Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:47:59.241Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:47:59.258Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:47:59.260Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:48:01.262Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: Use the calculator tool to perform the mathematical operation of finding the square root of the specified number. |
+| 2026-07-16T16:48:01.262Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: Use the calculator tool to perform the mathematical operation of finding the square root of the specified number. |
+| 2026-07-16T16:48:01.273Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T16:48:01.282Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: c02e39fe-1828-440c-8c39-f256af0fb0c4 |
+| 2026-07-16T16:48:01.282Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: c02e39fe-1828-440c-8c39-f256af0fb0c4 |
+| 2026-07-16T16:48:01.283Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T16:48:01.299Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:48:01.314Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T16:48:01.327Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Parallel 2 |
+| 2026-07-16T16:48:01.377Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from 93698841-60bd-416b-82b9-268d074e6c44 |
+| 2026-07-16T16:48:01.378Z | THOUGHT | ThoughtBus | [observation] Task task-1 completed by agent 93698841-60bd-416b-82b9-268d074e6c44 |
+| 2026-07-16T16:48:01.378Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 completed by agent 93698841-60bd-416b-82b9-268d074e6c44 |
+| 2026-07-16T16:48:01.392Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"c02e39fe-1828-440c-8c39-f256af0fb0c4","status":"completed","mission":{"id":"c02e39fe-1 |
+| 2026-07-16T16:48:01.427Z | EVENT | AgentEventBus | **MISSION_COMPLETED**: {"missionId":"c02e39fe-1828-440c-8c39-f256af0fb0c4","outcome":{"success":true,"summary":"Mission \"P |
+| 2026-07-16T16:48:01.428Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_COMPLETED |
+
+
+---
+
+# MISSION EXECUTION TRACE: Parallel 1
+
+Generated at: 2026-07-16T16:48:02.608Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T16:48:00.924Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"c1bc799f-dd57-426e-88a6-9786d4fb6705","title":"Parallel 1","goal":{"description":" |
+| 2026-07-16T16:48:00.925Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"c1bc799f-dd57-426e-88a6-9786d4fb6705","status":"running","mission":{"id":"c1bc799f-dd5 |
+| 2026-07-16T16:48:00.926Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Parallel 1 |
+| 2026-07-16T16:48:00.928Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Parallel 1 |
+| 2026-07-16T16:48:00.929Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Search for current weather in London.. Success criteria: Completed |
+| 2026-07-16T16:48:00.930Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Search for current weather in London.. Success criteria: Completed |
+| 2026-07-16T16:48:00.931Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:48:00.931Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:48:00.946Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:48:00.946Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:48:02.568Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: To fulfill the goal, I will use the search tool to retrieve current weather information for London, then present the findings using the weather UI component. |
+| 2026-07-16T16:48:02.570Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: To fulfill the goal, I will use the search tool to retrieve current weather information for London, then present the findings using the weather UI component. |
+| 2026-07-16T16:48:02.574Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T16:48:02.574Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: c1bc799f-dd57-426e-88a6-9786d4fb6705 |
+| 2026-07-16T16:48:02.574Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: c1bc799f-dd57-426e-88a6-9786d4fb6705 |
+| 2026-07-16T16:48:02.574Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T16:48:02.577Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:48:02.580Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T16:48:02.581Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Parallel 1 |
+| 2026-07-16T16:48:02.590Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from b04b393d-6e5d-4839-807a-ec20f43482b7 |
+| 2026-07-16T16:48:02.594Z | THOUGHT | ThoughtBus | [observation] Task task-1 completed by agent b04b393d-6e5d-4839-807a-ec20f43482b7 |
+| 2026-07-16T16:48:02.596Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 completed by agent b04b393d-6e5d-4839-807a-ec20f43482b7 |
+| 2026-07-16T16:48:02.600Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"c1bc799f-dd57-426e-88a6-9786d4fb6705","status":"completed","mission":{"id":"c1bc799f-d |
+| 2026-07-16T16:48:02.604Z | EVENT | AgentEventBus | **MISSION_COMPLETED**: {"missionId":"c1bc799f-dd57-426e-88a6-9786d4fb6705","outcome":{"success":true,"summary":"Mission \"P |
+| 2026-07-16T16:48:02.605Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_COMPLETED |
+
+
+---
+
+# MISSION EXECUTION TRACE: Parallel 3
+
+Generated at: 2026-07-16T16:48:02.815Z
+
+| Timestamp | Type | Source | Description |
+| :--- | :--- | :--- | :--- |
+| 2026-07-16T16:48:01.121Z | EVENT | AgentEventBus | **MISSION_CREATED**: {"mission":{"id":"a6a748fc-348f-4f36-9a12-e71dfcd8c3d3","title":"Parallel 3","goal":{"description":" |
+| 2026-07-16T16:48:01.129Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"a6a748fc-348f-4f36-9a12-e71dfcd8c3d3","status":"running","mission":{"id":"a6a748fc-348 |
+| 2026-07-16T16:48:01.129Z | THOUGHT | ThoughtBus | [plan] Starting coordination for mission: Parallel 3 |
+| 2026-07-16T16:48:01.132Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting coordination for mission: Parallel 3 |
+| 2026-07-16T16:48:01.138Z | THOUGHT | ThoughtBus | [plan] Generating autonomous plan for goal: Create a file named stress_test.txt and write 'System Load Test' inside.. Success criteria: Completed |
+| 2026-07-16T16:48:01.138Z | ACTION | ActionBus | **AGENT_UPDATE**: Generating autonomous plan for goal: Create a file named stress_test.txt and write 'System Load Test' inside.. Success criteria: Completed |
+| 2026-07-16T16:48:01.138Z | THOUGHT | ThoughtBus | [reasoning] Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:48:01.138Z | ACTION | ActionBus | **AGENT_UPDATE**: Querying Knowledge Graph for relevant past experiences and facts... |
+| 2026-07-16T16:48:01.148Z | THOUGHT | ThoughtBus | [reasoning] Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:48:01.148Z | ACTION | ActionBus | **AGENT_UPDATE**: Consulting LLM provider for structured task decomposition. |
+| 2026-07-16T16:48:02.706Z | THOUGHT | ThoughtBus | [observation] Generated plan reasoning: I will use the filesystem tool to perform a write operation to create the file 'stress_test.txt' with the specified content. This is a direct and efficient way to fulfill the goal. |
+| 2026-07-16T16:48:02.708Z | ACTION | ActionBus | **AGENT_UPDATE**: Generated plan reasoning: I will use the filesystem tool to perform a write operation to create the file 'stress_test.txt' with the specified content. This is a direct and efficient way to fulfill the goal. |
+| 2026-07-16T16:48:02.716Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_STARTED |
+| 2026-07-16T16:48:02.716Z | THOUGHT | ThoughtBus | [plan] Starting cooperative coordination for plan: a6a748fc-348f-4f36-9a12-e71dfcd8c3d3 |
+| 2026-07-16T16:48:02.717Z | ACTION | ActionBus | **AGENT_UPDATE**: Starting cooperative coordination for plan: a6a748fc-348f-4f36-9a12-e71dfcd8c3d3 |
+| 2026-07-16T16:48:02.717Z | EVENT | LifecycleBus | **AGENT_LIFECYCLE**: Agent Worker Agent task spawned |
+| 2026-07-16T16:48:02.725Z | COMMUNICATION | CommBus | MSG: TASK_ASSIGNMENT from system-coordinator |
+| 2026-07-16T16:48:02.735Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> running |
+| 2026-07-16T16:48:02.735Z | DECISION | ExecutiveBrain | **DECISION**: createMission - Parallel 3 |
+| 2026-07-16T16:48:02.778Z | COMMUNICATION | CommBus | MSG: TASK_COMPLETED from b4642ca1-f229-4c0f-afbe-7afa32072e5d |
+| 2026-07-16T16:48:02.786Z | THOUGHT | ThoughtBus | [observation] Task task-1 completed by agent b4642ca1-f229-4c0f-afbe-7afa32072e5d |
+| 2026-07-16T16:48:02.786Z | ACTION | ActionBus | **AGENT_UPDATE**: Task task-1 completed by agent b4642ca1-f229-4c0f-afbe-7afa32072e5d |
+| 2026-07-16T16:48:02.794Z | EVENT | AgentEventBus | **MISSION_STATUS_UPDATED**: {"missionId":"a6a748fc-348f-4f36-9a12-e71dfcd8c3d3","status":"completed","mission":{"id":"a6a748fc-3 |
+| 2026-07-16T16:48:02.802Z | EVENT | AgentEventBus | **MISSION_COMPLETED**: {"missionId":"a6a748fc-348f-4f36-9a12-e71dfcd8c3d3","outcome":{"success":true,"summary":"Mission \"P |
+| 2026-07-16T16:48:02.808Z | EVENT | AgentEventBus | **AGENT_UPDATE**: Status -> PLAN_COMPLETED |
+
+
+---
+

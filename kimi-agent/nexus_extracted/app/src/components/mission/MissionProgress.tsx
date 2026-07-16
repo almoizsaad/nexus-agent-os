@@ -53,6 +53,12 @@ export const MissionProgress: React.FC<MissionProgressProps> = ({ mission }) => 
                         {task.status}
                       </span>
                     </div>
+
+                    {task.status === 'completed' && mission.timeline.find(e => e.type === 'knowledge' && (e.data as any)?.taskId === task.id) && (
+                      <div className="mt-2 p-2 rounded bg-black/20 border border-white/5 font-mono text-[9px] text-muted-foreground truncate">
+                        RESULT: {JSON.stringify(mission.timeline.find(e => e.type === 'knowledge' && (e.data as any)?.taskId === task.id)?.data)}
+                      </div>
+                    )}
                     
                     {task.status === 'running' && (
                       <div className="space-y-1">

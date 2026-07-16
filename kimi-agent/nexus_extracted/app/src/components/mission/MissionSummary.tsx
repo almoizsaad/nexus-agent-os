@@ -1,7 +1,8 @@
 import React from 'react';
 import type { Mission, MissionPriority } from '@/agent/types/mission';
 import { Badge } from '@/components/ui/badge';
-import { Target, Shield, Clock, Brain } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Target, Shield, Clock, Brain, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface MissionSummaryProps {
@@ -39,6 +40,27 @@ export const MissionSummary: React.FC<MissionSummaryProps> = ({ mission }) => {
           <Badge className="capitalize font-mono text-xs">{mission.status}</Badge>
         </div>
       </div>
+
+      {mission.outcome && (
+        <Card className="p-4 bg-primary/5 border-primary/20 space-y-3">
+          <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-tight">
+            <CheckCircle2 className="w-4 h-4" />
+            Mission Outcome
+          </div>
+          <p className="text-sm leading-relaxed">
+            {mission.outcome.summary}
+          </p>
+          {mission.outcome.deliverables.length > 0 && (
+            <div className="flex flex-wrap gap-2 pt-2">
+              {mission.outcome.deliverables.map((d, i) => (
+                <Badge key={i} variant="outline" className="text-[9px] font-mono bg-background/50">
+                  DELIVERABLE: {d}
+                </Badge>
+              ))}
+            </div>
+          )}
+        </Card>
+      )}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="p-3 rounded-lg bg-white/5 border border-white/5 space-y-1">

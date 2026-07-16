@@ -27,7 +27,7 @@ export class KnowledgeTool implements Tool<any, any> {
 
   public readonly inputSchema = z.discriminatedUnion('operation', [
     z.object({
-      operation: z.literal('search'),
+      operation: z.enum(['search', 'query']),
       query: z.string(),
       limit: z.number().default(5),
       threshold: z.number().default(0.5)
@@ -52,6 +52,7 @@ export class KnowledgeTool implements Tool<any, any> {
   public async execute(input: any): Promise<any> {
     switch (input.operation) {
       case 'search':
+      case 'query':
         return await this.knowledgeDb.search(input.query, {
           limit: input.limit,
           threshold: input.threshold

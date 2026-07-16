@@ -99,7 +99,28 @@ export class ExecutiveBrain {
     try {
       if (payload.status === 'PLAN_COMPLETED') {
         this.goalManager.updateMissionStatus(missionId, 'completed');
-        console.info(`[ExecutiveBrain] Mission completed: ${mission.title} (${missionId})`);
+        
+        // Synthesize Outcome
+        const mission = this.goalManager.getMission(missionId);
+        if (mission) {
+          const outcome = {
+            success: true,
+            summary: `Mission "${mission.title}" completed successfully. All operational plans were executed and verified.`,
+            deliverables: mission.timeline
+              .filter(e => e.type === 'knowledge')
+              .map(e => e.title),
+            lessonsLearned: mission.reflections?.[0]?.lessonsLearned || [],
+            timestamp: Date.now()
+          };
+          
+          this.eventBus.publish('agent:events', {
+            type: 'MISSION_COMPLETED' as any,
+            payload: { missionId, outcome },
+            timestamp: Date.now()
+          });
+        }
+
+        console.info(`[ExecutiveBrain] Mission completed: ${mission?.title} (${missionId})`);
       } else if (payload.status === 'PLAN_FAILED') {
         const retries = (mission.context.retries as number || 0);
         if (retries < 2) {

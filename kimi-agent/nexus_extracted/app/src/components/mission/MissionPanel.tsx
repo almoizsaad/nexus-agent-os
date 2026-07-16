@@ -7,7 +7,7 @@ import { ReflectionPanel } from './ReflectionPanel';
 import { KnowledgeExplorer } from './KnowledgeExplorer';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Brain, Activity, History, Network, Shield } from 'lucide-react';
+import { Brain, Activity, History, Network, Shield, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface MissionPanelProps {
@@ -37,6 +37,13 @@ export const MissionPanel: React.FC<MissionPanelProps> = ({ mission, className }
             >
               <Activity className="w-3 h-3" />
               Overview
+            </TabsTrigger>
+            <TabsTrigger 
+              value="results" 
+              className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-0 gap-2 font-mono text-xs uppercase tracking-widest"
+            >
+              <Zap className="w-3 h-3" />
+              Results
             </TabsTrigger>
             <TabsTrigger 
               value="timeline" 
@@ -73,6 +80,38 @@ export const MissionPanel: React.FC<MissionPanelProps> = ({ mission, className }
           <TabsContent value="overview" className="h-full m-0 outline-none">
             <ScrollArea className="h-full p-6">
               <MissionProgress mission={mission} />
+            </ScrollArea>
+          </TabsContent>
+
+          <TabsContent value="results" className="h-full m-0 outline-none">
+            <ScrollArea className="h-full p-6 space-y-6">
+              {mission.timeline.filter(e => e.type === 'knowledge').map((entry, i) => (
+                <div key={i} className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-bold flex items-center gap-2">
+                      <Zap className="w-4 h-4 text-yellow-500" />
+                      {entry.title}
+                    </h4>
+                    <span className="text-[10px] font-mono text-muted-foreground opacity-50">
+                      {new Date(entry.timestamp).toLocaleTimeString()}
+                    </span>
+                  </div>
+                  <div className="text-xs text-muted-foreground leading-relaxed">
+                    {entry.description}
+                  </div>
+                  {entry.data && (
+                    <pre className="p-3 rounded bg-black/40 text-[10px] font-mono text-primary/80 overflow-x-auto border border-white/5">
+                      {JSON.stringify(entry.data, null, 2)}
+                    </pre>
+                  )}
+                </div>
+              ))}
+              {mission.timeline.filter(e => e.type === 'knowledge').length === 0 && (
+                <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 opacity-30">
+                  <Zap className="w-12 h-12" />
+                  <p className="text-xs font-mono uppercase tracking-widest">No deliverables identified yet.</p>
+                </div>
+              )}
             </ScrollArea>
           </TabsContent>
           

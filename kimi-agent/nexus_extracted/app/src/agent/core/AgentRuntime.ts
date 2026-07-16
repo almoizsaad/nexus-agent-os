@@ -113,6 +113,17 @@ export class AgentRuntime {
     });
     this._unsubscribers.push(unsubEvents);
 
+    // Subscribe to telemetry for history (e.g. task completions)
+    const unsubTelemetry = this._eventBus.subscribe<any>('system:telemetry', (event) => {
+      const telemetryEvent = {
+        type: event.type,
+        payload: event.payload,
+        timestamp: event.timestamp || Date.now()
+      } as any;
+      this.recordEvent(telemetryEvent);
+    });
+    this._unsubscribers.push(unsubTelemetry);
+
     // Subscribe to incoming actions (e.g. from workspace)
     const unsubActions = this._eventBus.subscribe<AgentProtocolAction>('agent:actions', (action) => {
       this.handleAction(action);
@@ -454,6 +465,17 @@ export class AgentRuntime {
       // 4. Store in memory (Persistent/Semantic)
       await this._memory.consolidateWithReflection(workflowId, reflection);
       
+      this._eventBus.publish('agent:events', {
+        type: AgentEventType.KNOWLEDGE_UPDATED,
+        payload: {
+          workflowId,
+          type: 'reflection',
+          summary: `Reflected on workflow ${workflowId.slice(0, 8)}: ${reflection.success ? 'Success' : 'Failure'}`,
+          metadata: reflection.metadata
+        },
+        timestamp: Date.now()
+      });
+
       // 4b. Store in session memory (Episodic)
       await this._memory.addSessionEvent({
         type: AgentEventType.REFLECTION,
