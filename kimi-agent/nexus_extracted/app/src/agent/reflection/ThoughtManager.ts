@@ -11,9 +11,9 @@ export class ThoughtManager {
   private eventBus: EventBus;
   private chainPromises: Map<string, Promise<ThoughtChain>> = new Map();
 
-  constructor(eventBus: EventBus, memory: PersistentMemory) {
+  constructor(eventBus: EventBus) {
     this.eventBus = eventBus;
-    this.persistence = new ThoughtPersistence(memory);
+    this.persistence = new ThoughtPersistence();
     this.setupListeners();
   }
 

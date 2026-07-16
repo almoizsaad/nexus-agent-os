@@ -1,5 +1,5 @@
 import type { GraphNode, GraphEdge } from '../types/knowledge';
-import { PersistentMemory } from '../memory/PersistentMemory';
+import { PersistenceManager } from '../core/PersistenceManager';
 
 export interface SerializedGraph {
   nodes: GraphNode[];
@@ -10,24 +10,25 @@ export interface SerializedGraph {
  * KnowledgePersistence handles saving and loading the KnowledgeGraph.
  */
 export class KnowledgePersistence {
-  private memory: PersistentMemory;
+  private persistence: PersistenceManager;
   private storageKey = 'knowledge_graph';
+  private STORE_NAME = 'settings';
 
-  constructor(memory: PersistentMemory) {
-    this.memory = memory;
+  constructor() {
+    this.persistence = PersistenceManager.getInstance();
   }
 
   public async save(nodes: GraphNode[], edges: GraphEdge[]): Promise<void> {
     const data: SerializedGraph = { nodes, edges };
-    this.memory.store(this.storageKey, data);
+    await this.persistence.save(this.STORE_NAME, { key: this.storageKey, data });
   }
 
   public async load(): Promise<SerializedGraph | null> {
-    const data = this.memory.recall(this.storageKey) as SerializedGraph | null;
-    return data;
+    const entry = await this.persistence.get(this.STORE_NAME, this.storageKey);
+    return entry ? entry.data : null;
   }
 
   public async clear(): Promise<void> {
-    this.memory.remove(this.storageKey);
+    await this.persistence.delete(this.STORE_NAME, this.storageKey);
   }
 }

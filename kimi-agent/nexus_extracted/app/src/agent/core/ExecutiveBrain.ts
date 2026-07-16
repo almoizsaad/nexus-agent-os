@@ -74,12 +74,13 @@ export class ExecutiveBrain {
   }
 
   public async createMission(title: string, goal: MissionGoal, context: Record<string, unknown> = {}): Promise<string> {
-    const mission = this.goalManager.createMission(title, goal, context);
+    await this.goalManager.init();
+    const mission = await this.goalManager.createMission(title, goal, context);
     try {
       await this.scheduler.schedule();
     } catch (error) {
       console.error(`[ExecutiveBrain] Critical failure during mission scheduling for "${title}":`, error);
-      this.goalManager.updateMissionStatus(mission.id, 'failed');
+      await this.goalManager.updateMissionStatus(mission.id, 'failed');
     }
     return mission.id;
   }
@@ -102,7 +103,7 @@ export class ExecutiveBrain {
 
     try {
       if (payload.status === 'PLAN_COMPLETED') {
-        this.goalManager.updateMissionStatus(missionId, 'completed');
+        await this.goalManager.updateMissionStatus(missionId, 'completed');
         
         // Synthesize Outcome
         const mission = this.goalManager.getMission(missionId);
@@ -130,10 +131,10 @@ export class ExecutiveBrain {
         if (retries < 2) {
           console.warn(`[ExecutiveBrain] Mission failed: ${mission.title} (${missionId}). Retrying (attempt ${retries + 1})...`);
           mission.context.retries = retries + 1;
-          this.goalManager.updateMissionStatus(missionId, 'idle'); // Put back to idle for rescheduling
+          await this.goalManager.updateMissionStatus(missionId, 'idle'); // Put back to idle for rescheduling
         } else {
           console.error(`[ExecutiveBrain] Mission failed after retries: ${mission.title} (${missionId})`);
-          this.goalManager.updateMissionStatus(missionId, 'failed');
+          await this.goalManager.updateMissionStatus(missionId, 'failed');
         }
       }
 
@@ -149,5 +150,9 @@ export class ExecutiveBrain {
 
   public getCoordinator(): CoordinatorAgent {
     return this.coordinator;
+  }
+
+  public get knowledgeGraph(): any {
+    return this.coordinator.knowledgeGraph;
   }
 }

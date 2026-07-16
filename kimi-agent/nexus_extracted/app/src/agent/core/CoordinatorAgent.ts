@@ -39,9 +39,24 @@ export class CoordinatorAgent extends AgentRuntime {
     this.consensus = new PlannerConsensus();
     this.manager = manager;
     
-    // Base constructor calls setupMessageHandlers, but we might need to re-register 
-    // or ensure coordinator is ready. Since setupMessageHandlers is overridden,
-    // the version called in super() will be the one below.
+    this.initResumption();
+  }
+
+  private async initResumption(): Promise<void> {
+    // Wait for state to be fully loaded (handled by bootstrap sequence)
+    // If we have a current plan, re-activate it as an active plan
+    if (this._state.currentPlan) {
+      console.info(`[CoordinatorAgent] Resuming persistent plan: ${this._state.currentPlan.id}`);
+      this.activePlans.set(this._state.currentPlan.id, this._state.currentPlan as CooperativePlan);
+      
+      // If the plan was still running, re-trigger coordination
+      if (this._state.status === 'executing' || this._state.status === 'idle') {
+         // Use a small delay to ensure all agents are re-spawned by AgentManager first
+         setTimeout(() => {
+           this.coordinator.coordinatePlan(this._state.currentPlan as CooperativePlan);
+         }, 2000);
+      }
+    }
   }
 
   public setManager(manager: AgentManager): void {

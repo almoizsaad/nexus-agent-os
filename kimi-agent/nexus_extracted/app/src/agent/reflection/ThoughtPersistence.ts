@@ -1,36 +1,37 @@
 import type { IThoughtPersistence, Thought, ThoughtChain, ThoughtQuery } from '../types/thought';
-import { PersistentMemory } from '../memory/PersistentMemory';
+import { PersistenceManager } from '../core/PersistenceManager';
 
 /**
  * ThoughtPersistence handles long-term storage of agent reasoning steps.
  */
 export class ThoughtPersistence implements IThoughtPersistence {
-  private memory: PersistentMemory;
+  private persistence: PersistenceManager;
   private readonly THOUGHTS_KEY = 'thoughts';
   private readonly CHAINS_KEY = 'chains';
+  private readonly STORE_NAME = 'settings';
   private saveLock: Promise<void> = Promise.resolve();
 
-  constructor(memory: PersistentMemory) {
-    this.memory = memory;
+  constructor() {
+    this.persistence = PersistenceManager.getInstance();
   }
 
   public async saveThought(thought: Thought): Promise<void> {
     this.saveLock = this.saveLock.then(async () => {
-      const thoughts = this.getAllThoughts();
+      const thoughts = await this.getAllThoughts();
       thoughts.push(thought);
       
       if (thoughts.length > 1000) {
         thoughts.shift();
       }
       
-      this.memory.store(this.THOUGHTS_KEY, thoughts);
+      await this.persistence.save(this.STORE_NAME, { key: this.THOUGHTS_KEY, data: thoughts });
     });
     return this.saveLock;
   }
 
   public async saveChain(chain: ThoughtChain): Promise<void> {
     this.saveLock = this.saveLock.then(async () => {
-      const chains = this.getAllChains();
+      const chains = await this.getAllChains();
       const index = chains.findIndex(c => c.id === chain.id);
       if (index >= 0) {
         chains[index] = { ...chain }; // Store a copy
@@ -41,21 +42,23 @@ export class ThoughtPersistence implements IThoughtPersistence {
           chains.shift();
         }
       }
-      this.memory.store(this.CHAINS_KEY, chains);
+      await this.persistence.save(this.STORE_NAME, { key: this.CHAINS_KEY, data: chains });
     });
     return this.saveLock;
   }
 
   public async getThought(id: string): Promise<Thought | null> {
-    return this.getAllThoughts().find(t => t.id === id) || null;
+    const thoughts = await this.getAllThoughts();
+    return thoughts.find(t => t.id === id) || null;
   }
 
   public async getChain(id: string): Promise<ThoughtChain | null> {
-    return this.getAllChains().find(c => c.id === id) || null;
+    const chains = await this.getAllChains();
+    return chains.find(c => c.id === id) || null;
   }
 
   public async findThoughts(query: ThoughtQuery): Promise<Thought[]> {
-    let thoughts = this.getAllThoughts();
+    let thoughts = await this.getAllThoughts();
 
     if (query.agentId) thoughts = thoughts.filter(t => t.agentId === query.agentId);
     if (query.workflowId) thoughts = thoughts.filter(t => t.workflowId === query.workflowId);
@@ -73,7 +76,7 @@ export class ThoughtPersistence implements IThoughtPersistence {
   }
 
   public async findChains(query: { agentId?: string; workflowId?: string }): Promise<ThoughtChain[]> {
-    let chains = this.getAllChains();
+    let chains = await this.getAllChains();
 
     if (query.agentId) chains = chains.filter(c => c.agentId === query.agentId);
     if (query.workflowId) chains = chains.filter(c => c.workflowId === query.workflowId);
@@ -84,13 +87,13 @@ export class ThoughtPersistence implements IThoughtPersistence {
     return chains;
   }
 
-  private getAllThoughts(): Thought[] {
-    const stored = this.memory.recall(this.THOUGHTS_KEY);
-    return Array.isArray(stored) ? (stored as Thought[]) : [];
+  private async getAllThoughts(): Promise<Thought[]> {
+    const entry = await this.persistence.get(this.STORE_NAME, this.THOUGHTS_KEY);
+    return entry && Array.isArray(entry.data) ? entry.data : [];
   }
 
-  private getAllChains(): ThoughtChain[] {
-    const stored = this.memory.recall(this.CHAINS_KEY);
-    return Array.isArray(stored) ? (stored as ThoughtChain[]) : [];
+  private async getAllChains(): Promise<ThoughtChain[]> {
+    const entry = await this.persistence.get(this.STORE_NAME, this.CHAINS_KEY);
+    return entry && Array.isArray(entry.data) ? entry.data : [];
   }
 }

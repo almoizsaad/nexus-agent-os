@@ -25,6 +25,7 @@ import { ExecutionAnalyzer } from '../reflection/ExecutionAnalyzer';
 import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
 import { ThoughtManager } from '../reflection/ThoughtManager';
 import { PersistentMemory } from '../memory/PersistentMemory';
+import { PersistenceManager } from './PersistenceManager';
 import type { 
   IPerformanceMonitor, 
   IImprovementEngine, 
@@ -58,6 +59,9 @@ export class AgentRuntime {
   protected _identity?: AgentIdentity;
   protected _channel?: AgentChannel;
   private _unsubscribers: Array<() => void> = [];
+  
+  protected persistence: PersistenceManager;
+  protected readonly STORE_NAME = 'agent_states';
 
   public get planner(): Planner | null { return this._planner; }
   public get executor(): Executor | null { return this._executor; }
@@ -89,6 +93,7 @@ export class AgentRuntime {
     this._suggestions = suggestions;
     this._identity = identity;
     this._channel = channel;
+    this.persistence = PersistenceManager.getInstance();
 
     this._knowledgeGraph = knowledgeGraph || new KnowledgeGraph();
     this._memory = new MemoryManager(monitor);
@@ -105,7 +110,45 @@ export class AgentRuntime {
     }
 
     this._state = this.getInitialState();
+    this.init();
+  }
 
+  private async init(): Promise<void> {
+    await this.loadState();
+    this.subscribeToCoreEvents();
+    this.setupMessageHandlers();
+  }
+
+  private async loadState(): Promise<void> {
+    if (!this._identity) return;
+    try {
+      const savedState = await this.persistence.get(this.STORE_NAME, this._identity.id);
+      if (savedState) {
+        this._state = {
+          ...this._state,
+          ...savedState,
+          status: 'idle' // Reset status to idle on load
+        };
+        console.info(`[AgentRuntime] Restored persistent state for agent: ${this._identity.id}`);
+      }
+    } catch (e) {
+      console.warn(`[AgentRuntime] Failed to load persistent state for ${this._identity?.id}:`, e);
+    }
+  }
+
+  protected async saveState(): Promise<void> {
+    if (!this._identity) return;
+    try {
+      await this.persistence.save(this.STORE_NAME, {
+        id: this._identity.id,
+        ...this._state
+      });
+    } catch (e) {
+      console.error(`[AgentRuntime] Failed to save state for ${this._identity.id}:`, e);
+    }
+  }
+
+  private subscribeToCoreEvents(): void {
     // Subscribe to incoming agent events
     const unsubEvents = this._eventBus.subscribe<AgentProtocolEvent>('agent:events', (event) => {
       this.handleEvent(event);
@@ -129,8 +172,6 @@ export class AgentRuntime {
       this.handleAction(action);
     });
     this._unsubscribers.push(unsubActions);
-
-    this.setupMessageHandlers();
   }
 
   private getInitialState(): AgentState {
@@ -140,9 +181,10 @@ export class AgentRuntime {
     };
   }
 
-  public reset(): void {
+  public async reset(): Promise<void> {
     this._state = this.getInitialState();
-    this._memory.clear();
+    await this._memory.clear();
+    await this.saveState();
     this.dispatchAction({
       type: AgentActionType.AGENT_UPDATE,
       payload: {
@@ -168,6 +210,7 @@ export class AgentRuntime {
     Logger.info(`[AgentRuntime] Executing task assignment: ${taskId} for plan ${planId}`, { tool, metadata });
     
     this._state.status = 'executing';
+    await this.saveState();
     
     try {
       const taskObj = {
@@ -207,18 +250,21 @@ export class AgentRuntime {
       });
     } finally {
       this._state.status = 'idle';
+      await this.saveState();
     }
   }
 
-  public pause(): void {
+  public async pause(): Promise<void> {
     this._state.status = 'paused';
     this._stream.thinking('Agent has been paused.');
+    await this.saveState();
   }
 
-  public resume(): void {
+  public async resume(): Promise<void> {
     if (this._state.status === 'paused') {
       this._state.status = 'idle'; // Or return to previous state if tracked
       this._stream.thinking('Agent has been resumed.');
+      await this.saveState();
     }
   }
 
@@ -235,7 +281,7 @@ export class AgentRuntime {
       return;
     }
     
-    this.recordEvent(event);
+    await this.recordEvent(event);
     
     switch (event.type) {
       case AgentEventType.USER_MESSAGE:
@@ -272,6 +318,7 @@ export class AgentRuntime {
     this._state.status = 'thinking';
     this._memory.setGoal(goal);
     this._stream.thinking('Analyzing goal and generating autonomous plan...');
+    await this.saveState();
 
     try {
       // Recall relevant context from memory
@@ -283,6 +330,7 @@ export class AgentRuntime {
       this._state.currentPlan = JSON.parse(JSON.stringify(plan));
       
       if (!this._state.currentPlan) return;
+      await this.saveState();
 
       this.dispatchAction({
         type: AgentActionType.UPDATE_PLAN,
@@ -293,8 +341,9 @@ export class AgentRuntime {
       });
 
       this._state.status = 'executing';
+      await this.saveState();
       
-      const success = await this._workflowEngine.executePlan(this._state.currentPlan, (taskId, status, result) => {
+      const success = await this._workflowEngine.executePlan(this._state.currentPlan, async (taskId, status, result) => {
         if (status === 'in-progress') {
           const task = this._state.currentPlan!.tasks.find(t => t.id === taskId);
           this._stream.executingTool(task?.description || taskId);
@@ -331,6 +380,8 @@ export class AgentRuntime {
           this._state.currentPlan!.tasks[taskIndex].status = status as Task['status'];
         }
 
+        await this.saveState();
+
         this.dispatchAction({
           type: AgentActionType.UPDATE_PLAN,
           payload: {
@@ -361,9 +412,12 @@ export class AgentRuntime {
           console.error('[AgentRuntime] Reflection failed:', err);
         });
       }
+      
+      await this.saveState();
 
     } catch (error) {
       this._state.status = 'error';
+      await this.saveState();
       this._stream.error(`Critical error: ${error}`, true);
     }
   }
@@ -526,8 +580,9 @@ export class AgentRuntime {
     };
   }
 
-  private recordEvent(event: AgentEvent): void {
+  private async recordEvent(event: AgentEvent): Promise<void> {
     this._state.history.push(event);
+    await this.saveState();
   }
 
   private async onUserMessage(text: string): Promise<void> {
@@ -539,7 +594,7 @@ export class AgentRuntime {
   private async onWorkspaceAction(action: string, metadata?: Record<string, unknown>): Promise<void> {
     Logger.info(`[AgentRuntime] Workspace action: ${action}`, metadata);
     if (action === 'REPLAN') {
-      const goal = this._memory.getGoal();
+      const goal = await this._memory.recallGoal();
       if (goal) await this.processGoal(goal);
     }
   }

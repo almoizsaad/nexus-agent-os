@@ -2,7 +2,6 @@ import { z } from 'zod';
 import type { Tool, ToolMetadata, ToolPermissions, ToolExecutionOptions, ToolHealth } from '../Tool';
 import { ConnectivityLayer } from '../../core/ConnectivityLayer';
 import { APIMetricsManager } from '../../core/APIMetricsManager';
-import { agent } from '../../bootstrap/createAgent';
 
 /**
  * Tool for performing HTTP requests.
@@ -30,7 +29,7 @@ export class HTTPTool implements Tool<any, any> {
   private metrics?: APIMetricsManager;
 
   constructor(metrics?: APIMetricsManager) {
-    this.metrics = metrics || (agent?.eventBus ? APIMetricsManager.getInstance(agent.eventBus) : undefined);
+    this.metrics = metrics;
   }
 
   public readonly inputSchema = z.object({

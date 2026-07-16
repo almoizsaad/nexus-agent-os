@@ -66,8 +66,7 @@ export class DependencyRegistry {
     if (!container.has(OptimizationSuggestions)) container.registerSingleton(OptimizationSuggestions, new OptimizationSuggestions());
     if (!container.has(KnowledgeGraph)) {
       container.registerSingleton(KnowledgeGraph, () => {
-        const memory = new PersistentMemory();
-        const persistence = new KnowledgePersistence(memory);
+        const persistence = new KnowledgePersistence();
         return new KnowledgeGraph(persistence);
       });
     }
@@ -79,7 +78,8 @@ export class DependencyRegistry {
       container.registerSingleton(KnowledgeDatabase, (c) => {
         return new KnowledgeDatabase(
           c.resolve(VectorSearch),
-          c.resolve('LLMProvider')
+          c.resolve('LLMProvider'),
+          c.resolve(EmbeddingStore)
         );
       });
     }
@@ -135,6 +135,13 @@ export class DependencyRegistry {
       });
     }
 
+    if (!container.has(KnowledgeGraph)) {
+      container.registerSingleton(KnowledgeGraph, () => {
+        const persistence = new KnowledgePersistence();
+        return new KnowledgeGraph(persistence);
+      });
+    }
+
     if (!container.has('Reflection')) {
       container.registerSingleton('Reflection', (c) => {
         const graph = c.resolve(KnowledgeGraph);
@@ -155,10 +162,10 @@ export class DependencyRegistry {
     if (!container.has(ThoughtManager)) {
       container.registerSingleton(ThoughtManager, (c) => {
         const eventBus = c.resolve(EventBus);
-        const persistentMemory = new PersistentMemory();
-        return new ThoughtManager(eventBus, persistentMemory);
+        return new ThoughtManager(eventBus);
       });
     }
+
 
     // Registry & Adapters
     if (!container.has(ComponentRegistry)) container.registerSingleton(ComponentRegistry, new ComponentRegistry());
@@ -265,7 +272,11 @@ export class DependencyRegistry {
 
     if (!container.has(ContinuousLearning)) {
       container.registerSingleton(ContinuousLearning, (c) => {
-        return new ContinuousLearning(c.resolve(EventBus), c.resolve(AgentRegistry));
+        const eventBus = c.resolve(EventBus);
+        const registry = c.resolve(AgentRegistry);
+        const graph = c.resolve(KnowledgeGraph);
+        const db = c.resolve(KnowledgeDatabase);
+        return new ContinuousLearning(eventBus, registry, graph, db);
       });
     }
 

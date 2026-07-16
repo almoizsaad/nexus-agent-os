@@ -67,14 +67,51 @@ export class KnowledgeGraph implements IKnowledgeGraph {
     const existing = this.nodes.get(id);
     if (!existing) throw new Error(`Node with id ${id} not found`);
 
+    // Evolution logic: Preserve history in properties
+    const history = (existing.properties.history as any[]) || [];
+    history.push({
+      properties: { ...existing.properties, history: undefined },
+      updatedAt: existing.updatedAt
+    });
+
     const updated: GraphNode = {
       ...existing,
       ...properties,
+      properties: {
+        ...existing.properties,
+        ...(properties.properties || {}),
+        history
+      },
       updatedAt: Date.now()
     };
+    
+    // Auto-increment version if present
+    if (updated.properties.version !== undefined) {
+      updated.properties.version = (updated.properties.version as number) + 1;
+    }
+
     this.nodes.set(id, updated);
     await this.save();
     return updated;
+  }
+
+  /**
+   * Evolve a node based on new insights/reflections.
+   * This is called by ContinuousLearning.
+   */
+  public async evolveNode(id: string, insight: string, confidence: number): Promise<void> {
+    const node = await this.getNode(id);
+    if (!node) return;
+
+    console.info(`[KnowledgeGraph] Evolving node ${node.label} with new insight: ${insight.slice(0, 30)}...`);
+    
+    await this.updateNode(id, {
+      properties: {
+        ...node.properties,
+        lastInsight: insight,
+        confidence: (Number(node.properties.confidence || 0.5) + confidence) / 2
+      }
+    });
   }
 
   public async deleteNode(id: string): Promise<void> {

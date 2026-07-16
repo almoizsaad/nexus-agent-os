@@ -1,19 +1,60 @@
-import type { IKnowledgeDatabase, KnowledgeEntry, SearchOptions, VectorSearchResult, IVectorSearch } from '../types/knowledge';
+import type { 
+  IKnowledgeDatabase, 
+  KnowledgeEntry, 
+  SearchOptions, 
+  VectorSearchResult, 
+  IVectorSearch,
+  KnowledgeRankingResult,
+  KnowledgeVersion
+} from '../types/knowledge';
 import type { LLMProvider } from '../providers/LLMProvider';
+import { PersistenceManager } from '../core/PersistenceManager';
 
 export class KnowledgeDatabase implements IKnowledgeDatabase {
-  private prefix = 'nexus_knowledge_';
+  private STORE_NAME = 'knowledge';
   private vectorSearch: IVectorSearch;
   private llmProvider: LLMProvider;
+  private persistence: PersistenceManager;
+  private embeddingStore?: IEmbeddingStore;
 
-  constructor(vectorSearch: IVectorSearch, llmProvider: LLMProvider) {
+  constructor(vectorSearch: IVectorSearch, llmProvider: LLMProvider, embeddingStore?: IEmbeddingStore) {
     this.vectorSearch = vectorSearch;
     this.llmProvider = llmProvider;
+    this.persistence = PersistenceManager.getInstance();
+    this.embeddingStore = embeddingStore;
   }
 
   public async add(entry: KnowledgeEntry): Promise<void> {
     try {
-      localStorage.setItem(`${this.prefix}${entry.id}`, JSON.stringify(entry));
+      // 1. Generate and save embedding
+      if (this.embeddingStore) {
+        const embedding = await this.llmProvider.embed(entry.content);
+        await this.embeddingStore.save(entry.id, embedding);
+        entry.embedding = embedding;
+      }
+
+      const existing = await this.get(entry.id);
+
+      if (existing) {
+        // Handle Evolution & Versioning
+        const history: KnowledgeVersion[] = existing.history || [];
+        const oldVersion = existing.metadata.version || 1;
+        
+        history.push({
+          version: oldVersion,
+          content: existing.content,
+          timestamp: existing.metadata.updatedAt || Date.now(),
+          author: existing.metadata.author
+        });
+
+        entry.metadata.version = oldVersion + 1;
+        entry.history = history;
+        console.info(`[KnowledgeDatabase] Evolving knowledge entry: ${entry.id} to v${entry.metadata.version}`);
+      } else {
+        entry.metadata.version = entry.metadata.version || 1;
+      }
+
+      await this.persistence.save(this.STORE_NAME, entry);
     } catch (e) {
       console.error('[KnowledgeDatabase] Failed to save entry:', e);
     }
@@ -21,8 +62,7 @@ export class KnowledgeDatabase implements IKnowledgeDatabase {
 
   public async get(id: string): Promise<KnowledgeEntry | null> {
     try {
-      const item = localStorage.getItem(`${this.prefix}${id}`);
-      return item ? JSON.parse(item) : null;
+      return await this.persistence.get(this.STORE_NAME, id);
     } catch (e) {
       console.error('[KnowledgeDatabase] Failed to load entry:', e);
       return null;
@@ -33,7 +73,8 @@ export class KnowledgeDatabase implements IKnowledgeDatabase {
     const existing = await this.get(id);
     if (!existing) return;
 
-    const updated = {
+    // Use add to handle versioning automatically if content changes
+    const updatedEntry: KnowledgeEntry = {
       ...existing,
       ...entry,
       metadata: {
@@ -43,28 +84,28 @@ export class KnowledgeDatabase implements IKnowledgeDatabase {
       }
     };
 
-    await this.add(updated);
+    await this.add(updatedEntry);
   }
 
   public async delete(id: string): Promise<void> {
-    localStorage.removeItem(`${this.prefix}${id}`);
+    await this.persistence.delete(this.STORE_NAME, id);
   }
 
   public async search(query: string, options: SearchOptions = {}): Promise<VectorSearchResult[]> {
     const queryEmbedding = await this.llmProvider.embed(query);
-    const vectorResults = await this.vectorSearch.search(queryEmbedding, options.limit || 10);
+    const vectorResults = await this.vectorSearch.search(queryEmbedding, options.limit || 20);
     
     const allEntries = await this.listAll();
     const filteredEntries = this.filterEntries(allEntries, options);
 
-    if (options.threshold === undefined) options.threshold = 0.5;
+    if (options.threshold === undefined) options.threshold = 0.2;
     
-    const results: VectorSearchResult[] = [];
+    const candidates: VectorSearchResult[] = [];
     
     for (const vr of vectorResults) {
       const entry = filteredEntries.find(e => e.id === vr.id);
       if (entry && vr.score >= (options.threshold || 0)) {
-        results.push({
+        candidates.push({
           id: vr.id,
           score: vr.score,
           entry
@@ -72,23 +113,41 @@ export class KnowledgeDatabase implements IKnowledgeDatabase {
       }
     }
 
-    return results;
+    return this.rankResults(candidates).slice(0, options.limit || 10);
+  }
+
+  /**
+   * Advanced Knowledge Ranking Algorithm
+   * Combines Semantic Score (LLM) + Importance + Recency + Confidence
+   */
+  private rankResults(results: VectorSearchResult[]): KnowledgeRankingResult[] {
+    const now = Date.now();
+    const ONE_DAY = 24 * 60 * 60 * 1000;
+
+    return results.map(r => {
+      const { entry, score: semanticScore } = r;
+      const { importance, confidence, updatedAt } = entry.metadata;
+
+      // Recency boost (exponential decay)
+      const ageInDays = (now - updatedAt) / ONE_DAY;
+      const recencyScore = Math.exp(-ageInDays / 7); // Half-life of ~5 days
+
+      // Weighted Ranking
+      const rankScore = 
+        (semanticScore * 0.5) +  // LLM context match
+        (importance * 0.2) +     // Human/System manual weight
+        (recencyScore * 0.15) +  // Up-to-date information
+        (confidence * 0.15);     // Verification/Reflection score
+
+      return {
+        ...r,
+        rankScore
+      };
+    }).sort((a, b) => b.rankScore - a.rankScore);
   }
 
   private async listAll(): Promise<KnowledgeEntry[]> {
-    const entries: KnowledgeEntry[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key?.startsWith(this.prefix)) {
-        try {
-          const entry = JSON.parse(localStorage.getItem(key)!) as KnowledgeEntry;
-          entries.push(entry);
-        } catch {
-          // Skip malformed entries
-        }
-      }
-    }
-    return entries;
+    return await this.persistence.getAll(this.STORE_NAME);
   }
 
   private filterEntries(entries: KnowledgeEntry[], options: SearchOptions): KnowledgeEntry[] {

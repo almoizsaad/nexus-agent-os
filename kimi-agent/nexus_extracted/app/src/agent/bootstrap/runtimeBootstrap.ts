@@ -19,15 +19,20 @@ import { MissionNotifications } from '../core/MissionNotifications';
 import { MissionInbox } from '../core/MissionInbox';
 import { AutonomousMonitoring } from '../core/AutonomousMonitoring';
 import { SelfHealing } from '../core/SelfHealing';
+import { APIMetricsManager } from '../core/APIMetricsManager';
+import { GoalManager } from '../core/GoalManager';
+import { AgentManager } from '../core/AgentManager';
 
 /**
  * Bootstraps the complete Agent OS runtime exactly once.
  * Ensures all core components are instantiated and registered in the ServiceContainer.
  */
-export function bootstrapRuntime() {
+export async function bootstrapRuntime() {
+  const isBrowser = typeof window !== 'undefined';
+
   // Use a global flag to prevent multiple initializations during hot reload
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if ((window as any).__AGENT_OS_BOOTSTRAPPED__) {
+  if (isBrowser && (window as any).__AGENT_OS_BOOTSTRAPPED__) {
     console.debug('[AgentOS] Runtime already bootstrapped. Skipping.');
     return globalContainer;
   }
@@ -43,10 +48,20 @@ export function bootstrapRuntime() {
   // 3. Eagerly instantiate core singletons to establish the runtime
   try {
     // Core Infrastructure
-    globalContainer.resolve(EventBus);
+    const eventBus = globalContainer.resolve(EventBus);
     globalContainer.resolve(KnowledgeGraph);
     globalContainer.resolve(MemoryManager);
     globalContainer.resolve('Safety');
+    
+    // Phase 9.3: Initialize Persistent Managers
+    const metrics = globalContainer.resolve(APIMetricsManager);
+    await metrics.init();
+
+    const goalManager = globalContainer.resolve(GoalManager);
+    await goalManager.init();
+
+    const agentManager = globalContainer.resolve(AgentManager);
+    await agentManager.init();
     
     // Planning & Execution
     globalContainer.resolve('Planner');
@@ -56,7 +71,6 @@ export function bootstrapRuntime() {
     
     // Management Layers
     globalContainer.resolve(ThoughtManager);
-    globalContainer.resolve(AgentManager);
     globalContainer.resolve(CoordinatorAgent);
     globalContainer.resolve(ExecutiveBrain);
     globalContainer.resolve(MissionIntelligence);
@@ -78,9 +92,10 @@ export function bootstrapRuntime() {
     const background = globalContainer.resolve(BackgroundRuntime);
     background.start().catch(err => console.error('[AgentOS] BackgroundRuntime start failed:', err));
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
-    (window as any).__AGENT_OS_BOOTSTRAPPED__ = true;
+    if (isBrowser) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any).__AGENT_OS_BOOTSTRAPPED__ = true;
+    }
     console.info('[AgentOS] Runtime bootstrap complete.');
   } catch (error) {
     console.error('[AgentOS] Critical failure during runtime bootstrap:', error);
@@ -93,10 +108,10 @@ export function bootstrapRuntime() {
 /**
  * Access the bootstrapped container
  */
-export const getRuntime = () => {
+export const getRuntime = async () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!(window as any).__AGENT_OS_BOOTSTRAPPED__) {
-    return bootstrapRuntime();
+    return await bootstrapRuntime();
   }
   return globalContainer;
 };

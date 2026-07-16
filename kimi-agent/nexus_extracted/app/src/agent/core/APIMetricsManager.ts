@@ -1,4 +1,5 @@
 import { EventBus } from './EventBus';
+import { PersistenceManager } from './PersistenceManager';
 
 export interface APIMetric {
   provider: string;
@@ -28,9 +29,14 @@ export class APIMetricsManager {
   private eventBus: EventBus;
   private metrics: APIMetric[] = [];
   private providerStats: Map<string, ProviderStats> = new Map();
+  private persistence: PersistenceManager;
+  private readonly STORE_NAME = 'settings';
+  private readonly STATS_KEY = 'api_provider_stats';
+  private isInitialized = false;
 
   constructor(eventBus: EventBus) {
     this.eventBus = eventBus;
+    this.persistence = PersistenceManager.getInstance();
   }
 
   public static getInstance(eventBus: EventBus): APIMetricsManager {
@@ -38,6 +44,31 @@ export class APIMetricsManager {
       APIMetricsManager.instance = new APIMetricsManager(eventBus);
     }
     return APIMetricsManager.instance;
+  }
+
+  public async init(): Promise<void> {
+    if (this.isInitialized) return;
+    await this.loadStats();
+    this.isInitialized = true;
+  }
+
+  private async loadStats(): Promise<void> {
+    try {
+      const entry = await this.persistence.get(this.STORE_NAME, this.STATS_KEY);
+      if (entry && typeof entry.data === 'object') {
+        Object.entries(entry.data).forEach(([provider, stats]) => {
+          this.providerStats.set(provider, stats as ProviderStats);
+        });
+        console.info(`[APIMetricsManager] Loaded stats for ${Object.keys(entry.data).length} providers.`);
+      }
+    } catch (e) {
+      console.warn('[APIMetricsManager] Failed to load stats:', e);
+    }
+  }
+
+  private async saveStats(): Promise<void> {
+    const data = this.getAllStats();
+    await this.persistence.save(this.STORE_NAME, { key: this.STATS_KEY, data });
   }
 
   public recordMetric(metric: Omit<APIMetric, 'timestamp'>): void {
@@ -53,6 +84,9 @@ export class APIMetricsManager {
 
     // Keep memory clean
     if (this.metrics.length > 1000) this.metrics.shift();
+
+    // Persist stats
+    this.saveStats().catch(e => console.error('[APIMetricsManager] Failed to save stats:', e));
   }
 
   private updateStats(metric: APIMetric): void {
@@ -80,18 +114,19 @@ export class APIMetricsManager {
       .slice(-50);
     
     const successCount = recentMetrics.filter(m => m.status === 'success').length;
-    stats.successRate = successCount / recentMetrics.length;
+    // If we have recent metrics, use them for success rate, otherwise keep current
+    if (recentMetrics.length > 0) {
+      stats.successRate = successCount / recentMetrics.length;
+    }
 
     const failureCount = recentMetrics.filter(m => m.status === 'failure').length;
-    const failureRate = failureCount / recentMetrics.length;
+    const failureRate = recentMetrics.length > 0 ? failureCount / recentMetrics.length : 0;
 
     if (failureRate > 0.3) stats.healthStatus = 'critical';
     else if (failureRate > 0.1) stats.healthStatus = 'degraded';
     else stats.healthStatus = 'optimal';
 
     this.providerStats.set(metric.provider, stats);
-    
-    // Periodically sync stats to store if needed
   }
 
   public getStats(provider: string): ProviderStats | undefined {

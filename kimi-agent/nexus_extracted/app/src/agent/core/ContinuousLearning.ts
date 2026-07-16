@@ -1,15 +1,21 @@
 import { EventBus } from './EventBus';
 import { AgentEventType } from '../types/agent';
 import { AgentRegistry } from './AgentRegistry';
+import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
+import { KnowledgeDatabase } from '../knowledge/KnowledgeDatabase';
 
 /**
  * ContinuousLearning service processes reflections to evolve agent capabilities and skills.
  */
 export class ContinuousLearning {
   private eventBus: EventBus;
+  private graph?: KnowledgeGraph;
+  private db?: KnowledgeDatabase;
 
-  constructor(eventBus: EventBus, _registry: AgentRegistry) {
+  constructor(eventBus: EventBus, _registry: AgentRegistry, graph?: KnowledgeGraph, db?: KnowledgeDatabase) {
     this.eventBus = eventBus;
+    this.graph = graph;
+    this.db = db;
     this.setupListeners();
   }
 
@@ -21,17 +27,47 @@ export class ContinuousLearning {
     });
   }
 
-  private processReflection(payload: any): void {
+  private async processReflection(payload: any): Promise<void> {
     const { workflowId, reflection } = payload;
     console.info(`[ContinuousLearning] Processing reflection for ${workflowId}...`);
+
+    if (reflection.success) {
+      await this.learnFromSuccess(workflowId, reflection);
+    } else {
+      await this.learnFromFailure(workflowId, reflection);
+    }
 
     if (reflection.improvements.length > 0) {
       this.evolveSkills(reflection.improvements);
     }
-    
+
     if (reflection.mistakes.length > 0) {
       this.updatePolicies(reflection.mistakes);
     }
+  }
+
+  private async learnFromSuccess(workflowId: string, reflection: any): Promise<void> {
+    if (!this.graph) return;
+
+    // Boost confidence in the plan and involved nodes
+    const relatedNodes = await this.graph.searchNodes(workflowId);
+    for (const node of relatedNodes) {
+      await this.graph.evolveNode(node.id, 'Validated by successful execution', reflection.confidenceScore || 0.9);
+    }
+
+    console.info(`[ContinuousLearning] Reinforced knowledge for ${workflowId} (Success).`);
+  }
+
+  private async learnFromFailure(workflowId: string, reflection: any): Promise<void> {
+    if (!this.graph) return;
+
+    // Decrease confidence and record mistakes
+    const relatedNodes = await this.graph.searchNodes(workflowId);
+    for (const node of relatedNodes) {
+      await this.graph.evolveNode(node.id, `Failure: ${reflection.mistakes[0] || 'Unknown'}`, 0.3);
+    }
+
+    console.warn(`[ContinuousLearning] Flagged knowledge issues for ${workflowId} (Failure).`);
   }
 
   private evolveSkills(improvements: string[]): void {

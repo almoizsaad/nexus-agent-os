@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Mission, MissionStatus, MissionTimelineEntry, MissionOutcome } from '@/agent/types/mission';
 import type { Plan, AgentIdentity, Thought, Task } from '@/agent/types/agent';
 import type { ReflectionResult } from '@/agent/types/reflection';
@@ -24,205 +25,213 @@ export interface MissionStoreState {
   reset: () => void;
 }
 
-export const useMissionStore = create<MissionStoreState>((set) => ({
-  activeMissionId: null,
-  missions: {},
+export const useMissionStore = create<MissionStoreState>()(
+  persist(
+    (set) => ({
+      activeMissionId: null,
+      missions: {},
 
-  setActiveMission: (id) => set({ activeMissionId: id }),
+      setActiveMission: (id) => set({ activeMissionId: id }),
 
-  reset: () => set({ activeMissionId: null, missions: {} }),
+      reset: () => set({ activeMissionId: null, missions: {} }),
 
-  addMission: (mission) => set((state) => ({
-    missions: { ...state.missions, [mission.id]: mission }
-  })),
+      addMission: (mission) => set((state) => ({
+        missions: { ...state.missions, [mission.id]: mission }
+      })),
 
-  updateMissionStatus: (id, status) => set((state) => {
-    const mission = state.missions[id];
-    if (!mission) return state;
-    return {
-      missions: {
-        ...state.missions,
-        [id]: { ...mission, status, updatedAt: Date.now() }
-      }
-    };
-  }),
-
-  updateTaskStatus: (missionId, planId, taskId, status) => set((state) => {
-    const mission = state.missions[missionId];
-    if (!mission) return state;
-
-    const updatedPlans = mission.plans.map(plan => {
-      if (plan.id === planId) {
+      updateMissionStatus: (id, status) => set((state) => {
+        const mission = state.missions[id];
+        if (!mission) return state;
         return {
-          ...plan,
-          tasks: plan.tasks.map(task => 
-            task.id === taskId ? { ...task, status } : task
-          )
-        };
-      }
-      return plan;
-    });
-
-    return {
-      missions: {
-        ...state.missions,
-        [missionId]: {
-          ...mission,
-          plans: updatedPlans,
-          updatedAt: Date.now()
-        }
-      }
-    };
-  }),
-
-  addTimelineEntry: (id, entry) => set((state) => {
-    const mission = state.missions[id];
-    if (!mission) return state;
-    return {
-      missions: {
-        ...state.missions,
-        [id]: {
-          ...mission,
-          timeline: [...mission.timeline, entry],
-          updatedAt: Date.now()
-        }
-      }
-    };
-  }),
-
-  addPlan: (id, plan) => set((state) => {
-    const mission = state.missions[id];
-    if (!mission) return state;
-    
-    // Prevent duplicate plans
-    if (mission.plans.some(p => p.id === plan.id)) {
-      return {
-        missions: {
-          ...state.missions,
-          [id]: {
-            ...mission,
-            plans: mission.plans.map(p => p.id === plan.id ? plan : p),
-            updatedAt: Date.now()
+          missions: {
+            ...state.missions,
+            [id]: { ...mission, status, updatedAt: Date.now() }
           }
+        };
+      }),
+
+      updateTaskStatus: (missionId, planId, taskId, status) => set((state) => {
+        const mission = state.missions[missionId];
+        if (!mission) return state;
+
+        const updatedPlans = mission.plans.map(plan => {
+          if (plan.id === planId) {
+            return {
+              ...plan,
+              tasks: plan.tasks.map(task => 
+                task.id === taskId ? { ...task, status } : task
+              )
+            };
+          }
+          return plan;
+        });
+
+        return {
+          missions: {
+            ...state.missions,
+            [missionId]: {
+              ...mission,
+              plans: updatedPlans,
+              updatedAt: Date.now()
+            }
+          }
+        };
+      }),
+
+      addTimelineEntry: (id, entry) => set((state) => {
+        const mission = state.missions[id];
+        if (!mission) return state;
+        return {
+          missions: {
+            ...state.missions,
+            [id]: {
+              ...mission,
+              timeline: [...mission.timeline, entry],
+              updatedAt: Date.now()
+            }
+          }
+        };
+      }),
+
+      addPlan: (id, plan) => set((state) => {
+        const mission = state.missions[id];
+        if (!mission) return state;
+        
+        // Prevent duplicate plans
+        if (mission.plans.some(p => p.id === plan.id)) {
+          return {
+            missions: {
+              ...state.missions,
+              [id]: {
+                ...mission,
+                plans: mission.plans.map(p => p.id === plan.id ? plan : p),
+                updatedAt: Date.now()
+              }
+            }
+          };
         }
-      };
+
+        return {
+          missions: {
+            ...state.missions,
+            [id]: {
+              ...mission,
+              plans: [...mission.plans, plan],
+              updatedAt: Date.now()
+            }
+          }
+        };
+      }),
+
+      addRunningAgent: (id, agent) => set((state) => {
+        const mission = state.missions[id];
+        if (!mission) return state;
+        return {
+          missions: {
+            ...state.missions,
+            [id]: {
+              ...mission,
+              runningAgents: [...mission.runningAgents, agent],
+              updatedAt: Date.now()
+            }
+          }
+        };
+      }),
+
+      removeRunningAgent: (id, agentId) => set((state) => {
+        const mission = state.missions[id];
+        if (!mission) return state;
+        return {
+          missions: {
+            ...state.missions,
+            [id]: {
+              ...mission,
+              runningAgents: mission.runningAgents.filter((a) => a.id !== agentId),
+              updatedAt: Date.now()
+            }
+          }
+        };
+      }),
+
+      addThought: (id, thought) => set((state) => {
+        const mission = state.missions[id];
+        if (!mission) return state;
+        return {
+          missions: {
+            ...state.missions,
+            [id]: {
+              ...mission,
+              thoughts: [...mission.thoughts, thought],
+              updatedAt: Date.now()
+            }
+          }
+        };
+      }),
+
+      addReflection: (id, reflection) => set((state) => {
+        const mission = state.missions[id];
+        if (!mission) return state;
+        return {
+          missions: {
+            ...state.missions,
+            [id]: {
+              ...mission,
+              reflections: [...mission.reflections, reflection],
+              updatedAt: Date.now()
+            }
+          }
+        };
+      }),
+
+      addMemoryUpdate: (id, update) => set((state) => {
+        const mission = state.missions[id];
+        if (!mission) return state;
+        return {
+          missions: {
+            ...state.missions,
+            [id]: {
+              ...mission,
+              memoryUpdates: [...mission.memoryUpdates, update],
+              updatedAt: Date.now()
+            }
+          }
+        };
+      }),
+
+      addKnowledgeUpdate: (id, update) => set((state) => {
+        const mission = state.missions[id];
+        if (!mission) return state;
+        return {
+          missions: {
+            ...state.missions,
+            [id]: {
+              ...mission,
+              knowledgeUpdates: [...mission.knowledgeUpdates, update],
+              updatedAt: Date.now()
+            }
+          }
+        };
+      }),
+
+      setMissionOutcome: (id, outcome) => set((state) => {
+        const mission = state.missions[id];
+        if (!mission) return state;
+        return {
+          missions: {
+            ...state.missions,
+            [id]: {
+              ...mission,
+              outcome,
+              status: outcome.success ? 'completed' : 'failed',
+              updatedAt: Date.now()
+            }
+          }
+        };
+      }),
+    }),
+    {
+      name: 'nexus-mission-store',
+      storage: createJSONStorage(() => localStorage),
     }
-
-    return {
-      missions: {
-        ...state.missions,
-        [id]: {
-          ...mission,
-          plans: [...mission.plans, plan],
-          updatedAt: Date.now()
-        }
-      }
-    };
-  }),
-
-  addRunningAgent: (id, agent) => set((state) => {
-    const mission = state.missions[id];
-    if (!mission) return state;
-    return {
-      missions: {
-        ...state.missions,
-        [id]: {
-          ...mission,
-          runningAgents: [...mission.runningAgents, agent],
-          updatedAt: Date.now()
-        }
-      }
-    };
-  }),
-
-  removeRunningAgent: (id, agentId) => set((state) => {
-    const mission = state.missions[id];
-    if (!mission) return state;
-    return {
-      missions: {
-        ...state.missions,
-        [id]: {
-          ...mission,
-          runningAgents: mission.runningAgents.filter((a) => a.id !== agentId),
-          updatedAt: Date.now()
-        }
-      }
-    };
-  }),
-
-  addThought: (id, thought) => set((state) => {
-    const mission = state.missions[id];
-    if (!mission) return state;
-    return {
-      missions: {
-        ...state.missions,
-        [id]: {
-          ...mission,
-          thoughts: [...mission.thoughts, thought],
-          updatedAt: Date.now()
-        }
-      }
-    };
-  }),
-
-  addReflection: (id, reflection) => set((state) => {
-    const mission = state.missions[id];
-    if (!mission) return state;
-    return {
-      missions: {
-        ...state.missions,
-        [id]: {
-          ...mission,
-          reflections: [...mission.reflections, reflection],
-          updatedAt: Date.now()
-        }
-      }
-    };
-  }),
-
-  addMemoryUpdate: (id, update) => set((state) => {
-    const mission = state.missions[id];
-    if (!mission) return state;
-    return {
-      missions: {
-        ...state.missions,
-        [id]: {
-          ...mission,
-          memoryUpdates: [...mission.memoryUpdates, update],
-          updatedAt: Date.now()
-        }
-      }
-    };
-  }),
-
-  addKnowledgeUpdate: (id, update) => set((state) => {
-    const mission = state.missions[id];
-    if (!mission) return state;
-    return {
-      missions: {
-        ...state.missions,
-        [id]: {
-          ...mission,
-          knowledgeUpdates: [...mission.knowledgeUpdates, update],
-          updatedAt: Date.now()
-        }
-      }
-    };
-  }),
-
-  setMissionOutcome: (id, outcome) => set((state) => {
-    const mission = state.missions[id];
-    if (!mission) return state;
-    return {
-      missions: {
-        ...state.missions,
-        [id]: {
-          ...mission,
-          outcome,
-          status: outcome.success ? 'completed' : 'failed',
-          updatedAt: Date.now()
-        }
-      }
-    };
-  }),
-}));
+  )
+);

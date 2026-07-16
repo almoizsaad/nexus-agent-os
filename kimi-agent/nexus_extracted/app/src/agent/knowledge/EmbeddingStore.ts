@@ -1,11 +1,18 @@
 import type { IEmbeddingStore } from '../types/knowledge';
+import { PersistenceManager } from '../core/PersistenceManager';
 
 export class EmbeddingStore implements IEmbeddingStore {
-  private prefix = 'nexus_embedding_';
+  private persistence: PersistenceManager;
+  private readonly STORE_NAME = 'settings';
+  private readonly PREFIX = 'emb_';
+
+  constructor() {
+    this.persistence = PersistenceManager.getInstance();
+  }
 
   public async save(id: string, embedding: number[]): Promise<void> {
     try {
-      localStorage.setItem(`${this.prefix}${id}`, JSON.stringify(embedding));
+      await this.persistence.save(this.STORE_NAME, { key: `${this.PREFIX}${id}`, data: embedding });
     } catch (e) {
       console.error('[EmbeddingStore] Failed to save embedding:', e);
     }
@@ -13,8 +20,8 @@ export class EmbeddingStore implements IEmbeddingStore {
 
   public async get(id: string): Promise<number[] | null> {
     try {
-      const item = localStorage.getItem(`${this.prefix}${id}`);
-      return item ? JSON.parse(item) : null;
+      const entry = await this.persistence.get(this.STORE_NAME, `${this.PREFIX}${id}`);
+      return entry ? entry.data : null;
     } catch (e) {
       console.error('[EmbeddingStore] Failed to load embedding:', e);
       return null;
@@ -22,34 +29,23 @@ export class EmbeddingStore implements IEmbeddingStore {
   }
 
   public async delete(id: string): Promise<void> {
-    localStorage.removeItem(`${this.prefix}${id}`);
+    await this.persistence.delete(this.STORE_NAME, `${this.PREFIX}${id}`);
   }
 
   public async list(): Promise<{ id: string; embedding: number[] }[]> {
-    const results: { id: string; embedding: number[] }[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key?.startsWith(this.prefix)) {
-        try {
-          const id = key.replace(this.prefix, '');
-          const embedding = JSON.parse(localStorage.getItem(key)!) as number[];
-          results.push({ id, embedding });
-        } catch {
-          // Skip malformed entries
-        }
-      }
-    }
-    return results;
+    const all = await this.persistence.getAll(this.STORE_NAME);
+    return all
+      .filter(item => item.key && item.key.startsWith(this.PREFIX))
+      .map(item => ({
+        id: item.key.replace(this.PREFIX, ''),
+        embedding: item.data
+      }));
   }
 
   public async clear(): Promise<void> {
-    const keys: string[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key?.startsWith(this.prefix)) {
-        keys.push(key);
-      }
+    const all = await this.list();
+    for (const item of all) {
+      await this.delete(item.id);
     }
-    keys.forEach(k => localStorage.removeItem(k));
   }
 }

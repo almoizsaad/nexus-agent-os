@@ -1,11 +1,17 @@
 import type { IMemoryStorage, MemoryEntry, MemoryQuery } from '../types/memory';
+import { PersistenceManager } from '../core/PersistenceManager';
 
 export class MemoryStorage implements IMemoryStorage {
-  private prefix = 'nexus_memory_';
+  private STORE_NAME = 'memory';
+  private persistence: PersistenceManager;
+
+  constructor() {
+    this.persistence = PersistenceManager.getInstance();
+  }
 
   public async save(entry: MemoryEntry): Promise<void> {
     try {
-      localStorage.setItem(`${this.prefix}${entry.id}`, JSON.stringify(entry));
+      await this.persistence.save(this.STORE_NAME, entry);
     } catch (e) {
       console.error('[MemoryStorage] Failed to save entry:', e);
     }
@@ -13,8 +19,7 @@ export class MemoryStorage implements IMemoryStorage {
 
   public async load(id: string): Promise<MemoryEntry | null> {
     try {
-      const item = localStorage.getItem(`${this.prefix}${id}`);
-      return item ? JSON.parse(item) : null;
+      return await this.persistence.get(this.STORE_NAME, id);
     } catch (e) {
       console.error('[MemoryStorage] Failed to load entry:', e);
       return null;
@@ -22,24 +27,12 @@ export class MemoryStorage implements IMemoryStorage {
   }
 
   public async delete(id: string): Promise<void> {
-    localStorage.removeItem(`${this.prefix}${id}`);
+    await this.persistence.delete(this.STORE_NAME, id);
   }
 
   public async list(query: MemoryQuery): Promise<MemoryEntry[]> {
-    const entries: MemoryEntry[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key?.startsWith(this.prefix)) {
-        try {
-          const entry = JSON.parse(localStorage.getItem(key)!) as MemoryEntry;
-          if (this.matchesQuery(entry, query)) {
-            entries.push(entry);
-          }
-        } catch {
-          // Skip malformed entries
-        }
-      }
-    }
+    const allEntries = await this.persistence.getAll(this.STORE_NAME) as MemoryEntry[];
+    const entries = allEntries.filter(entry => this.matchesQuery(entry, query));
 
     // Sort by timestamp desc
     entries.sort((a, b) => b.timestamp - a.timestamp);
@@ -48,14 +41,7 @@ export class MemoryStorage implements IMemoryStorage {
   }
 
   public async clear(): Promise<void> {
-    const keys: string[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key?.startsWith(this.prefix)) {
-        keys.push(key);
-      }
-    }
-    keys.forEach(k => localStorage.removeItem(k));
+    await this.persistence.clear(this.STORE_NAME);
   }
 
   private matchesQuery(entry: MemoryEntry, query: MemoryQuery): boolean {

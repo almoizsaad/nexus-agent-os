@@ -11,9 +11,18 @@ export interface KnowledgeMetadata {
   updatedAt: number;
   tags: string[];
   importance: number; // 0-1
+  confidence: number; // 0-1 (derived from verification/reflection)
+  version: number;
   chunkIndex?: number;
   totalChunks?: number;
   originalId?: string; // Reference to the original document if this is a chunk
+}
+
+export interface KnowledgeVersion {
+  version: number;
+  content: string;
+  timestamp: number;
+  author?: string;
 }
 
 export interface KnowledgeEntry {
@@ -21,6 +30,11 @@ export interface KnowledgeEntry {
   content: string;
   metadata: KnowledgeMetadata;
   embedding?: number[];
+  history?: KnowledgeVersion[];
+}
+
+export interface KnowledgeRankingResult extends VectorSearchResult {
+  rankScore: number; // Combined score (semantic + importance + recency + confidence)
 }
 
 export interface VectorSearchResult {

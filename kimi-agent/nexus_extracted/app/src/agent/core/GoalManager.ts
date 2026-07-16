@@ -1,34 +1,40 @@
 import type { Mission, MissionGoal, MissionStatus } from '../types/mission';
 import { EventBus } from './EventBus';
 import { AgentEventType } from '../types/agent';
-import { PersistentMemory } from '../memory/PersistentMemory';
+import { PersistenceManager } from './PersistenceManager';
 
 export class GoalManager {
   private missions: Map<string, Mission> = new Map();
   private eventBus: EventBus;
-  private memory: PersistentMemory;
-  private readonly STORAGE_KEY = 'missions';
+  private persistence: PersistenceManager;
+  private readonly STORE_NAME = 'missions';
+  private isInitialized = false;
 
   constructor(eventBus: EventBus) {
     this.eventBus = eventBus;
-    this.memory = new PersistentMemory();
-    this.loadMissions();
+    this.persistence = PersistenceManager.getInstance();
   }
 
-  private loadMissions(): void {
-    const savedMissions = this.memory.recall(this.STORAGE_KEY) as Mission[];
+  public async init(): Promise<void> {
+    if (this.isInitialized) return;
+    await this.loadMissions();
+    this.isInitialized = true;
+  }
+
+  private async loadMissions(): Promise<void> {
+    const savedMissions = await this.persistence.getAll(this.STORE_NAME) as Mission[];
     if (savedMissions && Array.isArray(savedMissions)) {
       savedMissions.forEach(m => this.missions.set(m.id, m));
-      console.info(`[GoalManager] Loaded ${savedMissions.length} missions from persistence.`);
+      console.info(`[GoalManager] Loaded ${savedMissions.length} missions from IndexedDB.`);
     }
   }
 
-  private saveMissions(): void {
-    const missionsArray = Array.from(this.missions.values());
-    this.memory.store(this.STORAGE_KEY, missionsArray);
+  private async saveMission(mission: Mission): Promise<void> {
+    await this.persistence.save(this.STORE_NAME, mission);
   }
 
-  public createMission(title: string, goal: MissionGoal, context: Record<string, unknown> = {}): Mission {
+  public async createMission(title: string, goal: MissionGoal, context: Record<string, unknown> = {}): Promise<Mission> {
+    await this.init();
     const mission: Mission = {
       id: crypto.randomUUID(),
       title,
@@ -48,7 +54,7 @@ export class GoalManager {
     };
     
     this.missions.set(mission.id, mission);
-    this.saveMissions();
+    await this.saveMission(mission);
 
     this.eventBus.publish('agent:events', {
       type: AgentEventType.MISSION_CREATED as any,
@@ -63,12 +69,13 @@ export class GoalManager {
     return this.missions.get(id);
   }
 
-  public updateMissionStatus(id: string, status: MissionStatus): void {
+  public async updateMissionStatus(id: string, status: MissionStatus): Promise<void> {
+    await this.init();
     const mission = this.missions.get(id);
     if (mission) {
       mission.status = status;
       mission.updatedAt = Date.now();
-      this.saveMissions();
+      await this.saveMission(mission);
 
       this.eventBus.publish('agent:events', {
         type: AgentEventType.MISSION_STATUS_UPDATED as any,
@@ -86,9 +93,12 @@ export class GoalManager {
     return this.getAllMissions().filter(m => m.status === 'running');
   }
 
-  public deleteMission(id: string): boolean {
+  public async deleteMission(id: string): Promise<boolean> {
+    await this.init();
     const deleted = this.missions.delete(id);
-    if (deleted) this.saveMissions();
+    if (deleted) {
+      await this.persistence.delete(this.STORE_NAME, id);
+    }
     return deleted;
   }
 }
