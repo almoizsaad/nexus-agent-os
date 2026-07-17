@@ -7,6 +7,7 @@ import { AgentFactory } from '../core/AgentFactory';
 import { AgentManager } from '../core/AgentManager';
 import { KnowledgeGraph } from '../knowledge/KnowledgeGraph';
 import { KnowledgeDatabase } from '../knowledge/KnowledgeDatabase';
+import { KnowledgeIndexer } from '../knowledge/KnowledgeIndexer';
 import { PerformanceMonitor } from '../improvement/PerformanceMonitor';
 import { ImprovementEngine } from '../improvement/ImprovementEngine';
 import { OptimizationSuggestions } from '../improvement/OptimizationSuggestions';
@@ -27,11 +28,12 @@ export function createAgent(container: ServiceContainer = new ServiceContainer()
   const eventBus = container.resolve(EventBus);
   const toolRegistry = container.resolve(ToolRegistry);
   const knowledgeDb = container.resolve(KnowledgeDatabase);
+  const knowledgeIndexer = container.resolve(KnowledgeIndexer);
   const llmProvider = container.resolve<LLMProvider>('LLMProvider');
   const apiMetrics = container.resolve(APIMetricsManager);
 
   // Register default production tools
-  registerDefaultTools(toolRegistry, knowledgeDb, llmProvider, apiMetrics);
+  registerDefaultTools(toolRegistry, knowledgeDb, llmProvider, apiMetrics, knowledgeIndexer);
 
   const monitor = container.resolve(PerformanceMonitor);
   const improvementEngine = container.resolve(ImprovementEngine);

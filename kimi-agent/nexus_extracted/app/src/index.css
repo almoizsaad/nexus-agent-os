@@ -441,6 +441,15 @@
   50% { opacity: 0; }
 }
 
+@keyframes progress-glow {
+  0%, 100% { opacity: 1; filter: brightness(1); }
+  50% { opacity: 0.8; filter: brightness(1.5); }
+}
+
+.animate-progress-glow {
+  animation: progress-glow 2s ease-in-out infinite;
+}
+
 @keyframes fade-in-up {
   from {
     opacity: 0;

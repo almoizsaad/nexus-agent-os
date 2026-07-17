@@ -9,6 +9,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Brain, Activity, History, Network, Shield, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import SystemMetrics from '../generative-ui/SystemMetrics';
+import { useAgent } from '@/hooks/useAgent';
 
 interface MissionPanelProps {
   mission: Mission;
@@ -16,6 +18,7 @@ interface MissionPanelProps {
 }
 
 export const MissionPanel: React.FC<MissionPanelProps> = ({ mission, className }) => {
+  const { metrics, recommendations } = useAgent();
   const thoughtsByType = mission.thoughts.reduce((acc, thought) => {
     if (!acc[thought.type]) acc[thought.type] = [];
     acc[thought.type].push(thought);
@@ -79,7 +82,10 @@ export const MissionPanel: React.FC<MissionPanelProps> = ({ mission, className }
         <div className="flex-1 overflow-hidden min-h-0">
           <TabsContent value="overview" className="h-full m-0 outline-none">
             <ScrollArea className="h-full p-6">
-              <MissionProgress mission={mission} />
+              <div className="space-y-6">
+                <SystemMetrics metrics={metrics} recommendations={recommendations} />
+                <MissionProgress mission={mission} />
+              </div>
             </ScrollArea>
           </TabsContent>
 

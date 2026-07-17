@@ -36,7 +36,7 @@ export class KnowledgeIndexer {
     this.chunkingOptions = chunkingOptions;
     this.graph = graph;
     if (graph) {
-      this.linker = new KnowledgeLinker(graph);
+      this.linker = new KnowledgeLinker(graph, llmProvider);
     }
   }
 

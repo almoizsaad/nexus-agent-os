@@ -1,14 +1,27 @@
 /**
- * PersistenceManager provides a unified interface for IndexedDB storage.
+ * PersistenceManager provides a unified interface for storage.
+ * Supports IndexedDB in browsers and file-based storage in Node.js.
  */
+import * as fs from 'fs';
+import * as path from 'path';
+
 export class PersistenceManager {
   private dbName: string = 'nexus_agent_os';
   private version: number = 1;
   private db: IDBDatabase | null = null;
+  private isNode: boolean = typeof window === 'undefined' && typeof process !== 'undefined';
+  private nodeStorageDir: string = '';
 
   private static instance: PersistenceManager;
 
-  private constructor() {}
+  private constructor() {
+    if (this.isNode) {
+      this.nodeStorageDir = path.join(process.cwd(), '.nexus_storage');
+      if (!fs.existsSync(this.nodeStorageDir)) {
+        fs.mkdirSync(this.nodeStorageDir, { recursive: true });
+      }
+    }
+  }
 
   public static getInstance(): PersistenceManager {
     if (!PersistenceManager.instance) {
@@ -18,9 +31,20 @@ export class PersistenceManager {
   }
 
   public async init(): Promise<void> {
+    if (this.isNode) return; // No init needed for file storage
     if (this.db) return;
 
     return new Promise((resolve, reject) => {
+      if (typeof indexedDB === 'undefined') {
+        console.warn('[PersistenceManager] indexedDB is undefined. Falling back to Node.js mode (if possible).');
+        this.isNode = true;
+        this.nodeStorageDir = path.join(process.cwd(), '.nexus_storage');
+        if (!fs.existsSync(this.nodeStorageDir)) {
+          fs.mkdirSync(this.nodeStorageDir, { recursive: true });
+        }
+        return resolve();
+      }
+
       const request = indexedDB.open(this.dbName, this.version);
 
       request.onupgradeneeded = (event) => {
@@ -64,7 +88,40 @@ export class PersistenceManager {
     });
   }
 
+  private getStorePath(storeName: string): string {
+    return path.join(this.nodeStorageDir, `${storeName}.json`);
+  }
+
+  private async readNodeStore(storeName: string): Promise<Record<string, any>> {
+    const filePath = this.getStorePath(storeName);
+    if (!fs.existsSync(filePath)) return {};
+    try {
+      const content = fs.readFileSync(filePath, 'utf-8');
+      return JSON.parse(content);
+    } catch (e) {
+      console.error(`[PersistenceManager] Failed to read store ${storeName}:`, e);
+      return {};
+    }
+  }
+
+  private async writeNodeStore(storeName: string, data: Record<string, any>): Promise<void> {
+    const filePath = this.getStorePath(storeName);
+    try {
+      fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+    } catch (e) {
+      console.error(`[PersistenceManager] Failed to write store ${storeName}:`, e);
+    }
+  }
+
   public async save(storeName: string, data: any): Promise<void> {
+    if (this.isNode) {
+      const store = await this.readNodeStore(storeName);
+      const key = data.id || data.key || 'default';
+      store[key] = data;
+      await this.writeNodeStore(storeName, store);
+      return;
+    }
+
     await this.init();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([storeName], 'readwrite');
@@ -77,6 +134,11 @@ export class PersistenceManager {
   }
 
   public async get(storeName: string, id: string): Promise<any> {
+    if (this.isNode) {
+      const store = await this.readNodeStore(storeName);
+      return store[id] || null;
+    }
+
     await this.init();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([storeName], 'readonly');
@@ -89,6 +151,11 @@ export class PersistenceManager {
   }
 
   public async getAll(storeName: string): Promise<any[]> {
+    if (this.isNode) {
+      const store = await this.readNodeStore(storeName);
+      return Object.values(store);
+    }
+
     await this.init();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([storeName], 'readonly');
@@ -101,6 +168,13 @@ export class PersistenceManager {
   }
 
   public async delete(storeName: string, id: string): Promise<void> {
+    if (this.isNode) {
+      const store = await this.readNodeStore(storeName);
+      delete store[id];
+      await this.writeNodeStore(storeName, store);
+      return;
+    }
+
     await this.init();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([storeName], 'readwrite');
@@ -113,6 +187,11 @@ export class PersistenceManager {
   }
 
   public async clear(storeName: string): Promise<void> {
+    if (this.isNode) {
+      await this.writeNodeStore(storeName, {});
+      return;
+    }
+
     await this.init();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([storeName], 'readwrite');
@@ -124,3 +203,4 @@ export class PersistenceManager {
     });
   }
 }
+

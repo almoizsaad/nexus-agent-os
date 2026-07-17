@@ -20,6 +20,7 @@ import { OpenAPITool } from './local/OpenAPITool';
 import { MCPTool } from './local/MCPTool';
 import { ToolDiagnosticsTool } from './local/ToolDiagnosticsTool';
 import { RepositoryIndexerTool } from './local/RepositoryIndexerTool';
+import { KnowledgeIndexer } from '../knowledge/KnowledgeIndexer';
 import type { IKnowledgeDatabase } from '../types/knowledge';
 import type { Tool } from './Tool';
 import type { LLMProvider } from '../providers/LLMProvider';

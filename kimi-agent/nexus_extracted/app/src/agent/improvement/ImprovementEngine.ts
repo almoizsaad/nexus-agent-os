@@ -1,7 +1,8 @@
 import type { 
   IImprovementEngine, 
   SystemMetrics, 
-  OptimizationRecommendation 
+  OptimizationRecommendation,
+  SystemInstruction
 } from '../types/improvement';
 import { ToolEvaluator } from './ToolEvaluator';
 import { PlannerEvaluator } from './PlannerEvaluator';
@@ -41,5 +42,56 @@ export class ImprovementEngine implements IImprovementEngine {
     }
 
     return recommendations;
+  }
+
+  public analyzeForPromptOptimization(reflection: any, analysis?: any): SystemInstruction[] {
+    const instructions: SystemInstruction[] = [];
+
+    // Learn from mistakes (Policy/Constraint)
+    if (reflection.mistakes && reflection.mistakes.length > 0) {
+      reflection.mistakes.forEach((mistake: string, index: number) => {
+        instructions.push({
+          id: `policy-${reflection.workflowId}-${index}`,
+          type: 'policy',
+          content: `AVOID THIS MISTAKE: ${mistake}`,
+          source: reflection.workflowId,
+          confidence: reflection.confidenceScore / 100,
+          usageCount: 0,
+          lastUsed: Date.now()
+        });
+      });
+    }
+
+    // Learn from improvements (Tips)
+    if (reflection.improvements && reflection.improvements.length > 0) {
+      reflection.improvements.forEach((improvement: string, index: number) => {
+        instructions.push({
+          id: `tip-${reflection.workflowId}-${index}`,
+          type: 'tip',
+          content: `PRO-TIP: ${improvement}`,
+          source: reflection.workflowId,
+          confidence: reflection.confidenceScore / 100,
+          usageCount: 0,
+          lastUsed: Date.now()
+        });
+      });
+    }
+
+    // Analyze Thought Analysis Suggestions
+    if (analysis && analysis.suggestions) {
+      analysis.suggestions.forEach((suggestion: string, index: number) => {
+        instructions.push({
+          id: `reasoning-${reflection.workflowId}-${index}`,
+          type: 'skill',
+          content: `REASONING IMPROVEMENT: ${suggestion}`,
+          source: reflection.workflowId,
+          confidence: (analysis.coherence + analysis.depth / 20) / 2,
+          usageCount: 0,
+          lastUsed: Date.now()
+        });
+      });
+    }
+
+    return instructions;
   }
 }

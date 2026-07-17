@@ -1,0 +1,90 @@
+{
+  "thoughts": {
+    "key": "thoughts",
+    "data": [
+      {
+        "id": "t1",
+        "timestamp": 1784304020838,
+        "content": "I am planning to use the search tool.",
+        "type": "reasoning",
+        "agentId": "test-agent",
+        "workflowId": "test-mission-self-improvement"
+      },
+      {
+        "id": "t2",
+        "timestamp": 1784304020838,
+        "content": "Searching for capital of Mars...",
+        "type": "observation",
+        "agentId": "test-agent",
+        "workflowId": "test-mission-self-improvement",
+        "parentId": "t1"
+      }
+    ]
+  },
+  "chains": {
+    "key": "chains",
+    "data": [
+      {
+        "id": "test-mission-self-improvement",
+        "thoughts": [
+          {
+            "id": "t1",
+            "timestamp": 1784304020838,
+            "content": "I am planning to use the search tool.",
+            "type": "reasoning",
+            "agentId": "test-agent",
+            "workflowId": "test-mission-self-improvement"
+          },
+          {
+            "id": "t2",
+            "timestamp": 1784304020838,
+            "content": "Searching for capital of Mars...",
+            "type": "observation",
+            "agentId": "test-agent",
+            "workflowId": "test-mission-self-improvement",
+            "parentId": "t1"
+          }
+        ],
+        "agentId": "test-agent",
+        "workflowId": "test-mission-self-improvement",
+        "startTime": 1784304020838,
+        "endTime": 1784304020838
+      }
+    ]
+  },
+  "dynamic_instructions": {
+    "key": "dynamic_instructions",
+    "data": [
+      {
+        "id": "policy-undefined-0",
+        "type": "policy",
+        "content": "AVOID THIS MISTAKE: Did not specify the search depth",
+        "confidence": 0.4,
+        "usageCount": 0,
+        "lastUsed": 1784304021042
+      },
+      {
+        "id": "tip-undefined-0",
+        "type": "tip",
+        "content": "PRO-TIP: Always specify search depth for planetary searches",
+        "confidence": 0.4,
+        "usageCount": 0,
+        "lastUsed": 1784304021042
+      }
+    ]
+  },
+  "api_provider_stats": {
+    "key": "api_provider_stats",
+    "data": {
+      "gemini": {
+        "totalCalls": 1,
+        "successRate": 1,
+        "avgLatency": 150,
+        "totalTokens": 0,
+        "totalCost": 0,
+        "lastUsed": 1784306340289,
+        "healthStatus": "optimal"
+      }
+    }
+  }
+}

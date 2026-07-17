@@ -51,9 +51,13 @@ import { MissionNotifications } from './MissionNotifications';
 import { MissionInbox } from './MissionInbox';
 
 import { APIMetricsManager } from './APIMetricsManager';
+import { PromptOptimizer } from '../improvement/PromptOptimizer';
+
+import { KnowledgeIndexer } from '../knowledge/KnowledgeIndexer';
 
 export class DependencyRegistry {
   public static registerCoreServices(container: ServiceContainer): void {
+    // ... rest of imports
     // Singletons - only if not already registered
     if (!container.has(EventBus)) container.registerSingleton(EventBus, new EventBus());
     if (!container.has(APIMetricsManager)) container.registerSingleton(APIMetricsManager, (c) => APIMetricsManager.getInstance(c.resolve(EventBus)));
@@ -64,6 +68,7 @@ export class DependencyRegistry {
     if (!container.has(MemoryManager)) container.registerSingleton(MemoryManager, (c) => new MemoryManager(c.resolve(PerformanceMonitor)));
     if (!container.has(ImprovementEngine)) container.registerSingleton(ImprovementEngine, new ImprovementEngine());
     if (!container.has(OptimizationSuggestions)) container.registerSingleton(OptimizationSuggestions, new OptimizationSuggestions());
+    if (!container.has(PromptOptimizer)) container.registerSingleton(PromptOptimizer, new PromptOptimizer());
     if (!container.has(KnowledgeGraph)) {
       container.registerSingleton(KnowledgeGraph, () => {
         const persistence = new KnowledgePersistence();
@@ -80,6 +85,18 @@ export class DependencyRegistry {
           c.resolve(VectorSearch),
           c.resolve('LLMProvider'),
           c.resolve(EmbeddingStore)
+        );
+      });
+    }
+
+    if (!container.has(KnowledgeIndexer)) {
+      container.registerSingleton(KnowledgeIndexer, (c) => {
+        return new KnowledgeIndexer(
+          c.resolve(KnowledgeDatabase),
+          c.resolve(EmbeddingStore),
+          c.resolve('LLMProvider'),
+          undefined,
+          c.resolve(KnowledgeGraph)
         );
       });
     }
@@ -114,7 +131,8 @@ export class DependencyRegistry {
         const monitor = c.resolve(PerformanceMonitor);
         const graph = c.resolve(KnowledgeGraph);
         const stream = c.resolve(AgentStream);
-        return new LLMPlanner(provider, toolRegistry, undefined, monitor, graph, undefined, stream);
+        const promptOptimizer = c.resolve(PromptOptimizer);
+        return new LLMPlanner(provider, toolRegistry, undefined, monitor, graph, undefined, stream, promptOptimizer);
       });
     }
 
@@ -276,7 +294,10 @@ export class DependencyRegistry {
         const registry = c.resolve(AgentRegistry);
         const graph = c.resolve(KnowledgeGraph);
         const db = c.resolve(KnowledgeDatabase);
-        return new ContinuousLearning(eventBus, registry, graph, db);
+        const thoughtManager = c.resolve(ThoughtManager);
+        const improvementEngine = c.resolve(ImprovementEngine);
+        const promptOptimizer = c.resolve(PromptOptimizer);
+        return new ContinuousLearning(eventBus, registry, graph, db, thoughtManager, improvementEngine, promptOptimizer);
       });
     }
 

@@ -10,7 +10,16 @@ interface LogEntry {
 }
 
 export class Logger {
-  private static isProduction = typeof import.meta.env !== 'undefined' ? import.meta.env.PROD : process.env.NODE_ENV === 'production';
+  private static _isProduction: boolean | null = null;
+
+  private static get isProduction(): boolean {
+    if (this._isProduction !== null) return this._isProduction;
+    return typeof import.meta.env !== 'undefined' ? import.meta.env.PROD : process.env.NODE_ENV === 'production';
+  }
+
+  public static setProduction(value: boolean): void {
+    this._isProduction = value;
+  }
 
   private static format(level: LogLevel, message: string, context?: Record<string, unknown>, error?: Error): LogEntry {
     return {

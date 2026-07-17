@@ -11,6 +11,7 @@ import { KnowledgeLinker } from '../knowledge/KnowledgeLinker';
 import type { ISafetyGuard } from '../types/safety';
 import { SafetyGuard } from '../core/SafetyLayer';
 import { AgentStream } from '../events/AgentStream';
+import { PromptOptimizer } from '../improvement/PromptOptimizer';
 
 /**
  * LLMPlanner uses a Large Language Model to generate autonomous plans.
@@ -27,6 +28,7 @@ export class LLMPlanner implements Planner {
   private linker?: KnowledgeLinker;
   private safetyGuard: ISafetyGuard;
   private stream?: AgentStream;
+  private promptOptimizer?: PromptOptimizer;
 
   constructor(
     provider: LLMProvider, 
@@ -35,7 +37,8 @@ export class LLMPlanner implements Planner {
     monitor?: IPerformanceMonitor,
     graph?: IKnowledgeGraph,
     safetyGuard?: ISafetyGuard,
-    stream?: AgentStream
+    stream?: AgentStream,
+    promptOptimizer?: PromptOptimizer
   ) {
     this.provider = provider;
     this.toolRegistry = toolRegistry;
@@ -45,6 +48,7 @@ export class LLMPlanner implements Planner {
     this.monitor = monitor;
     this.graph = graph;
     this.stream = stream;
+    this.promptOptimizer = promptOptimizer;
     if (graph) {
       this.linker = new KnowledgeLinker(graph);
     }
@@ -68,8 +72,14 @@ export class LLMPlanner implements Planner {
       }
     }
 
+    // Phase 9.7: Self-Improvement - Get learned system instructions
+    const promptOverlay = this.promptOptimizer?.getPromptOverlay() || '';
+    if (promptOverlay) {
+      this.stream?.thought('Applying learned system improvements and policies to the planner prompt.', 'reasoning');
+    }
+
     const toolsDescription = this.toolRegistry.describeTools();
-    const prompt = this.buildPrompt(goal, state, toolsDescription, knowledgeContext);
+    const prompt = this.buildPrompt(goal, state, toolsDescription, knowledgeContext, promptOverlay);
 
     try {
       this.stream?.thought('Consulting LLM provider for structured task decomposition.', 'reasoning');
@@ -161,7 +171,7 @@ export class LLMPlanner implements Planner {
     }
   }
 
-  private buildPrompt(goal: string, state: AgentState, toolsDescription: string, knowledgeContext: string = ''): string {
+  private buildPrompt(goal: string, state: AgentState, toolsDescription: string, knowledgeContext: string = '', promptOverlay: string = ''): string {
     return `
       You are an autonomous Agent OS Planner. 
       Your mission is to decompose the user's goal into a logical sequence of tasks.
@@ -169,6 +179,8 @@ export class LLMPlanner implements Planner {
       GOAL: "${goal}"
       
       ${knowledgeContext ? `RELEVANT KNOWLEDGE FROM GRAPH:\n${knowledgeContext}\n` : ''}
+
+      ${promptOverlay}
 
       AVAILABLE TOOLS:
       ${toolsDescription}

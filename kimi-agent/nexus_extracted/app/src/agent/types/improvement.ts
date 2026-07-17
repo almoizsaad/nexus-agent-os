@@ -44,6 +44,22 @@ export interface IPerformanceMonitor {
   getMetrics(): SystemMetrics;
 }
 
+export interface SystemInstruction {
+  id: string;
+  type: 'skill' | 'policy' | 'constraint' | 'tip';
+  content: string;
+  source: string; // workflowId or 'manual'
+  confidence: number;
+  usageCount: number;
+  lastUsed: number;
+}
+
+export interface PromptOptimization {
+  baseInstructions: string;
+  dynamicOverlays: SystemInstruction[];
+}
+
 export interface IImprovementEngine {
   generateRecommendations(metrics: SystemMetrics): OptimizationRecommendation[];
+  analyzeForPromptOptimization(reflection: any, analysis?: any): SystemInstruction[];
 }

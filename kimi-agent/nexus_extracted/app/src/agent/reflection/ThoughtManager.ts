@@ -1,6 +1,7 @@
 import { EventBus } from '../core/EventBus';
-import type { IThoughtPersistence, Thought, ThoughtChain } from '../types/thought';
+import type { IThoughtPersistence, Thought, ThoughtChain, ThoughtAnalysis } from '../types/thought';
 import { ThoughtPersistence } from './ThoughtPersistence';
+import { ThoughtAnalyzer } from './ThoughtAnalyzer';
 import { PersistentMemory } from '../memory/PersistentMemory';
 
 /**
@@ -8,12 +9,14 @@ import { PersistentMemory } from '../memory/PersistentMemory';
  */
 export class ThoughtManager {
   private persistence: IThoughtPersistence;
+  private analyzer: ThoughtAnalyzer;
   private eventBus: EventBus;
   private chainPromises: Map<string, Promise<ThoughtChain>> = new Map();
 
   constructor(eventBus: EventBus) {
     this.eventBus = eventBus;
     this.persistence = new ThoughtPersistence();
+    this.analyzer = new ThoughtAnalyzer();
     this.setupListeners();
   }
 
@@ -61,6 +64,16 @@ export class ThoughtManager {
 
   public getPersistence(): IThoughtPersistence {
     return this.persistence;
+  }
+
+  public async getChains(workflowId: string): Promise<ThoughtChain[]> {
+    return await this.persistence.findChains({ workflowId });
+  }
+
+  public async analyzeChain(chainId: string): Promise<ThoughtAnalysis> {
+    const chain = await this.persistence.getChain(chainId);
+    if (!chain) throw new Error(`Chain ${chainId} not found`);
+    return await this.analyzer.analyzeChain(chain);
   }
 
   /**

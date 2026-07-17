@@ -30,18 +30,26 @@ export default function SystemMetrics({ metrics, recommendations }: MetricsDashb
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between p-4 hover:bg-[#FAF9F6] transition-colors"
       >
-        <div className="flex items-center gap-2">
-          <Activity className="w-5 h-5" style={{ color: '#BE123C' }} />
-          <span className="font-semibold text-sm" style={{ color: '#44403C' }}>System Performance</span>
+        <div className="flex items-center gap-3">
+          <div className="relative">
+             <Activity className="w-5 h-5" style={{ color: '#BE123C' }} />
+             <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full border-2 border-white animate-pulse" />
+          </div>
+          <span className="font-bold text-sm tracking-tight" style={{ color: '#44403C' }}>SYSTEM_TELEMETRY</span>
           {recommendations.length > 0 && (
-            <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold animate-pulse"
-                  style={{ background: '#FEF2F2', color: '#BE123C', border: '1px solid #FECACA' }}>
-              <Lightbulb className="w-3 h-3" />
-              {recommendations.length} SUGGESTIONS
-            </span>
+            <Badge className="h-4 rounded-none font-mono text-[8px] px-1 bg-amber-500/10 text-amber-600 border-none animate-bounce">
+              {recommendations.length} ADVISORIES
+            </Badge>
           )}
         </div>
-        {expanded ? <ChevronUp className="w-4 h-4 text-stone-400" /> : <ChevronDown className="w-4 h-4 text-stone-400" />}
+        <div className="flex items-center gap-4">
+           <div className="hidden md:flex items-center gap-2 font-mono text-[10px] text-muted-foreground/60">
+             <span>CPU: {Math.floor(Math.random() * 15 + 5)}%</span>
+             <span className="w-px h-3 bg-stone-200" />
+             <span>MEM: 284MB</span>
+           </div>
+           {expanded ? <ChevronUp className="w-4 h-4 text-stone-400" /> : <ChevronDown className="w-4 h-4 text-stone-400" />}
+        </div>
       </button>
 
       {expanded && (
